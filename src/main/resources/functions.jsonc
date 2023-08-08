@@ -1,0 +1,10 @@
+{
+  "event": {
+    "parameters": ["identifier", "block"],
+    "returns": "null",
+  },
+  "log": {
+    "parameters": ["string"],
+    "returns": "string",
+  }
+}
