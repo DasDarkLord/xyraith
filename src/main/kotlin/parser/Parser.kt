@@ -2,37 +2,124 @@ package parser
 
 import lexer.Token
 import lexer.TokenType
+import java.lang.IndexOutOfBoundsException
 
-class Parser(val input: MutableList<Token>) {
-    var pointer = 0
+class Parser(private val input: MutableList<Token>) {
+    private var pointer = 0
 
-    fun parseEvent(): Ast.Event {
-        if(input[pointer++] !is Token.LeftParen) {
-            throw UnexpectedToken(input[pointer].toType(), TokenType.LeftParen, input[pointer].spanStart, input[pointer].spanEnd)
+    private fun nextToken(): Token {
+        return try {
+            input[pointer++]
+        } catch (e: IndexOutOfBoundsException) {
+            Token.EOF()
         }
-        val eventToken = input[pointer++]
-        if(eventToken !is Token.Identifier) {
-            throw UnexpectedToken(input[pointer].toType(), TokenType.LeftParen, input[pointer].spanStart, input[pointer].spanEnd)
+    }
+    private fun standardMatch(token: Token, type: TokenType) {
+        println("|| Matching $token and $type")
+        if(token.toType() != type) {
+            throw UnexpectedToken(token.toType(), type, token.spanStart, token.spanEnd)
         }
-        val nameToken = input[pointer++]
+    }
+    fun parseEvent(): Ast.Event? {
+        println("| Parsing event...")
+        if(nextToken().toType() == TokenType.EOF) {
+            return null
+        }
+        pointer--
+        standardMatch(nextToken(), TokenType.LeftParen)
+
+        val eventToken = nextToken()
+        standardMatch(eventToken, TokenType.Identifier)
+        val nameToken = nextToken()
+        standardMatch(nameToken, TokenType.Identifier)
         if(nameToken !is Token.Identifier) {
-            throw UnexpectedToken(input[pointer].toType(), TokenType.LeftParen, input[pointer].spanStart, input[pointer].spanEnd)
+            throw Unreachable()
         }
         val block = parseBlock()
         val name = nameToken.value
-        if(input[pointer++] !is Token.RightParen) {
-            throw UnexpectedToken(input[pointer].toType(), TokenType.LeftParen, input[pointer].spanStart, input[pointer].spanEnd)
-        }
+        standardMatch(nextToken(), TokenType.RightParen)
         return Ast.Event(name, block)
     }
 
-    fun parseBlock(): Ast.Block {
-        if(input[pointer++] !is Token.LeftParen) {
-            throw UnexpectedToken(input[pointer].toType(), TokenType.LeftParen, input[pointer].spanStart, input[pointer].spanEnd)
+    fun parseAll(): List<Ast.Event> {
+        println("| Parsing all...")
+        val list: MutableList<Ast.Event> = mutableListOf()
+        while(true) {
+            val event = parseEvent()
+            if(event != null ) {
+                list.add(event)
+            } else {
+                break
+            }
         }
-        if(input[pointer++] !is Token.RightParen) {
-            throw UnexpectedToken(input[pointer].toType(), TokenType.LeftParen, input[pointer].spanStart, input[pointer].spanEnd)
+        return list
+    }
+
+    private fun parseBlock(): Ast.Block {
+        println("| Parsing block...")
+        standardMatch(nextToken(), TokenType.LeftParen)
+        val list: MutableList<Ast.Command> = mutableListOf()
+        while(nextToken() is Token.LeftParen) {
+            pointer--
+            list.add(parseCommand())
         }
-        return Ast.Block(listOf())
+        pointer--
+        standardMatch(nextToken(), TokenType.RightParen)
+        return Ast.Block(list)
+    }
+
+    private fun parseCommand(): Ast.Command {
+        println("| Parsing command...")
+        standardMatch(nextToken(), TokenType.LeftParen)
+        val nameToken = nextToken()
+        standardMatch(nameToken, TokenType.Identifier)
+        if(nameToken !is Token.Identifier) {
+            throw Unreachable()
+        }
+        val list: MutableList<Value> = mutableListOf()
+        while(nextToken() !is Token.RightParen) {
+            pointer--
+            list.add(parseArgument())
+        }
+        pointer--
+        standardMatch(nextToken(), TokenType.RightParen)
+        return Ast.Command(nameToken.value, list)
+    }
+    private fun parseArgument(): Value {
+        println("| Parsing argument...")
+        when(val next = nextToken()) {
+            is Token.LeftParen -> {
+                val next2 = nextToken()
+                if(next2 is Token.LeftParen) {
+                    pointer--
+                    pointer--
+                    return Value.Block(parseBlock())
+                } else if(next2 is Token.Identifier) {
+                    pointer--
+                    pointer--
+                    return Value.Command(parseCommand())
+                } else {
+                    throw UnexpectedToken(TokenType.Identifier, next2.toType(), next2.spanStart, next2.spanEnd)
+                }
+            }
+            is Token.StringText -> {
+                return Value.String(next.value)
+            }
+            is Token.Symbol -> {
+                return Value.Symbol(next.value)
+            }
+            is Token.Number -> {
+                return Value.Number(next.value)
+            }
+            is Token.RightParen -> {
+                throw Unreachable()
+            }
+            is Token.EOF -> {
+                throw Unreachable()
+            }
+            is Token.Identifier -> {
+                return Value.String(next.value)
+            }
+        }
     }
 }

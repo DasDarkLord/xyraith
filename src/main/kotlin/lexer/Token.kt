@@ -11,6 +11,7 @@ sealed class Token() {
     class StringText(val value: String, override val spanStart: Int = 0, override val spanEnd: Int = 0) : Token()
     class Number(val value: Double, override val spanStart: Int = 0, override val spanEnd: Int = 0) : Token()
     class Symbol(val value: String, override val spanStart: Int = 0, override val spanEnd: Int = 0) : Token()
+    class EOF(override val spanStart: Int = 0, override val spanEnd: Int = 0) : Token()
 
     override fun toString(): String {
         return when(this) {
@@ -20,6 +21,7 @@ sealed class Token() {
             is StringText -> """{"type":"string","value":"${this.value}","spanStart":$spanStart,"spanEnd":$spanEnd}"""
             is Number -> """{"type":"number","value":${this.value},"spanStart":$spanStart,"spanEnd":$spanEnd}"""
             is Symbol -> """{"type":"symbol","value":"${this.value}","spanStart":$spanStart,"spanEnd":$spanEnd}"""
+            is EOF -> """"""
         }
     }
 
@@ -27,10 +29,11 @@ sealed class Token() {
         return when(this) {
             is LeftParen -> TokenType.LeftParen
             is RightParen -> TokenType.RightParen
-            is Identifier -> TokenType.Identifier()
-            is StringText -> TokenType.StringText()
-            is Number -> TokenType.Number()
-            is Symbol -> TokenType.Symbol()
+            is Identifier -> TokenType.Identifier
+            is StringText -> TokenType.StringText
+            is Number -> TokenType.Number
+            is Symbol -> TokenType.Symbol
+            is EOF -> TokenType.EOF
         }
     }
 }

@@ -16,10 +16,10 @@ class Lexer(val source: String) {
                 source[position] == ')' -> {
                     output.add(Token.RightParen(position, position++))
                 }
-                source[position].isDigit() -> {
+                source[position].isDigit() || source[position] == '-' -> {
                     val spanStart = position
                     var number = ""
-                    while(position < source.length && source[position].isDigit()) {
+                    while(position < source.length && (source[position].isDigit() || source[position] == '-')) {
                         number = "$number${source[position]}"
                         position++
                     }

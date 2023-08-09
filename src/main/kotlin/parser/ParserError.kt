@@ -10,3 +10,5 @@ class UnexpectedToken(val expected: TokenType, val found: TokenType, override va
         return Diagnostic(1, "expected ${this.expected}, found ${this.found}", spanStart, spanEnd)
     }
 }
+
+class Unreachable : Exception()

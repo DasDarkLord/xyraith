@@ -1,10 +1,12 @@
+import ir.Translation
 import lexer.Lexer
 import parser.Parser
 import parser.ParserError
 import java.io.File
+import java.lang.IndexOutOfBoundsException
 
 fun main(args: Array<String>) {
-    val text = File("main.xyr").readText()
+    val text = File("main.lisp").readText()
     val lexer = Lexer(text)
     val tokens = lexer.transform()
     println("[")
@@ -14,10 +16,20 @@ fun main(args: Array<String>) {
     println("]")
     val parser = Parser(tokens)
     try {
-        val ast = parser.parseEvent()
+        val ast = parser.parseAll()
         println(ast)
-    } catch(e: ParserError) {
-        println(e.emit())
+        val translator = Translation()
+        val blocks = translator.translateAST(ast)
+        println("$blocks")
+        blocks.forEach {
+            println(it.display())
+        }
+    } finally {
+
     }
+//    } catch(e: ParserError) {
+//        println(e.emit())
+//    } catch(e: IndexOutOfBoundsException) {
+//        println("silly bounds error?!")
+//    }
 }
-// t
