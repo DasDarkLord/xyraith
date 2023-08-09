@@ -15,7 +15,7 @@ class BasicBlock(val id: Int, val code: MutableList<Node>) {
         return "  @$id:\n$display"
     }
 }
-class Node(val id: Int, val name: String, val arguments: List<Argument>) {
+class Node(val id: Int, var name: String, var arguments: List<Argument>) {
     override fun toString(): String {
         return """{"type":"node","id":$id,"name":"$name","arguments":$arguments}"""
     }
@@ -26,6 +26,22 @@ class Node(val id: Int, val name: String, val arguments: List<Argument>) {
         }
         display = display.removeSuffix(", ")
         return "    %$id = $name $display\n"
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Node) return false
+
+        return id == other.id &&
+                name == other.name &&
+                arguments == other.arguments
+    }
+
+    override fun hashCode(): Int {
+        var result = id
+        result = 31 * result + name.hashCode()
+        result = 31 * result + arguments.hashCode()
+        return result
     }
 }
 sealed class Argument {

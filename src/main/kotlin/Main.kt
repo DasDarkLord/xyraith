@@ -1,4 +1,5 @@
 import ir.Translation
+import ir.optimizations.applyAllTransformations
 import lexer.Lexer
 import parser.Parser
 import parser.ParserError
@@ -20,8 +21,9 @@ fun main(args: Array<String>) {
         println(ast)
         val translator = Translation()
         val blocks = translator.translateAST(ast)
-        println("$blocks")
-        blocks.forEach {
+        val optimizedBlocks = applyAllTransformations(blocks)
+        println("$optimizedBlocks")
+        optimizedBlocks.forEach {
             println(it.display())
         }
     } finally {
