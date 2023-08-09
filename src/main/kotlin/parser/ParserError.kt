@@ -11,4 +11,11 @@ class UnexpectedToken(val expected: TokenType, val found: TokenType, override va
     }
 }
 
+class InvalidCommand(val command: String, override val spanStart: Int, override val spanEnd: Int) : ParserError(spanStart, spanEnd) {
+    override fun emit(): Diagnostic {
+        return Diagnostic(1, "`$command` is not a valid command", spanStart, spanEnd)
+    }
+}
+
+
 class Unreachable : Exception()

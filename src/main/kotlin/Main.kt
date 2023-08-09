@@ -6,6 +6,9 @@ import parser.ParserError
 import java.io.File
 import java.lang.IndexOutOfBoundsException
 
+fun getResourceAsText(path: String): String? =
+    object {}.javaClass.getResource(path)?.readText()
+
 fun main(args: Array<String>) {
     val text = File("main.lisp").readText()
     val lexer = Lexer(text)
@@ -26,12 +29,9 @@ fun main(args: Array<String>) {
         optimizedBlocks.forEach {
             println(it.display())
         }
-    } finally {
-
+    } catch(e: ParserError) {
+        println(e.emit())
+    } catch(e: IndexOutOfBoundsException) {
+        println("silly bounds error?!")
     }
-//    } catch(e: ParserError) {
-//        println(e.emit())
-//    } catch(e: IndexOutOfBoundsException) {
-//        println("silly bounds error?!")
-//    }
 }

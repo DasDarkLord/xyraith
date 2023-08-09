@@ -1,0 +1,20 @@
+# Player Commands
+player.sendMessage
+player.teleport
+# World Commands
+world.setBlock
+# Branching
+if
+call
+# Comparisons
+le
+ge
+lte
+gte
+# Load & storing
+load
+store
+globals.load
+globals.store
+player.load
+player.store

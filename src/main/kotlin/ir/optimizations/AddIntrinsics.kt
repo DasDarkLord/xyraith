@@ -10,8 +10,7 @@ fun convertIntrinsics(blocks: List<BasicBlock>): List<BasicBlock> {
     return output
 }
 
-/*
-
+    /*
     This part converts certain `add`, `sub`, `mul`, and `div` commands into `loadAnd<op>` commands.
     E.g
     %1 = load :x
@@ -24,7 +23,6 @@ fun convertIntrinsics(blocks: List<BasicBlock>): List<BasicBlock> {
     %3 = store :x, %2
 
      */
-
 private fun applyLoadOpt(blocks: List<BasicBlock>): List<BasicBlock> {
     val output = mutableListOf<BasicBlock>()
     blocks.forEach { block ->
@@ -61,7 +59,6 @@ private fun applyLoadOpt(blocks: List<BasicBlock>): List<BasicBlock> {
                     }
                 }
             }
-
             addedBlock.code.add(addedNode)
         }
         output.add(addedBlock)

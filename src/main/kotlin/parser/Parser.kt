@@ -83,6 +83,9 @@ class Parser(private val input: MutableList<Token>) {
         }
         pointer--
         standardMatch(nextToken(), TokenType.RightParen)
+        if(!verifyBuiltinCommand(nameToken.value)) {
+            throw InvalidCommand(nameToken.value, nameToken.spanStart, nameToken.spanEnd)
+        }
         return Ast.Command(nameToken.value, list)
     }
     private fun parseArgument(): Value {
