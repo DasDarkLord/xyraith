@@ -1,8 +1,10 @@
 # Player Commands
 player.sendMessage
 player.teleport
+
 # World Commands
 world.setBlock
+
 # Branching
 if
 call
@@ -11,6 +13,7 @@ le
 ge
 lte
 gte
+
 # Load & storing
 load
 store
@@ -18,3 +21,12 @@ globals.load
 globals.store
 player.load
 player.store
+
+# Arithmetic
+add
+sub
+mul
+div
+mod
+shl
+shr

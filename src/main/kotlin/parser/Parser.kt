@@ -15,13 +15,11 @@ class Parser(private val input: MutableList<Token>) {
         }
     }
     private fun standardMatch(token: Token, type: TokenType) {
-        println("|| Matching $token and $type")
         if(token.toType() != type) {
             throw UnexpectedToken(token.toType(), type, token.spanStart, token.spanEnd)
         }
     }
     fun parseEvent(): Ast.Event? {
-        println("| Parsing event...")
         if(nextToken().toType() == TokenType.EOF) {
             return null
         }
@@ -42,7 +40,6 @@ class Parser(private val input: MutableList<Token>) {
     }
 
     fun parseAll(): List<Ast.Event> {
-        println("| Parsing all...")
         val list: MutableList<Ast.Event> = mutableListOf()
         while(true) {
             val event = parseEvent()
@@ -56,7 +53,6 @@ class Parser(private val input: MutableList<Token>) {
     }
 
     private fun parseBlock(): Ast.Block {
-        println("| Parsing block...")
         standardMatch(nextToken(), TokenType.LeftParen)
         val list: MutableList<Ast.Command> = mutableListOf()
         while(nextToken() is Token.LeftParen) {
@@ -69,7 +65,6 @@ class Parser(private val input: MutableList<Token>) {
     }
 
     private fun parseCommand(): Ast.Command {
-        println("| Parsing command...")
         standardMatch(nextToken(), TokenType.LeftParen)
         val nameToken = nextToken()
         standardMatch(nameToken, TokenType.Identifier)
@@ -89,7 +84,6 @@ class Parser(private val input: MutableList<Token>) {
         return Ast.Command(nameToken.value, list)
     }
     private fun parseArgument(): Value {
-        println("| Parsing argument...")
         when(val next = nextToken()) {
             is Token.LeftParen -> {
                 val next2 = nextToken()

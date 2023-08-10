@@ -5,8 +5,7 @@ import ir.BasicBlock
 import ir.Node
 
 fun convertIntrinsics(blocks: List<BasicBlock>): List<BasicBlock> {
-    var output = listOf<BasicBlock>()
-    output = applyLoadOpt(output)
+    val output = applyLoadOpt(blocks)
     return output
 }
 
@@ -36,16 +35,15 @@ private fun applyLoadOpt(blocks: List<BasicBlock>): List<BasicBlock> {
                 "div" to "loadAndDiv",
             )
             map.forEach { entry ->
-                if(addedNode.name == entry.key) {
+                if (addedNode.name == entry.key) {
                     addedNode.arguments.forEach { arg ->
-                        if(arg is Argument.SSARef) {
+                        if (arg is Argument.SSARef) {
                             block.code.forEach { otherNode ->
-                                if(otherNode.name == "load" && otherNode.id == arg.value) {
-                                    val removed = addedBlock.code.remove(otherNode)
-                                    println("removed? $removed")
+                                if (otherNode.name == "load" && otherNode.id == arg.value) {
+                                    addedBlock.code.remove(otherNode)
                                     val newArguments = mutableListOf<Argument>()
                                     addedNode.arguments.forEach {
-                                        if(!(it is Argument.SSARef && it.value == otherNode.id)) {
+                                        if (!(it is Argument.SSARef && it.value == otherNode.id)) {
                                             newArguments.add(it)
                                         } else {
                                             newArguments.add(otherNode.arguments[0])
@@ -65,3 +63,4 @@ private fun applyLoadOpt(blocks: List<BasicBlock>): List<BasicBlock> {
     }
     return output
 }
+
