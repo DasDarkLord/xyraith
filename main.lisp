@@ -1,4 +1,4 @@
 (event join (
-    (player.sendMessage "Welcome to the server %player%!")
-    (store :x (mul (load :x) 2))
+    (console.log "Hello world!")
+    (store :x 10)
 ))
