@@ -17,5 +17,10 @@ class InvalidCommand(val command: String, override val spanStart: Int, override 
     }
 }
 
+class IncorrectArgument(val expectedType: String, val foundType: String, val commandName: String, override val spanStart: Int, override val spanEnd: Int) : ParserError(spanStart, spanEnd) {
+    override fun emit(): Diagnostic {
+        return Diagnostic(1, "invalid argument in command $commandName - expected `$expectedType`, found `$foundType`", spanStart, spanEnd)
+    }
+}
 
 class Unreachable : Exception()
