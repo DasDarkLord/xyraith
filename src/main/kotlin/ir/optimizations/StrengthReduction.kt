@@ -6,6 +6,11 @@ import ir.Node
 import kotlin.math.log2
 import kotlin.math.roundToInt
 
+/*
+This allows certain operations to go faster than others.
+For example, multiplying by two is converted into bitshift-right by 1.
+This is faster for the CPU to process than multiplication.
+ */
 fun reduceStrength(blocks: List<BasicBlock>): List<BasicBlock> {
     val output = mutableListOf<BasicBlock>()
     blocks.forEach { block ->
@@ -51,9 +56,3 @@ fun reduceStrength(blocks: List<BasicBlock>): List<BasicBlock> {
     }
     return output
 }
-
-/**
- *
- * CURRENTLY: RESEARCHING STRENGTH REDUCTION
- * Will code again in a few minutes...
- */
