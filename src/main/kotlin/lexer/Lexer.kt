@@ -16,6 +16,9 @@ class Lexer(val source: String) {
                 source[position] == ')' -> {
                     output.add(Token.RightParen(position, position++))
                 }
+                source[position] == '@' -> {
+                    output.add(Token.At(position, position++))
+                }
                 source[position].isDigit() || source[position] == '-' -> {
                     val spanStart = position
                     var number = ""

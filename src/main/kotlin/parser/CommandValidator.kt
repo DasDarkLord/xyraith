@@ -9,13 +9,14 @@ fun verifyBuiltinCommand(nameToken: Token.Identifier, arguments: List<Value>) {
         throw InvalidCommand(command, nameToken.spanStart, nameToken.spanEnd)
     }
     val typeCheckList: List<*> = (commandRegistry[command]!!["arguments"] as List<*>?)!!
-    val iterator = arguments.iterator()
+    var argumentPointer = 0
     typeCheckList.forEach { type ->
         val type = type as String
-        if(!iterator.hasNext()) {
+        if(argumentPointer > arguments.size && !type.endsWith("?")) {
             throw IncorrectArgument(type, "end of command", command, nameToken.spanStart, nameToken.spanEnd)
         }
-        val next = iterator.next()
+        val next = arguments[argumentPointer]
+        argumentPointer++
         if(type == "number") {
             if(next !is Value.Number && next !is Value.Symbol && next !is Value.Command) {
                 throw IncorrectArgument("number", "another type", command, nameToken.spanStart, nameToken.spanEnd)
@@ -44,6 +45,11 @@ fun verifyBuiltinCommand(nameToken: Token.Identifier, arguments: List<Value>) {
         if(type == "command") {
             if(next !is Value.Command) {
                 throw IncorrectArgument("command", "another type", command, nameToken.spanStart, nameToken.spanEnd)
+            }
+        }
+        if(type == "selector") {
+            if(next !is Value.Selector) {
+                throw IncorrectArgument("selector", "another type", command, nameToken.spanStart, nameToken.spanEnd)
             }
         }
     }

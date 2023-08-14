@@ -83,6 +83,13 @@ class Parser(private val input: MutableList<Token>) {
     }
     private fun parseArgument(): Value {
         when(val next = nextToken()) {
+            is Token.At -> {
+                val next2 = nextToken()
+                if(next2 !is Token.Identifier) {
+                    throw UnexpectedToken(TokenType.Identifier, next2.toType(), next2.spanStart, next2.spanEnd)
+                }
+                return Value.Selector(next2.value)
+            }
             is Token.LeftParen -> {
                 val next2 = nextToken()
                 if(next2 is Token.LeftParen) {

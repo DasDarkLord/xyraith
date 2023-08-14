@@ -1,3 +1,5 @@
+import bytecode.Emitter
+import interpreter.Interpreter
 import ir.Translation
 import ir.optimizations.applyAllTransformations
 import lexer.Lexer
@@ -29,6 +31,20 @@ fun main(args: Array<String>) {
         optimizedBlocks.forEach {
             println(it.display())
         }
+        val emitter = Emitter(optimizedBlocks)
+        emitter.startEmitting()
+        var bytes = emitter.getBytes()
+        bytes = bytes.position(0)
+        print("[")
+        bytes.array().forEach {
+            print("$it, ")
+        }
+        println("]")
+        bytes = bytes.position(0)
+        val interpreter = Interpreter(bytes)
+        interpreter.transform()
+        println("blockmap:")
+        println(interpreter.blockMap)
     } catch(e: ParserError) {
         println(e.emit())
     } catch(e: IndexOutOfBoundsException) {

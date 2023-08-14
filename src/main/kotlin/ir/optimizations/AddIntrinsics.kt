@@ -33,6 +33,10 @@ private fun applyLoadOpt(blocks: List<BasicBlock>): List<BasicBlock> {
                 "sub" to "loadAndSub",
                 "mul" to "loadAndMul",
                 "div" to "loadAndDiv",
+                "+" to "loadAndAdd",
+                "-" to "loadAndSub",
+                "*" to "loadAndMul",
+                "/" to "loadAndDiv",
             )
             map.forEach { entry ->
                 if (addedNode.name == entry.key) {

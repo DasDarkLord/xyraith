@@ -68,7 +68,15 @@ sealed class Argument {
             return """{"type":"symbol","value":"$value"}"""
         }
         override fun display(): kotlin.String {
-            return "$value"
+            return value
+        }
+    }
+    class Selector(val value: kotlin.String) : Argument() {
+        override fun toString(): kotlin.String {
+            return """{"type":"selector","value":"$value"}"""
+        }
+        override fun display(): kotlin.String {
+            return "@$value"
         }
     }
 

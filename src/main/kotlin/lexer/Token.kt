@@ -1,6 +1,6 @@
 package lexer
 
-sealed class Token() {
+sealed class Token {
 
     abstract val spanStart: Int
     abstract val spanEnd: Int
@@ -12,16 +12,18 @@ sealed class Token() {
     class Number(val value: Double, override val spanStart: Int = 0, override val spanEnd: Int = 0) : Token()
     class Symbol(val value: String, override val spanStart: Int = 0, override val spanEnd: Int = 0) : Token()
     class EOF(override val spanStart: Int = 0, override val spanEnd: Int = 0) : Token()
+    class At(override val spanStart: Int = 0, override val spanEnd: Int = 0) : Token()
 
     override fun toString(): String {
         return when(this) {
             is LeftParen -> """{"type":"leftParen","spanStart":$spanStart,"spanEnd":$spanEnd}"""
             is RightParen -> """{"type":"rightParen","spanStart":$spanStart,"spanEnd":$spanEnd}"""
-            is Identifier -> """{"type":"ident","value":"${this.value}","spanStart":$spanStart,"spanEnd":$spanEnd}"""
+            is Identifier -> """{"type":"identifier","value":"${this.value}","spanStart":$spanStart,"spanEnd":$spanEnd}"""
             is StringText -> """{"type":"string","value":"${this.value}","spanStart":$spanStart,"spanEnd":$spanEnd}"""
             is Number -> """{"type":"number","value":${this.value},"spanStart":$spanStart,"spanEnd":$spanEnd}"""
             is Symbol -> """{"type":"symbol","value":"${this.value}","spanStart":$spanStart,"spanEnd":$spanEnd}"""
             is EOF -> """"""
+            is At -> """{"type":"at","spanStart":$spanStart,"spanEnd":$spanEnd}}"""
         }
     }
 
@@ -34,6 +36,7 @@ sealed class Token() {
             is Number -> TokenType.Number
             is Symbol -> TokenType.Symbol
             is EOF -> TokenType.EOF
+            is At -> TokenType.At
         }
     }
 }

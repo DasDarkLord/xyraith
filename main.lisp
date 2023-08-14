@@ -1,4 +1,6 @@
 (event join (
-    (console.log "Hello world!")
-    (store :x 10)
+    (add 1 2)
+))
+(event quit (
+    (add 3 4)
 ))

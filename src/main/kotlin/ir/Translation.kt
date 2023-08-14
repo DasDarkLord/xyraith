@@ -56,6 +56,9 @@ class Translation {
             is Value.Symbol -> {
                 return Argument.Symbol(value.value)
             }
+            is Value.Selector -> {
+                return Argument.Selector(value.value)
+            }
         }
     }
 }

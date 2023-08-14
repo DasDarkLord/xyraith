@@ -104,4 +104,8 @@ val commandRegistry = mutableMapOf(
         "arguments" to listOf("symbol"),
         "pure" to false,
     ),
+    "player.sendMessage" to mutableMapOf(
+        "arguments" to listOf("selector", "string"),
+        "pure" to false,
+    )
 )

@@ -1,0 +1,3 @@
+(event rightClick (
+    (player.store :money (add (player.load :money) 1))
+))

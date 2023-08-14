@@ -29,6 +29,11 @@ sealed class Value {
             return """{"type":"string","value":"$value"}"""
         }
     }
+    class Selector(val value: kotlin.String) : Value() {
+        override fun toString(): kotlin.String {
+            return """{"type":"selector","value":"$value"}"""
+        }
+    }
     class Symbol(val value: kotlin.String) : Value() {
         override fun toString(): kotlin.String {
             return """{"type":"symbol","value":"$value"}"""

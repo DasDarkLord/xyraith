@@ -1,11 +1,12 @@
 package lexer
 
 sealed class TokenType {
-    object LeftParen : TokenType()
-    object RightParen : TokenType()
-    object Identifier : TokenType()
-    object StringText : TokenType()
-    object Number : TokenType()
-    object Symbol : TokenType()
-    object EOF : TokenType()
+    data object LeftParen : TokenType()
+    data object RightParen : TokenType()
+    data object Identifier : TokenType()
+    data object StringText : TokenType()
+    data object Number : TokenType()
+    data object Symbol : TokenType()
+    data object EOF : TokenType()
+    data object At : TokenType()
 }
