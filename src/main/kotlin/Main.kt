@@ -1,5 +1,5 @@
 import bytecode.Emitter
-import interpreter.Interpreter
+import server.Interpreter
 import ir.Translation
 import ir.optimizations.applyAllTransformations
 import lexer.Lexer
@@ -7,7 +7,9 @@ import parser.Parser
 import parser.ParserError
 import java.io.File
 import java.lang.IndexOutOfBoundsException
+import java.nio.ByteBuffer
 
+var globalInterpreter = Interpreter(ByteBuffer.allocate(0))
 fun getResourceAsText(path: String): String? =
     object {}.javaClass.getResource(path)?.readText()
 
@@ -32,8 +34,7 @@ fun main(args: Array<String>) {
             println(it.display())
         }
         val emitter = Emitter(optimizedBlocks)
-        emitter.startEmitting()
-        var bytes = emitter.getBytes()
+        var bytes = emitter.startEmitting()
         bytes = bytes.position(0)
         print("[")
         bytes.array().forEach {
@@ -43,8 +44,10 @@ fun main(args: Array<String>) {
         bytes = bytes.position(0)
         val interpreter = Interpreter(bytes)
         interpreter.transform()
+        globalInterpreter = interpreter
         println("blockmap:")
         println(interpreter.blockMap)
+        interpreter.disassemble()
     } catch(e: ParserError) {
         println(e.emit())
     } catch(e: IndexOutOfBoundsException) {
