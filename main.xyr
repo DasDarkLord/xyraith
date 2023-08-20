@@ -1,0 +1,7 @@
+(event join (
+    (add 1 (add 3 4))
+))
+
+(event quit (
+    (add 5 (add 3 4))
+))

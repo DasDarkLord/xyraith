@@ -1,9 +1,6 @@
 package ir
 
-import parser.Ast
-import parser.Value
-
-class BasicBlock(val id: Int, val code: MutableList<Node>) {
+class BasicBlock(val id: Int, val code: MutableList<Node>, val eventId: String) {
     override fun toString(): String {
         return """{"type":"basicBlock","id":$id,"code":$code}"""
     }

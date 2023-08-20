@@ -14,7 +14,7 @@ This is faster for the CPU to process than multiplication.
 fun reduceStrength(blocks: List<BasicBlock>): List<BasicBlock> {
     val output = mutableListOf<BasicBlock>()
     blocks.forEach { block ->
-        val addedBlock = BasicBlock(block.id, mutableListOf())
+        val addedBlock = BasicBlock(block.id, mutableListOf(), block.eventId)
         block.code.forEach { node ->
             fun localLoop() {
                 var addedNode = node

@@ -6,9 +6,9 @@ sealed class Ast {
             return """{"name": "$name","code": $code}""".trimIndent()
         }
     }
-    class Block(val nodes: List<Ast.Command>) : Ast() {
+    class Block(val nodes: List<Ast.Command>, val eventName: String) : Ast() {
         override fun toString(): String {
-            return """$nodes""".trimIndent()
+            return """{"name":"$eventName","nodes":$nodes}""".trimIndent()
         }
     }
     class Command(val name: String, val arguments: List<Value>) : Ast() {

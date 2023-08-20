@@ -25,7 +25,7 @@ fun convertIntrinsics(blocks: List<BasicBlock>): List<BasicBlock> {
 private fun applyLoadOpt(blocks: List<BasicBlock>): List<BasicBlock> {
     val output = mutableListOf<BasicBlock>()
     blocks.forEach { block ->
-        val addedBlock = BasicBlock(block.id, mutableListOf())
+        val addedBlock = BasicBlock(block.id, mutableListOf(), block.eventId)
         block.code.forEach { node ->
             val addedNode = Node(node.id, node.name, node.arguments)
             val map = mapOf(

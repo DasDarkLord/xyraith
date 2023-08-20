@@ -33,7 +33,14 @@ class Parser(private val input: MutableList<Token>) {
         if(nameToken !is Token.Identifier) {
             throw Unreachable()
         }
-        val block = parseBlock()
+        when(nameToken.value) {
+            "join" -> {}
+            "quit" -> {}
+            else -> {
+                throw InvalidEvent(nameToken.value, nameToken.spanStart, nameToken.spanEnd)
+            }
+        }
+        val block = parseBlock(nameToken.value)
         val name = nameToken.value
         standardMatch(nextToken(), TokenType.RightParen)
         return Ast.Event(name, block)
@@ -52,7 +59,7 @@ class Parser(private val input: MutableList<Token>) {
         return list
     }
 
-    private fun parseBlock(): Ast.Block {
+    private fun parseBlock(eventName: String): Ast.Block {
         standardMatch(nextToken(), TokenType.LeftParen)
         val list: MutableList<Ast.Command> = mutableListOf()
         while(nextToken() is Token.LeftParen) {
@@ -61,7 +68,7 @@ class Parser(private val input: MutableList<Token>) {
         }
         pointer--
         standardMatch(nextToken(), TokenType.RightParen)
-        return Ast.Block(list)
+        return Ast.Block(list, eventName)
     }
 
     private fun parseCommand(): Ast.Command {
@@ -71,6 +78,7 @@ class Parser(private val input: MutableList<Token>) {
         if(nameToken !is Token.Identifier) {
             throw Unreachable()
         }
+
         val list: MutableList<Value> = mutableListOf()
         while(nextToken() !is Token.RightParen) {
             pointer--
@@ -95,7 +103,7 @@ class Parser(private val input: MutableList<Token>) {
                 if(next2 is Token.LeftParen) {
                     pointer--
                     pointer--
-                    return Value.Block(parseBlock())
+                    return Value.Block(parseBlock("callable"))
                 } else if(next2 is Token.Identifier) {
                     pointer--
                     pointer--

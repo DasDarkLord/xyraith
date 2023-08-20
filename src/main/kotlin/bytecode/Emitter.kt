@@ -3,6 +3,7 @@ package bytecode
 import ir.Argument
 import ir.BasicBlock
 import ir.Node
+import parser.InvalidEvent
 import parser.commandRegistry
 import java.nio.ByteBuffer
 
@@ -12,7 +13,7 @@ class Emitter(val blocks: List<BasicBlock>) {
     val constants: MutableMap<Argument, Int> = mutableMapOf()
     val constantsArray = ByteBuffer.allocate(1000)
 
-    inline fun mov(id: Short, constant: Int) {
+    fun mov(id: Short, constant: Int) {
         println("Emitter State | Inserting `mov` command (id: $id) (constant: $constant) (registers: $stackCounter)")
         array.put(0)
         array.putShort(id)
@@ -41,7 +42,12 @@ class Emitter(val blocks: List<BasicBlock>) {
             array.put(-127)
         }
         array.putInt(block.id)
-        array.putInt(0)
+        when(block.eventId) {
+            "callable" -> array.putInt(0)
+            "join" -> array.putInt(1)
+            "quit" -> array.putInt(1)
+            else -> throw IllegalArgumentException() // unreachable
+        }
 
         block.code.forEach {
             emitInstruction(it)

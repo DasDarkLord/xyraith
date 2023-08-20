@@ -5,6 +5,8 @@ import ir.optimizations.applyAllTransformations
 import lexer.Lexer
 import parser.Parser
 import parser.ParserError
+import server.disassemble
+import server.transform
 import java.io.File
 import java.lang.IndexOutOfBoundsException
 import java.nio.ByteBuffer
@@ -14,7 +16,7 @@ fun getResourceAsText(path: String): String? =
     object {}.javaClass.getResource(path)?.readText()
 
 fun main(args: Array<String>) {
-    val text = File("main.lisp").readText()
+    val text = File("main.xyr").readText()
     val lexer = Lexer(text)
     val tokens = lexer.transform()
     println("[")

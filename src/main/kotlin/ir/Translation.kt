@@ -9,7 +9,7 @@ class Translation {
     // ID for basic block numbering
     var bbId = 0
     var output = listOf<BasicBlock>()
-    var block = BasicBlock(-1, mutableListOf())
+    var block = BasicBlock(-1, mutableListOf(), "callable")
     var blockList = mutableListOf<BasicBlock>()
     fun translateAST(events: List<Ast.Event>): List<BasicBlock> {
         events.forEach {
@@ -20,7 +20,7 @@ class Translation {
 
     fun translateBlock(astBlock: Ast.Block) {
         val tempBlock = block
-        block = BasicBlock(bbId++, mutableListOf())
+        block = BasicBlock(bbId++, mutableListOf(), astBlock.eventName)
         astBlock.nodes.forEach {
             translateCommand(it)
         }
