@@ -1,10 +1,10 @@
 package server
 
-open class Value {
-    class Number(val value: kotlin.Double) : Value()
-    class String(val value: kotlin.String) : Value()
-    class Symbol(val value: kotlin.String) : Value()
-    class Null : Value()
+sealed class Value {
+    data class Number(val value: kotlin.Double) : Value()
+    data class String(val value: kotlin.String) : Value()
+    data class Symbol(val value: kotlin.String) : Value()
+    object Null : Value()
 
     fun toNumber(): Double {
         return when(this) {
@@ -19,7 +19,6 @@ open class Value {
             is Null -> "null"
             is String -> "\"$value\""
             is Symbol -> ":$value"
-            else -> "unknown"
         }
     }
 
@@ -29,7 +28,6 @@ open class Value {
             is Null -> "null"
             is String -> value
             is Symbol -> ":$value"
-            else -> "unknown"
         }
     }
 }

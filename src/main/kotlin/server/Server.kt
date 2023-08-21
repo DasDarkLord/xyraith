@@ -20,6 +20,12 @@ fun startupServer() {
         val player = event.player
         event.setSpawningInstance(instanceContainer)
         player.respawnPoint = Pos(0.0, 42.0, 0.0)
+        globalInterpreter.addExtensionInstruction(0) {
+            val target = it.getShort()
+            val reg = it.getShort().toInt()
+            println("Interpreter | Sending message of a funny value ")
+            player.sendMessage(globalInterpreter.registers[reg].toDisplay())
+        }
         globalInterpreter.bytes.position(0)
         globalInterpreter.interpretEvent(2)
     }

@@ -63,15 +63,32 @@ fun Interpreter.disassemble() {
                         val constant = buffer.getInt()
                         println("  mov r$reg, #$constant")
                     } else {
-                        val newPair: MutableMap.MutableEntry<String, MutableMap<String, Any>> = findOpcodeInRegistry(byte)!!
-                        val regsUsed = newPair.value["registersUsed"]!! as Int
-                        val name = newPair.key
-                        print("  $name ")
-                        for(x in 1..(regsUsed+1)) {
-                            val reg = buffer.getShort()
-                            print("r$reg, ")
+                        println("byte: $byte")
+                        if(byte.toInt() == 127) {
+                            val nid = buffer.getShort()
+                            println("short: $nid")
+                            val newPair2: MutableMap.MutableEntry<String, MutableMap<String, Any>> = findOpcodeInRegistry(nid.toInt())!!
+                            val regsUsed = newPair2.value["registersUsed"]!! as Int
+                            val name = newPair2.key
+                            print("  $name ")
+                            for(x in 1..(regsUsed+1)) {
+                                val reg = buffer.getShort()
+                                print("r$reg, ")
+                            }
+                            println()
+                            continue
+                        } else {
+                            val newPair: MutableMap.MutableEntry<String, MutableMap<String, Any>> = findOpcodeInRegistry(byte.toInt())!!
+                            val regsUsed = newPair.value["registersUsed"]!! as Int
+                            val name = newPair.key
+                            print("  $name ")
+                            for(x in 1..(regsUsed+1)) {
+                                val reg = buffer.getShort()
+                                print("r$reg, ")
+                            }
+                            println()
                         }
-                        println()
+
                     }
                 } catch(e: BufferUnderflowException) {
                     println()

@@ -64,6 +64,7 @@ class Emitter(val blocks: List<BasicBlock>) {
         val regsUsed: Int = commandRegistry[node.name]!!["registersUsed"]!! as Int
         val regsAdded: Short = (commandRegistry[node.name]!!["registersAdded"]!! as Int).toShort()
         if(commandRegistry[node.name]!!["opcode"] == null) {
+            array.put(127)
             array.putShort(commandRegistry[node.name]!!["opcodeExtension"] as Short)
             Logger.trace("Emitter State | Emitting instruction with $regsUsed registers used & extended opcodes (registers: $stackCounter)")
         } else {

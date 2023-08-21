@@ -14,7 +14,7 @@ import java.nio.ByteBuffer
 import java.time.LocalDate
 
 var globalInterpreter = Interpreter(ByteBuffer.allocate(0))
-val debug = 1
+val debug = 5
 fun getResourceAsText(path: String): String? =
     object {}.javaClass.getResource(path)?.readText()
 

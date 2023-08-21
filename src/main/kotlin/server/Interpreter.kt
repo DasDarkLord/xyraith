@@ -7,8 +7,8 @@ import java.nio.ByteBuffer
 
 class Interpreter(val bytes: ByteBuffer) {
     val blockMap: MutableMap<Int, ByteBuffer> = mutableMapOf()
-    val instructions: MutableMap<Short, () -> Unit> = mutableMapOf()
-    val registers: MutableList<Value> = MutableList(255) { return@MutableList Value.Null() }
+    val instructions: MutableMap<Short, (ByteBuffer) -> Unit> = mutableMapOf()
+    val registers: MutableList<Value> = MutableList(255) { return@MutableList Value.Null }
     val constants: MutableMap<Int, Value> = mutableMapOf()
     val variables: MutableMap<Value, Value> = mutableMapOf()
 
@@ -40,10 +40,19 @@ class Interpreter(val bytes: ByteBuffer) {
     }
     private fun interpretOpcode(buf: ByteBuffer) {
         val byte = buf.get().toInt()
-        if(byte != 255) {
+        Logger.debug("Interpreter | Interpreting byte $byte")
+        if(byte != 127) {
             Logger.debug("Interpreter | Accessing opcode $byte")
             val func = opcodes[byte]
             func(buf)
+        } else {
+            Logger.debug("Interpreter | Accessing opcode $byte")
+            val short: Short = (buf.getShort() - 128).toShort()
+            Logger.debug("Interpreter | Accessing subcode $short")
+            val func = instructions[short]
+            if(func != null) {
+                func(buf)
+            }
         }
     }
 
@@ -53,7 +62,7 @@ class Interpreter(val bytes: ByteBuffer) {
         }
     }
 
-    fun addExtensionInstruction(id: Short, callback: () -> Unit) {
-
+    fun addExtensionInstruction(id: Short, callback: (ByteBuffer) -> Unit) {
+        instructions[id] = callback
     }
 }

@@ -3,3 +3,17 @@
     (store :x 10)
     (console.log (load :x))
 ))
+
+(event join (
+    (player.sendMessage "Hi there!")
+    (player.sendMessage "Hi there!")
+    (player.sendMessage "Hi there!")
+    (player.sendMessage "Hi there!")
+    (player.sendMessage "Hi there!")
+    (player.sendMessage "Hi there!")
+    (player.sendMessage "Hi there!")
+    (player.sendMessage "Hi there!")
+    (player.sendMessage "Hi there!")
+    (player.sendMessage "Hi there!")
+
+))

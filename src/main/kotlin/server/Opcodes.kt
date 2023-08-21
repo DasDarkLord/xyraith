@@ -29,15 +29,18 @@ fun Interpreter.getCurrentTime(buf: ByteBuffer) {
 
 fun Interpreter.store(buf: ByteBuffer) {
     val target = buf.getShort().toInt()
-    val storeIn = buf.getShort().toInt()
     val value = buf.getShort().toInt()
+    val storeIn = buf.getShort().toInt()
 
-    registers[target] = Value.Null()
+
+    registers[target] = Value.Null
+    println("vars: $variables")
     variables[registers[storeIn]] = registers[value]
 }
 
 fun Interpreter.load(buf: ByteBuffer) {
     val target = buf.getShort().toInt()
     val loadFrom = buf.getShort().toInt()
+    println("vars: $variables")
     registers[target] = variables[registers[loadFrom]]!!
 }
