@@ -6,6 +6,7 @@ import lexer.Lexer
 import parser.Parser
 import parser.ParserError
 import server.disassemble
+import server.startupServer
 import server.transform
 import java.io.File
 import java.lang.IndexOutOfBoundsException
@@ -13,6 +14,7 @@ import java.nio.ByteBuffer
 import java.time.LocalDate
 
 var globalInterpreter = Interpreter(ByteBuffer.allocate(0))
+val debug = 1
 fun getResourceAsText(path: String): String? =
     object {}.javaClass.getResource(path)?.readText()
 
@@ -20,41 +22,34 @@ fun main(args: Array<String>) {
     val text = File("main.xyr").readText()
     val lexer = Lexer(text)
     val tokens = lexer.transform()
-    println("[")
+    Logger.trace("[")
     tokens.forEach {
-        println("\t$it,")
+        Logger.trace("\t$it,")
     }
-    println("]")
+    Logger.trace("]")
     val parser = Parser(tokens)
     try {
         val time1 = LocalDate.now()
         val ast = parser.parseAll()
-        println(ast)
+        Logger.trace(ast)
         val translator = Translation()
         val blocks = translator.translateAST(ast)
         val optimizedBlocks = applyAllTransformations(blocks)
-        println("$optimizedBlocks")
+        Logger.trace("$optimizedBlocks")
         optimizedBlocks.forEach {
-            println(it.display())
+            Logger.trace(it.display())
         }
         val emitter = Emitter(optimizedBlocks)
         var bytes = emitter.startEmitting()
         bytes = bytes.position(0)
-        print("[")
-        bytes.array().forEach {
-            print("$it, ")
-        }
-        println("]")
-        bytes = bytes.position(0)
         val interpreter = Interpreter(bytes)
         interpreter.transform()
         globalInterpreter = interpreter
-        println("blockmap:")
+        Logger.trace("blockmap:")
         globalInterpreter.printBlockMap()
-        globalInterpreter.disassemble()
-        globalInterpreter.bytes.position(0)
-        globalInterpreter.interpretEvent(1)
+        startupServer()
     } catch(e: ParserError) {
         println(e.emit())
     }
 }
+

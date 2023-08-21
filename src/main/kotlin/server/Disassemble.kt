@@ -31,6 +31,16 @@ fun Interpreter.disassemble() {
                         constants[id] = Value.String(str)
                         println("  #$id = \"$str\"")
                     }
+                    if(ty.toInt() == 3) {
+                        var str = ""
+                        while(true) {
+                            val d = buffer.getChar()
+                            if(d == Char.MIN_VALUE) break
+                            str = "$str$d"
+                        }
+                        constants[id] = Value.Symbol(str)
+                        println("  #$id = :$str")
+                    }
 
                 } catch(e: BufferUnderflowException) {
                     println()

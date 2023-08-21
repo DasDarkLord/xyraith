@@ -1,6 +1,5 @@
 package server
 
-import ir.Argument
 import java.nio.ByteBuffer
 
 fun Interpreter.mov(buf: ByteBuffer) {
@@ -20,4 +19,25 @@ fun Interpreter.consoleLog(buf: ByteBuffer) {
     buf.getShort()
     val reg = buf.getShort().toInt()
     println(registers[reg].toDisplay())
+}
+
+fun Interpreter.getCurrentTime(buf: ByteBuffer) {
+    val unixTime = System.currentTimeMillis()
+    val target = buf.getShort().toInt()
+    registers[target] = Value.Number(unixTime.toDouble() / 1000.0)
+}
+
+fun Interpreter.store(buf: ByteBuffer) {
+    val target = buf.getShort().toInt()
+    val storeIn = buf.getShort().toInt()
+    val value = buf.getShort().toInt()
+
+    registers[target] = Value.Null()
+    variables[registers[storeIn]] = registers[value]
+}
+
+fun Interpreter.load(buf: ByteBuffer) {
+    val target = buf.getShort().toInt()
+    val loadFrom = buf.getShort().toInt()
+    registers[target] = variables[registers[loadFrom]]!!
 }

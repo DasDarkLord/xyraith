@@ -10,9 +10,13 @@ class Interpreter(val bytes: ByteBuffer) {
     val instructions: MutableMap<Short, () -> Unit> = mutableMapOf()
     val registers: MutableList<Value> = MutableList(255) { return@MutableList Value.Null() }
     val constants: MutableMap<Int, Value> = mutableMapOf()
-    private val opcodes: List<(ByteBuffer) -> Unit> = listOf(::mov, ::add, ::consoleLog)
+    val variables: MutableMap<Value, Value> = mutableMapOf()
+
+    private val opcodes: List<(ByteBuffer) -> Unit> =
+        listOf(::mov, ::add, ::consoleLog, ::getCurrentTime, ::store, ::load)
 
     fun interpretEvent(id: Int) {
+        Logger.debug("Interpreter | Interpreting event $id")
         for(pair in blockMap) {
             val k = pair.key
             val v = pair.value
@@ -26,6 +30,7 @@ class Interpreter(val bytes: ByteBuffer) {
     }
 
     private fun interpretBlock(id: Int) {
+        Logger.debug("Interpreter | Interpreting block $id")
         val block = blockMap[id]!!
         val eventId = block.getInt()
         while(true) {
@@ -36,7 +41,7 @@ class Interpreter(val bytes: ByteBuffer) {
     private fun interpretOpcode(buf: ByteBuffer) {
         val byte = buf.get().toInt()
         if(byte != 255) {
-            println("accessing opcode $byte")
+            Logger.debug("Interpreter | Accessing opcode $byte")
             val func = opcodes[byte]
             func(buf)
         }
@@ -44,7 +49,7 @@ class Interpreter(val bytes: ByteBuffer) {
 
     fun printBlockMap() {
         for(pair in blockMap) {
-            println("${pair.key} => ${pair.value.array().toList()}")
+            Logger.trace("${pair.key} => ${pair.value.array().toList()}")
         }
     }
 

@@ -1,5 +1,6 @@
 package bytecode
 
+import Logger
 import ir.Argument
 import ir.BasicBlock
 import ir.Node
@@ -14,13 +15,13 @@ class Emitter(val blocks: List<BasicBlock>) {
     val constantsArray = ByteBuffer.allocate(1000)
 
     fun mov(id: Short, constant: Int) {
-        println("Emitter State | Inserting `mov` command (id: $id) (constant: $constant) (registers: $stackCounter)")
+        Logger.trace("Emitter State | Inserting `mov` command (id: $id) (constant: $constant) (registers: $stackCounter)")
         array.put(0)
         array.putShort(id)
         array.putInt(constant)
     }
     fun startEmitting(): ByteBuffer {
-        println("Emitter State | Starting emission (registers: $stackCounter)")
+        Logger.trace("Emitter State | Starting emission (registers: $stackCounter)")
         blocks.forEach {
             emitBlock(it)
         }
@@ -34,10 +35,10 @@ class Emitter(val blocks: List<BasicBlock>) {
     fun checkState() {
         val clone1 = array.duplicate()!!.flip().array().toList()
 
-        println("Emitter State | Here's a progress report! $clone1")
+        Logger.trace("Emitter State | Here's a progress report! $clone1")
     }
     fun emitBlock(block: BasicBlock) {
-        println("Emitter State | Emitting block (registers: $stackCounter)")
+        Logger.trace("Emitter State | Emitting block (registers: $stackCounter)")
         for(x in 1..20) {
             array.put(-127)
         }
@@ -56,7 +57,7 @@ class Emitter(val blocks: List<BasicBlock>) {
     }
 
     fun emitInstruction(node: Node) {
-        println("Emitter State | Emitting instruction ${node.display()} (registers: $stackCounter)")
+        Logger.trace("Emitter State | Emitting instruction ${node.display()} (registers: $stackCounter)")
         node.arguments.forEach {
             emitArgument(it)
         }
@@ -64,10 +65,10 @@ class Emitter(val blocks: List<BasicBlock>) {
         val regsAdded: Short = (commandRegistry[node.name]!!["registersAdded"]!! as Int).toShort()
         if(commandRegistry[node.name]!!["opcode"] == null) {
             array.putShort(commandRegistry[node.name]!!["opcodeExtension"] as Short)
-            println("Emitter State | Emitting instruction with $regsUsed registers used & extended opcodes (registers: $stackCounter)")
+            Logger.trace("Emitter State | Emitting instruction with $regsUsed registers used & extended opcodes (registers: $stackCounter)")
         } else {
             array.put(commandRegistry[node.name]!!["opcode"] as Byte)
-            println("Emitter State | Emitting instruction with $regsUsed registers used & regular opcodes (registers: $stackCounter) (opcode inserted: ${commandRegistry[node.name]!!["opcode"] as Byte})")
+            Logger.trace("Emitter State | Emitting instruction with $regsUsed registers used & regular opcodes (registers: $stackCounter) (opcode inserted: ${commandRegistry[node.name]!!["opcode"] as Byte})")
         }
         array.putShort((stackCounter-regsUsed+regsAdded).toShort())
         for(x in 1..regsUsed) {
@@ -76,14 +77,16 @@ class Emitter(val blocks: List<BasicBlock>) {
         stackCounter = (stackCounter + regsAdded).toShort()
 
         checkState()
-        println("Emitter State | Finishing instruction ${node.display()} (registers: $stackCounter) (regsUsed: $regsUsed) (regsAdded: $regsAdded)")
-        println("-------------------------")
+        Logger.trace("Emitter State | Finishing instruction ${node.display()} (registers: $stackCounter) (regsUsed: $regsUsed) (regsAdded: $regsAdded)")
+        Logger.trace("-------------------------")
     }
 
     fun insertArgument(argument: Argument) {
-        println("Emitter State | Inserting argument ${argument.display()} (registers: $stackCounter)")
+        Logger.trace("Emitter State | Inserting argument ${argument.display()} (registers: $stackCounter)")
         when(argument) {
-            is Argument.BasicBlockRef -> {}
+            is Argument.BasicBlockRef -> {
+
+            }
             is Argument.Number -> {
                 constants[argument] = constants.size+1
                 constantsArray.putInt(constants.size)
@@ -101,21 +104,29 @@ class Emitter(val blocks: List<BasicBlock>) {
                 }
                 constantsArray.putChar(Char.MIN_VALUE)
             }
-            is Argument.Symbol -> {}
+            is Argument.Symbol -> {
+                constants[argument] = constants.size+1
+                constantsArray.putInt(constants.size)
+                constantsArray.put(3)
+                for(char in argument.value.toCharArray()) {
+                    constantsArray.putChar(char)
+                }
+                constantsArray.putChar(Char.MIN_VALUE)
+            }
         }
     }
     fun emitArgument(argument: Argument) {
-        println("Emitter State | Emitting argument ${argument.display()} (registers: $stackCounter)")
+        Logger.trace("Emitter State | Emitting argument ${argument.display()} (registers: $stackCounter)")
         if(!constants.containsKey(argument)) {
             insertArgument(argument)
         }
 
         if(constants.containsKey(argument)) {
-            println("Emitter State | Valid argument! Inserting it into the bytecode via `mov` instruction. (registers: $stackCounter)")
+            Logger.trace("Emitter State | Valid argument! Inserting it into the bytecode via `mov` instruction. (registers: $stackCounter)")
             mov(++stackCounter, constants[argument]!!)
         }
         checkState()
-        println("Emitter State | Ending emitting argument ${argument.display()} (registers: $stackCounter)")
+        Logger.trace("Emitter State | Ending emitting argument ${argument.display()} (registers: $stackCounter)")
     }
 
     fun getBytes(): ByteBuffer {
