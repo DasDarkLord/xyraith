@@ -2,6 +2,7 @@ package server
 
 open class Value {
     class Number(val value: kotlin.Double) : Value()
+    class String(val value: kotlin.String) : Value()
     class Null : Value()
 
     fun toNumber(): Double {
@@ -11,10 +12,20 @@ open class Value {
         }
     }
 
-    override fun toString(): String {
+    override fun toString(): kotlin.String {
         return when(this) {
-            is Number -> return "${this.value}"
+            is Number -> "$value"
             is Null -> "null"
+            is String -> "\"$value\""
+            else -> "unknown"
+        }
+    }
+
+    fun toDisplay(): kotlin.String {
+        return when(this) {
+            is Number -> "$value"
+            is Null -> "null"
+            is String -> value
             else -> "unknown"
         }
     }

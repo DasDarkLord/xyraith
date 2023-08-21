@@ -10,7 +10,7 @@ class Interpreter(val bytes: ByteBuffer) {
     val instructions: MutableMap<Short, () -> Unit> = mutableMapOf()
     val registers: MutableList<Value> = MutableList(255) { return@MutableList Value.Null() }
     val constants: MutableMap<Int, Value> = mutableMapOf()
-    private val opcodes: List<(ByteBuffer) -> Unit> = listOf(::mov, ::add)
+    private val opcodes: List<(ByteBuffer) -> Unit> = listOf(::mov, ::add, ::consoleLog)
 
     fun interpretEvent(id: Int) {
         for(pair in blockMap) {

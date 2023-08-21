@@ -18,8 +18,18 @@ fun Interpreter.disassemble() {
                     val ty = buffer.get()
                     if(ty.toInt() == 1) {
                         val d = buffer.getDouble()
-                        constants.put(id, Value.Number(d))
+                        constants[id] = Value.Number(d)
                         println("  #$id = $d")
+                    }
+                    if(ty.toInt() == 2) {
+                        var str = ""
+                        while(true) {
+                            val d = buffer.getChar()
+                            if(d == Char.MIN_VALUE) break
+                            str = "$str$d"
+                        }
+                        constants[id] = Value.String(str)
+                        println("  #$id = \"$str\"")
                     }
 
                 } catch(e: BufferUnderflowException) {

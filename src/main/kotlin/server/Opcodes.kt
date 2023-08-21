@@ -7,7 +7,6 @@ fun Interpreter.mov(buf: ByteBuffer) {
     val register = buf.getShort().toInt()
     val constant = buf.getInt()
     registers[register] = constants[constant]!!
-    println("regs: $registers")
 }
 
 fun Interpreter.add(buf: ByteBuffer) {
@@ -15,5 +14,10 @@ fun Interpreter.add(buf: ByteBuffer) {
     val lhs = buf.getShort().toInt()
     val rhs = buf.getShort().toInt()
     registers[target] = Value.Number(registers[lhs].toNumber() + registers[rhs].toNumber())
-    println("regs: $registers")
+}
+
+fun Interpreter.consoleLog(buf: ByteBuffer) {
+    buf.getShort()
+    val reg = buf.getShort().toInt()
+    println(registers[reg].toDisplay())
 }

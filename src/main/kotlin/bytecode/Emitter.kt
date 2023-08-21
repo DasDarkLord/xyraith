@@ -92,7 +92,15 @@ class Emitter(val blocks: List<BasicBlock>) {
             }
             is Argument.SSARef -> {}
             is Argument.Selector -> {}
-            is Argument.String -> {}
+            is Argument.String -> {
+                constants[argument] = constants.size+1
+                constantsArray.putInt(constants.size)
+                constantsArray.put(2)
+                for(char in argument.value.toCharArray()) {
+                    constantsArray.putChar(char)
+                }
+                constantsArray.putChar(Char.MIN_VALUE)
+            }
             is Argument.Symbol -> {}
         }
     }
