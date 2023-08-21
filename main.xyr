@@ -4,16 +4,6 @@
     (console.log (load :x))
 ))
 
-(event join (
-    (player.sendMessage "Hi there!")
-    (player.sendMessage "Hi there!")
-    (player.sendMessage "Hi there!")
-    (player.sendMessage "Hi there!")
-    (player.sendMessage "Hi there!")
-    (player.sendMessage "Hi there!")
-    (player.sendMessage "Hi there!")
-    (player.sendMessage "Hi there!")
-    (player.sendMessage "Hi there!")
-    (player.sendMessage "Hi there!")
-
+(event command (
+    (player.sendMessage "Thanks for the command! We love you!")
 ))

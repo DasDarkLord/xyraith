@@ -1,15 +1,11 @@
 package server
 
-import ir.Argument
-import parser.findOpcodeInRegistry
-import java.nio.BufferUnderflowException
+import blockMap
 import java.nio.ByteBuffer
 
 class Interpreter(val bytes: ByteBuffer) {
-    val blockMap: MutableMap<Int, ByteBuffer> = mutableMapOf()
     val instructions: MutableMap<Short, (ByteBuffer) -> Unit> = mutableMapOf()
     val registers: MutableList<Value> = MutableList(255) { return@MutableList Value.Null }
-    val constants: MutableMap<Int, Value> = mutableMapOf()
     val variables: MutableMap<Value, Value> = mutableMapOf()
 
     private val opcodes: List<(ByteBuffer) -> Unit> =
@@ -19,7 +15,7 @@ class Interpreter(val bytes: ByteBuffer) {
         Logger.debug("Interpreter | Interpreting event $id")
         for(pair in blockMap) {
             val k = pair.key
-            val v = pair.value
+            val v = pair.value.asReadOnlyBuffer()
             v.position(0)
             val eventId = v.getInt()
             if(eventId == id && k != -2122219135) {
@@ -31,7 +27,7 @@ class Interpreter(val bytes: ByteBuffer) {
 
     private fun interpretBlock(id: Int) {
         Logger.debug("Interpreter | Interpreting block $id")
-        val block = blockMap[id]!!
+        val block = blockMap[id]!!.asReadOnlyBuffer()
         val eventId = block.getInt()
         while(true) {
             if(!block.hasRemaining()) break

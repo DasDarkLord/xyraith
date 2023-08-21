@@ -1,5 +1,6 @@
 package parser
 
+import commandRegistry
 import lexer.Token
 
 fun verifyBuiltinCommand(nameToken: Token.Identifier, arguments: List<Value>) {

@@ -1,5 +1,6 @@
 package server
 
+import constants
 import java.nio.ByteBuffer
 
 fun Interpreter.mov(buf: ByteBuffer) {

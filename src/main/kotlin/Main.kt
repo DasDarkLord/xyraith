@@ -1,20 +1,20 @@
 import bytecode.Emitter
-import server.Interpreter
 import ir.Translation
 import ir.optimizations.applyAllTransformations
 import lexer.Lexer
 import parser.Parser
 import parser.ParserError
-import server.disassemble
-import server.startupServer
-import server.transform
+import server.*
 import java.io.File
 import java.lang.IndexOutOfBoundsException
 import java.nio.ByteBuffer
 import java.time.LocalDate
 
 var globalInterpreter = Interpreter(ByteBuffer.allocate(0))
-val debug = 5
+val debug = 1
+val blockMap: MutableMap<Int, ByteBuffer> = mutableMapOf()
+val constants: MutableMap<Int, Value> = mutableMapOf()
+
 fun getResourceAsText(path: String): String? =
     object {}.javaClass.getResource(path)?.readText()
 
@@ -47,6 +47,7 @@ fun main(args: Array<String>) {
         globalInterpreter = interpreter
         Logger.trace("blockmap:")
         globalInterpreter.printBlockMap()
+        globalInterpreter.disassemble()
         startupServer()
     } catch(e: ParserError) {
         println(e.emit())

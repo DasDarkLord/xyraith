@@ -1,14 +1,14 @@
 package server
 
-import ir.Argument
-import parser.findOpcodeInRegistry
+import blockMap
+import constants
+import findOpcodeInRegistry
 import java.nio.BufferUnderflowException
-import java.nio.ByteBuffer
 
 fun Interpreter.disassemble() {
     for(pair in blockMap) {
         val k = pair.key
-        val v = pair.value
+        val v = pair.value.asReadOnlyBuffer()
         val buffer = v
         if(k == -2122219135) {
             println("CONSTANTS:")
@@ -67,7 +67,9 @@ fun Interpreter.disassemble() {
                         if(byte.toInt() == 127) {
                             val nid = buffer.getShort()
                             println("short: $nid")
-                            val newPair2: MutableMap.MutableEntry<String, MutableMap<String, Any>> = findOpcodeInRegistry(nid.toInt())!!
+                            val newPair2: MutableMap.MutableEntry<String, MutableMap<String, Any>> = findOpcodeInRegistry(
+                                nid.toInt()
+                            )!!
                             val regsUsed = newPair2.value["registersUsed"]!! as Int
                             val name = newPair2.key
                             print("  $name ")
@@ -78,7 +80,9 @@ fun Interpreter.disassemble() {
                             println()
                             continue
                         } else {
-                            val newPair: MutableMap.MutableEntry<String, MutableMap<String, Any>> = findOpcodeInRegistry(byte.toInt())!!
+                            val newPair: MutableMap.MutableEntry<String, MutableMap<String, Any>> = findOpcodeInRegistry(
+                                byte.toInt()
+                            )!!
                             val regsUsed = newPair.value["registersUsed"]!! as Int
                             val name = newPair.key
                             print("  $name ")

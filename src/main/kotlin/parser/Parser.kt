@@ -1,5 +1,6 @@
 package parser
 
+import events
 import lexer.Token
 import lexer.TokenType
 import java.lang.IndexOutOfBoundsException
@@ -33,13 +34,8 @@ class Parser(private val input: MutableList<Token>) {
         if(nameToken !is Token.Identifier) {
             throw Unreachable()
         }
-        when(nameToken.value) {
-            "join" -> {}
-            "quit" -> {}
-            "startup" -> {}
-            else -> {
-                throw InvalidEvent(nameToken.value, nameToken.spanStart, nameToken.spanEnd)
-            }
+        if(!events.containsKey(nameToken.value)) {
+            throw InvalidEvent(nameToken.value, nameToken.spanStart, nameToken.spanEnd)
         }
         val block = parseBlock(nameToken.value)
         val name = nameToken.value

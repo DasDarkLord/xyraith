@@ -4,8 +4,8 @@ import Logger
 import ir.Argument
 import ir.BasicBlock
 import ir.Node
-import parser.InvalidEvent
-import parser.commandRegistry
+import commandRegistry
+import events
 import java.nio.ByteBuffer
 
 class Emitter(val blocks: List<BasicBlock>) {
@@ -43,13 +43,7 @@ class Emitter(val blocks: List<BasicBlock>) {
             array.put(-127)
         }
         array.putInt(block.id)
-        when(block.eventId) {
-            "callable" -> array.putInt(0)
-            "startup" -> array.putInt(1)
-            "join" -> array.putInt(2)
-            "quit" -> array.putInt(3)
-            else -> throw IllegalArgumentException() // unreachable
-        }
+        array.putInt(events[block.eventId]!!)
 
         block.code.forEach {
             emitInstruction(it)

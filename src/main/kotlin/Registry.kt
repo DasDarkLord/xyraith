@@ -1,5 +1,3 @@
-package parser
-
 val commandRegistry = mutableMapOf(
     "add" to mutableMapOf(
         "arguments" to listOf("number", "number"),
@@ -59,3 +57,12 @@ fun findOpcodeInRegistry(opcode: Int): MutableMap.MutableEntry<String, MutableMa
     }
     return null
 }
+
+val events = mapOf(
+    "callable" to 0,
+    "startup" to 1,
+    "join" to 2,
+    "quit" to 3,
+    "command" to 4,
+    "playerTick" to 5,
+)
