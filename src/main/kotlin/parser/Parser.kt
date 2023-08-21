@@ -36,6 +36,7 @@ class Parser(private val input: MutableList<Token>) {
         when(nameToken.value) {
             "join" -> {}
             "quit" -> {}
+            "startup" -> {}
             else -> {
                 throw InvalidEvent(nameToken.value, nameToken.spanStart, nameToken.spanEnd)
             }

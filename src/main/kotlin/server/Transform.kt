@@ -1,5 +1,7 @@
 package server
 
+import java.nio.ByteBuffer
+
 fun Interpreter.transform() {
     var buf: MutableList<Byte> = mutableListOf()
     var counter = 0
@@ -23,7 +25,7 @@ fun Interpreter.transform() {
                 for(x in 1..20) {
                     buf.removeAt(0)
                 }
-                blockMap[latestBlock] = buf
+                blockMap[latestBlock] = ByteBuffer.wrap(buf.toByteArray())
             }
             buf = mutableListOf()
             latestBlock = bytes.getInt()

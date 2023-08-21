@@ -10,6 +10,7 @@ import server.transform
 import java.io.File
 import java.lang.IndexOutOfBoundsException
 import java.nio.ByteBuffer
+import java.time.LocalDate
 
 var globalInterpreter = Interpreter(ByteBuffer.allocate(0))
 fun getResourceAsText(path: String): String? =
@@ -26,6 +27,7 @@ fun main(args: Array<String>) {
     println("]")
     val parser = Parser(tokens)
     try {
+        val time1 = LocalDate.now()
         val ast = parser.parseAll()
         println(ast)
         val translator = Translation()
@@ -48,11 +50,11 @@ fun main(args: Array<String>) {
         interpreter.transform()
         globalInterpreter = interpreter
         println("blockmap:")
-        println(interpreter.blockMap)
-        interpreter.disassemble()
+        globalInterpreter.printBlockMap()
+        globalInterpreter.disassemble()
+        globalInterpreter.bytes.position(0)
+        globalInterpreter.interpretEvent(1)
     } catch(e: ParserError) {
         println(e.emit())
-    } catch(e: IndexOutOfBoundsException) {
-        println("silly bounds error?!")
     }
 }

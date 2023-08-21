@@ -44,8 +44,9 @@ class Emitter(val blocks: List<BasicBlock>) {
         array.putInt(block.id)
         when(block.eventId) {
             "callable" -> array.putInt(0)
-            "join" -> array.putInt(1)
-            "quit" -> array.putInt(1)
+            "startup" -> array.putInt(1)
+            "join" -> array.putInt(2)
+            "quit" -> array.putInt(3)
             else -> throw IllegalArgumentException() // unreachable
         }
 

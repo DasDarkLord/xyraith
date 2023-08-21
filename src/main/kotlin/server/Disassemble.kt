@@ -1,5 +1,6 @@
 package server
 
+import ir.Argument
 import parser.findOpcodeInRegistry
 import java.nio.BufferUnderflowException
 import java.nio.ByteBuffer
@@ -8,7 +9,7 @@ fun Interpreter.disassemble() {
     for(pair in blockMap) {
         val k = pair.key
         val v = pair.value
-        val buffer = ByteBuffer.wrap(v.toByteArray())
+        val buffer = v
         if(k == -2122219135) {
             println("CONSTANTS:")
             while(true) {
@@ -17,6 +18,7 @@ fun Interpreter.disassemble() {
                     val ty = buffer.get()
                     if(ty.toInt() == 1) {
                         val d = buffer.getDouble()
+                        constants.put(id, Value.Number(d))
                         println("  #$id = $d")
                     }
 
