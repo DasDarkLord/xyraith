@@ -27,7 +27,6 @@ fun convertIntrinsics(blocks: List<BasicBlock>): List<BasicBlock> {
       * %3 = store :x, %2
       *
       * @param blocks a List<BasicBlock> to optimize.
-      *
       * @return a List<BasicBlock> with the modifications.
      */
 private fun applyLoadOpt(blocks: List<BasicBlock>): List<BasicBlock> {
