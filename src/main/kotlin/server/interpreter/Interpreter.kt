@@ -1,6 +1,7 @@
-package server
+package server.interpreter
 
 import blockMap
+import server.*
 import java.nio.ByteBuffer
 
 class Interpreter(val bytes: ByteBuffer) {

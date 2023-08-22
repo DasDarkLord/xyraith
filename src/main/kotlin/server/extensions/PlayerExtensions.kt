@@ -1,8 +1,9 @@
-package server
+package server.extensions
 
 import net.minestom.server.entity.Player
+import server.interpreter.Interpreter
 
-fun playerExtension(player: Player, interpreter: Interpreter) {
+fun playerExtension(interpreter: Interpreter, player: Player) {
     interpreter.addExtensionInstruction(0) {
         val target = it.getShort()
         val reg = it.getShort().toInt()
@@ -16,3 +17,4 @@ fun playerExtension(player: Player, interpreter: Interpreter) {
         player.sendMessage(interpreter.registers[reg].toDisplay())
     }
 }
+

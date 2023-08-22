@@ -1,4 +1,4 @@
-package server
+package server.core
 
 import net.minestom.server.MinecraftServer
 import net.minestom.server.coordinate.Pos
@@ -7,6 +7,8 @@ import net.minestom.server.event.player.PlayerDisconnectEvent
 import net.minestom.server.event.player.PlayerLoginEvent
 import net.minestom.server.event.player.PlayerTickEvent
 import net.minestom.server.instance.block.Block
+import server.extensions.playerExtension
+import server.interpreter.Interpreter
 import java.nio.ByteBuffer
 
 fun startupServer() {
@@ -24,27 +26,27 @@ fun startupServer() {
         event.setSpawningInstance(instanceContainer)
         player.respawnPoint = Pos(0.0, 42.0, 0.0)
         val interpreter = Interpreter(ByteBuffer.allocate(0))
-        playerExtension(player, interpreter)
+        playerExtension(interpreter, player)
         interpreter.interpretEvent(2)
     }
     globalEventHandler.addListener(PlayerDisconnectEvent::class.java) { event ->
         val player = event.player
 
         val interpreter = Interpreter(ByteBuffer.allocate(0))
-        playerExtension(player, interpreter)
+        playerExtension(interpreter, player)
         interpreter.interpretEvent(3)
     }
     globalEventHandler.addListener(PlayerCommandEvent::class.java) { event: PlayerCommandEvent ->
         val player = event.player
 
         val interpreter = Interpreter(ByteBuffer.allocate(0))
-        playerExtension(player, interpreter)
+        playerExtension(interpreter, player)
         interpreter.interpretEvent(4)
     }
     globalEventHandler.addListener(PlayerTickEvent::class.java) { event ->
         val player = event.player
         val interpreter = Interpreter(ByteBuffer.allocate(0))
-        playerExtension(player, interpreter)
+        playerExtension(interpreter, player)
         interpreter.interpretEvent(5)
     }
 

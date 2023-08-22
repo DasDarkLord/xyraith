@@ -1,6 +1,7 @@
-package server
+package server.interpreter
 
 import constants
+import server.Value
 import java.nio.ByteBuffer
 
 fun Interpreter.mov(buf: ByteBuffer) {

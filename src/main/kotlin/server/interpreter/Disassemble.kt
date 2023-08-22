@@ -1,8 +1,9 @@
-package server
+package server.interpreter
 
 import blockMap
 import constants
 import findOpcodeInRegistry
+import server.Value
 import java.nio.BufferUnderflowException
 
 fun Interpreter.disassemble() {
