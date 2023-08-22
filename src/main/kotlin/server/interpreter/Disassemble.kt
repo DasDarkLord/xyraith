@@ -42,6 +42,11 @@ fun Interpreter.disassemble() {
                         constants[id] = Value.Symbol(str)
                         println("  #$id = :$str")
                     }
+                    if(ty.toInt() == 3) {
+                        val d = buffer.getInt()
+                        constants[id] = Value.BasicBlockRef(d)
+                        println("  #$id = {basicBlock#$d}")
+                    }
 
                 } catch(e: BufferUnderflowException) {
                     println()

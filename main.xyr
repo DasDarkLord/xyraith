@@ -3,5 +3,7 @@
 ))
 
 (event command (
-    (player.sendMessage "Thanks for the command! We love you!")
+    (player.sendMessage "<red>Thanks for the command! We love you!")
+    (player.sendMessage "<blue>You are at Y level...")
+    (player.sendMessage (loc.getY (player.getLoc)))
 ))

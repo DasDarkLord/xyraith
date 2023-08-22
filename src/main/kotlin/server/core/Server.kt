@@ -7,6 +7,7 @@ import net.minestom.server.event.player.PlayerDisconnectEvent
 import net.minestom.server.event.player.PlayerLoginEvent
 import net.minestom.server.event.player.PlayerTickEvent
 import net.minestom.server.instance.block.Block
+import server.extensions.allPossibleExtensions
 import server.extensions.playerExtension
 import server.extensions.worldExtensions
 import server.interpreter.Interpreter
@@ -27,36 +28,31 @@ fun startupServer() {
         event.setSpawningInstance(instanceContainer)
         player.respawnPoint = Pos(0.0, 70.0, 0.0)
         val interpreter = Interpreter(ByteBuffer.allocate(0))
-        playerExtension(interpreter, player)
-        worldExtensions(interpreter, instanceContainer)
+        allPossibleExtensions(interpreter, player, instanceContainer)
         interpreter.interpretEvent(2)
     }
     globalEventHandler.addListener(PlayerDisconnectEvent::class.java) { event ->
         val player = event.player
-
         val interpreter = Interpreter(ByteBuffer.allocate(0))
-        playerExtension(interpreter, player)
-        worldExtensions(interpreter, instanceContainer)
+        allPossibleExtensions(interpreter, player, instanceContainer)
         interpreter.interpretEvent(3)
     }
     globalEventHandler.addListener(PlayerCommandEvent::class.java) { event: PlayerCommandEvent ->
         val player = event.player
 
         val interpreter = Interpreter(ByteBuffer.allocate(0))
-        playerExtension(interpreter, player)
-        worldExtensions(interpreter, instanceContainer)
+        allPossibleExtensions(interpreter, player, instanceContainer)
         interpreter.interpretEvent(4)
     }
     globalEventHandler.addListener(PlayerTickEvent::class.java) { event ->
         val player = event.player
         val interpreter = Interpreter(ByteBuffer.allocate(0))
-        playerExtension(interpreter, player)
-        worldExtensions(interpreter, instanceContainer)
+        allPossibleExtensions(interpreter, player, instanceContainer)
         interpreter.interpretEvent(5)
     }
 
     val interpreter = Interpreter(ByteBuffer.allocate(0))
-    worldExtensions(interpreter, instanceContainer)
+    allPossibleExtensions(interpreter, null, instanceContainer)
     interpreter.interpretEvent(1)
 
     minecraftServer.start("0.0.0.0", 25565)

@@ -82,7 +82,10 @@ class Emitter(val blocks: List<BasicBlock>) {
         Logger.trace("Emitter State | Inserting argument ${argument.display()} (registers: $stackCounter)")
         when(argument) {
             is Argument.BasicBlockRef -> {
-
+                constants[argument] = constants.size+1
+                constantsArray.putInt(constants.size)
+                constantsArray.put(5)
+                constantsArray.putInt(argument.value)
             }
             is Argument.Number -> {
                 constants[argument] = constants.size+1

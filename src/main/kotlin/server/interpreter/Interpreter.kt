@@ -49,6 +49,8 @@ class Interpreter(val bytes: ByteBuffer) {
             val func = instructions[short]
             if(func != null) {
                 func(buf)
+            } else {
+                Logger.error("Encountered an error during interpreting, shortcode $short isn't valid in this context.")
             }
         }
     }
