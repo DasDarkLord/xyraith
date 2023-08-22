@@ -8,6 +8,7 @@ import net.minestom.server.event.player.PlayerLoginEvent
 import net.minestom.server.event.player.PlayerTickEvent
 import net.minestom.server.instance.block.Block
 import server.extensions.playerExtension
+import server.extensions.worldExtensions
 import server.interpreter.Interpreter
 import java.nio.ByteBuffer
 
@@ -24,9 +25,10 @@ fun startupServer() {
     globalEventHandler.addListener(PlayerLoginEvent::class.java) { event: PlayerLoginEvent ->
         val player = event.player
         event.setSpawningInstance(instanceContainer)
-        player.respawnPoint = Pos(0.0, 42.0, 0.0)
+        player.respawnPoint = Pos(0.0, 70.0, 0.0)
         val interpreter = Interpreter(ByteBuffer.allocate(0))
         playerExtension(interpreter, player)
+        worldExtensions(interpreter, instanceContainer)
         interpreter.interpretEvent(2)
     }
     globalEventHandler.addListener(PlayerDisconnectEvent::class.java) { event ->
@@ -34,6 +36,7 @@ fun startupServer() {
 
         val interpreter = Interpreter(ByteBuffer.allocate(0))
         playerExtension(interpreter, player)
+        worldExtensions(interpreter, instanceContainer)
         interpreter.interpretEvent(3)
     }
     globalEventHandler.addListener(PlayerCommandEvent::class.java) { event: PlayerCommandEvent ->
@@ -41,16 +44,19 @@ fun startupServer() {
 
         val interpreter = Interpreter(ByteBuffer.allocate(0))
         playerExtension(interpreter, player)
+        worldExtensions(interpreter, instanceContainer)
         interpreter.interpretEvent(4)
     }
     globalEventHandler.addListener(PlayerTickEvent::class.java) { event ->
         val player = event.player
         val interpreter = Interpreter(ByteBuffer.allocate(0))
         playerExtension(interpreter, player)
+        worldExtensions(interpreter, instanceContainer)
         interpreter.interpretEvent(5)
     }
 
     val interpreter = Interpreter(ByteBuffer.allocate(0))
+    worldExtensions(interpreter, instanceContainer)
     interpreter.interpretEvent(1)
 
     minecraftServer.start("0.0.0.0", 25565)

@@ -7,6 +7,7 @@ import java.nio.ByteBuffer
 fun Interpreter.mov(buf: ByteBuffer) {
     val register = buf.getShort().toInt()
     val constant = buf.getInt()
+    println("reg: $register constant: $constant")
     registers[register] = constants[constant]!!
 }
 
@@ -34,7 +35,6 @@ fun Interpreter.store(buf: ByteBuffer) {
     val value = buf.getShort().toInt()
     val storeIn = buf.getShort().toInt()
 
-
     registers[target] = Value.Null
     println("vars: $variables")
     variables[registers[storeIn]] = registers[value]
@@ -45,4 +45,22 @@ fun Interpreter.load(buf: ByteBuffer) {
     val loadFrom = buf.getShort().toInt()
     println("vars: $variables")
     registers[target] = variables[registers[loadFrom]]!!
+}
+
+fun Interpreter.vec(buf: ByteBuffer) {
+    val target = buf.getShort().toInt()
+    val x = registers[buf.getShort().toInt()].toNumber()
+    val y = registers[buf.getShort().toInt()].toNumber()
+    val z = registers[buf.getShort().toInt()].toNumber()
+    registers[target] = Value.Position(x, y, z)
+}
+
+fun Interpreter.pos(buf: ByteBuffer) {
+    val target = buf.getShort().toInt()
+    val x = registers[buf.getShort().toInt()].toNumber()
+    val y = registers[buf.getShort().toInt()].toNumber()
+    val z = registers[buf.getShort().toInt()].toNumber()
+    val pitch = registers[buf.getShort().toInt()].toNumber()
+    val yaw = registers[buf.getShort().toInt()].toNumber()
+    registers[target] = Value.Position(x, y, z, pitch, yaw)
 }

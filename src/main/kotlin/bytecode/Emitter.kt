@@ -10,7 +10,7 @@ import java.nio.ByteBuffer
 
 class Emitter(val blocks: List<BasicBlock>) {
     val array = ByteBuffer.allocate(1000)
-    var stackCounter: Short = 0
+    var stackCounter: Short = 1
     val constants: MutableMap<Argument, Int> = mutableMapOf()
     val constantsArray = ByteBuffer.allocate(1000)
 
@@ -23,6 +23,7 @@ class Emitter(val blocks: List<BasicBlock>) {
     fun startEmitting(): ByteBuffer {
         Logger.trace("Emitter State | Starting emission (registers: $stackCounter)")
         blocks.forEach {
+            stackCounter = 1
             emitBlock(it)
         }
         for(x in 1..20) {
@@ -55,24 +56,25 @@ class Emitter(val blocks: List<BasicBlock>) {
         node.arguments.forEach {
             emitArgument(it)
         }
-        val regsUsed: Int = commandRegistry[node.name]!!["registersUsed"]!! as Int
-        val regsAdded: Short = (commandRegistry[node.name]!!["registersAdded"]!! as Int).toShort()
+        val size = (commandRegistry[node.name]!!["arguments"] as List<*>).size
         if(commandRegistry[node.name]!!["opcode"] == null) {
             array.put(127)
             array.putShort(commandRegistry[node.name]!!["opcodeExtension"] as Short)
-            Logger.trace("Emitter State | Emitting instruction with $regsUsed registers used & extended opcodes (registers: $stackCounter)")
+            Logger.trace("Emitter State | Emitting instruction with $size registers used & extended opcodes (registers: $stackCounter)")
         } else {
             array.put(commandRegistry[node.name]!!["opcode"] as Byte)
-            Logger.trace("Emitter State | Emitting instruction with $regsUsed registers used & regular opcodes (registers: $stackCounter) (opcode inserted: ${commandRegistry[node.name]!!["opcode"] as Byte})")
+            Logger.trace("Emitter State | Emitting instruction with $size registers used & regular opcodes (registers: $stackCounter) (opcode inserted: ${commandRegistry[node.name]!!["opcode"] as Byte})")
         }
-        array.putShort((stackCounter-regsUsed+regsAdded).toShort())
-        for(x in 1..regsUsed) {
-            array.putShort(stackCounter--)
+
+        array.putShort((stackCounter - size).toShort())
+        stackCounter = (stackCounter - size).toShort()
+        for(x in 1..size) {
+            array.putShort(++stackCounter)
         }
-        stackCounter = (stackCounter + regsAdded).toShort()
+        stackCounter = (stackCounter - size).toShort()
 
         checkState()
-        Logger.trace("Emitter State | Finishing instruction ${node.display()} (registers: $stackCounter) (regsUsed: $regsUsed) (regsAdded: $regsAdded)")
+        Logger.trace("Emitter State | Finishing instruction ${node.display()} (registers: $stackCounter) (regsAdded: $size)")
         Logger.trace("-------------------------")
     }
 

@@ -43,16 +43,15 @@ class Node(val id: Int, var name: String, var arguments: List<Argument>) {
 }
 sealed class Argument {
     abstract fun display(): kotlin.String
-    class Number(val value: Double) : Argument() {
+    data class Number(val value: Double) : Argument() {
         override fun toString(): kotlin.String {
             return """{"type":"number","value":$value}"""
         }
         override fun display(): kotlin.String {
             return "$value"
         }
-
     }
-    class String(val value: kotlin.String) : Argument() {
+    data class String(val value: kotlin.String) : Argument() {
         override fun toString(): kotlin.String {
             return """{"type":"string","value":"$value"}"""
         }
@@ -60,7 +59,7 @@ sealed class Argument {
             return "\"$value\""
         }
     }
-    class Symbol(val value: kotlin.String) : Argument() {
+    data class Symbol(val value: kotlin.String) : Argument() {
         override fun toString(): kotlin.String {
             return """{"type":"symbol","value":"$value"}"""
         }
@@ -68,7 +67,7 @@ sealed class Argument {
             return value
         }
     }
-    class Selector(val value: kotlin.String) : Argument() {
+    data class Selector(val value: kotlin.String) : Argument() {
         override fun toString(): kotlin.String {
             return """{"type":"selector","value":"$value"}"""
         }
@@ -77,7 +76,7 @@ sealed class Argument {
         }
     }
 
-    class SSARef(val value: Int) : Argument() {
+    data class SSARef(val value: Int) : Argument() {
         override fun toString(): kotlin.String {
             return """{"type":"ssaRef","value":$value}"""
         }
@@ -85,7 +84,7 @@ sealed class Argument {
             return "%$value"
         }
     }
-    class BasicBlockRef(val value: Int) : Argument() {
+    data class BasicBlockRef(val value: Int) : Argument() {
         override fun toString(): kotlin.String {
             return """{"type":"basicBlockRef","value":$value}"""
         }

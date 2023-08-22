@@ -71,7 +71,7 @@ fun Interpreter.disassemble() {
                             val newPair2: MutableMap.MutableEntry<String, MutableMap<String, Any>> = findOpcodeInRegistry(
                                 nid.toInt()
                             )!!
-                            val regsUsed = newPair2.value["registersUsed"]!! as Int
+                            val regsUsed = (newPair2.value["arguments"]!! as List<*>).size
                             val name = newPair2.key
                             print("  $name ")
                             for(x in 1..(regsUsed+1)) {
@@ -84,7 +84,7 @@ fun Interpreter.disassemble() {
                             val newPair: MutableMap.MutableEntry<String, MutableMap<String, Any>> = findOpcodeInRegistry(
                                 byte.toInt()
                             )!!
-                            val regsUsed = newPair.value["registersUsed"]!! as Int
+                            val regsUsed = (newPair.value["arguments"]!! as List<*>).size
                             val name = newPair.key
                             print("  $name ")
                             for(x in 1..(regsUsed+1)) {

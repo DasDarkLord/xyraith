@@ -10,7 +10,7 @@ class Interpreter(val bytes: ByteBuffer) {
     val variables: MutableMap<Value, Value> = mutableMapOf()
 
     private val opcodes: List<(ByteBuffer) -> Unit> =
-        listOf(::mov, ::add, ::consoleLog, ::getCurrentTime, ::store, ::load)
+        listOf(::mov, ::add, ::consoleLog, ::getCurrentTime, ::store, ::load, ::pos, ::vec)
 
     fun interpretEvent(id: Int) {
         Logger.debug("Interpreter | Interpreting event $id")
@@ -44,7 +44,7 @@ class Interpreter(val bytes: ByteBuffer) {
             func(buf)
         } else {
             Logger.debug("Interpreter | Accessing opcode $byte")
-            val short: Short = (buf.getShort() - 128).toShort()
+            val short: Short = buf.getShort()
             Logger.debug("Interpreter | Accessing subcode $short")
             val func = instructions[short]
             if(func != null) {

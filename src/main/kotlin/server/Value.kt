@@ -4,6 +4,7 @@ sealed class Value {
     data class Number(val value: kotlin.Double) : Value()
     data class String(val value: kotlin.String) : Value()
     data class Symbol(val value: kotlin.String) : Value()
+    data class Position(val x: Double, val y: Double, val z: Double, val pitch: Double = 0.0, val yaw: Double = 0.0) : Value()
     object Null : Value()
 
     fun toNumber(): Double {
@@ -19,6 +20,7 @@ sealed class Value {
             is Null -> "null"
             is String -> "\"$value\""
             is Symbol -> ":$value"
+            is Position -> "<$x, $y, $z, $pitch, $yaw>"
         }
     }
 
@@ -28,6 +30,7 @@ sealed class Value {
             is Null -> "null"
             is String -> value
             is Symbol -> ":$value"
+            is Position -> "<$x, $y, $z, $pitch, $yaw>"
         }
     }
 }

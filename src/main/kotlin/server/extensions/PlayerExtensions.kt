@@ -1,20 +1,24 @@
 package server.extensions
 
+import net.minestom.server.coordinate.Pos
 import net.minestom.server.entity.Player
 import server.interpreter.Interpreter
 
 fun playerExtension(interpreter: Interpreter, player: Player) {
-    interpreter.addExtensionInstruction(0) {
+    /*
+    Extensions 1-1000 handle the player
+     */
+    interpreter.addExtensionInstruction(1) {
         val target = it.getShort()
         val reg = it.getShort().toInt()
-        println("Interpreter | Sending message of a funny value ")
         player.sendMessage(interpreter.registers[reg].toDisplay())
     }
-    interpreter.addExtensionInstruction(0) {
+    interpreter.addExtensionInstruction(2) {
         val target = it.getShort()
-        val reg = it.getShort().toInt()
-        println("Interpreter | Sending message of a funny value ")
-        player.sendMessage(interpreter.registers[reg].toDisplay())
+        val x = interpreter.registers[it.getShort().toInt()].toNumber()
+        val y = interpreter.registers[it.getShort().toInt()].toNumber()
+        val z = interpreter.registers[it.getShort().toInt()].toNumber()
+        player.respawnPoint = Pos(x, y, z)
     }
 }
 
