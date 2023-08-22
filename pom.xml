@@ -22,6 +22,10 @@
             <id>mavenCentral</id>
             <url>https://repo1.maven.org/maven2/</url>
         </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
     </repositories>
 
     <build>
@@ -97,7 +101,7 @@
         <dependency>
             <groupId>dev.hollowcube</groupId>
             <artifactId>minestom-ce</artifactId>
-            <version>438338381e</version>
+            <version>5ba3d92d83</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.jboss.shrinkwrap.resolver</groupId>

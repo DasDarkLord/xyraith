@@ -6,10 +6,13 @@ import ir.Node
 import kotlin.math.log2
 import kotlin.math.roundToInt
 
-/*
-This allows certain operations to go faster than others.
-For example, multiplying by two is converted into bitshift-right by 1.
-This is faster for the CPU to process than multiplication.
+/**
+ * This allows certain operations to go faster than others.
+ * For example, multiplying by two is converted into bitshift-right by 1.
+ * This is faster for the CPU to process than multiplication.
+ *
+ *@param blocks a List<BasicBlock> to optimize.
+ *@return a List<BasicBlock> with the modifications.
  */
 fun reduceStrength(blocks: List<BasicBlock>): List<BasicBlock> {
     val output = mutableListOf<BasicBlock>()
