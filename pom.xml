@@ -101,7 +101,7 @@
         <dependency>
             <groupId>dev.hollowcube</groupId>
             <artifactId>minestom-ce</artifactId>
-            <version>438338381e</version>
+            <version>5ba3d92d83</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.jboss.shrinkwrap.resolver</groupId>
