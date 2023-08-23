@@ -1,30 +1,4 @@
-object Extensions {
-    object Player {
-        const val SENDMESSAGE = 1.toShort()
-        const val SETSPAWNPOINT = 10.toShort()
-        const val GETLOCATION = 20.toShort()
-        const val TELEPORT = 21.toShort()
-    }
-    object World {
-        const val SETBLOCK = 1001.toShort()
-        const val GETBLOCK = 1001.toShort()
-    }
-    object Location {
-        const val GETX = 2001.toShort()
-        const val GETY = 2002.toShort()
-        const val GETZ = 2003.toShort()
-        const val GETPITCH = 2004.toShort()
-        const val GETYAW = 2005.toShort()
-        const val SETX = 2006.toShort()
-        const val SETY = 2007.toShort()
-        const val SETZ = 2008.toShort()
-        const val SETPITCH = 2009.toShort()
-        const val SETYAW = 2010.toShort()
-    }
-
-
-}
-
+package registry
 
 val commandRegistry = mutableMapOf(
     "add" to mutableMapOf(
@@ -58,6 +32,10 @@ val commandRegistry = mutableMapOf(
         "arguments" to listOf("symbol"),
         "opcode" to 5.toByte(),
     ),
+    "call" to mutableMapOf(
+        "arguments" to listOf("symbol"),
+        "opcode" to 8.toByte()
+    ),
 
     "player.sendMessage" to mutableMapOf(
         "arguments" to listOf("string"),
@@ -67,7 +45,7 @@ val commandRegistry = mutableMapOf(
         "arguments" to listOf("vec"),
         "opcodeExtension" to Extensions.Player.SETSPAWNPOINT
     ),
-    "player.getLocation" to mutableMapOf(
+    "player.getLoc" to mutableMapOf(
         "arguments" to listOf<String>(),
         "opcodeExtension" to Extensions.Player.GETLOCATION
     ),
@@ -97,6 +75,27 @@ val commandRegistry = mutableMapOf(
         "opcodeExtension" to Extensions.Location.GETYAW
     ),
 
+    "loc.setX" to mutableMapOf(
+        "arguments" to listOf("loc", "number"),
+        "opcodeExtension" to Extensions.Location.SETX
+    ),
+    "loc.setY" to mutableMapOf(
+        "arguments" to listOf("loc", "number"),
+        "opcodeExtension" to Extensions.Location.SETY
+    ),
+    "loc.setZ" to mutableMapOf(
+        "arguments" to listOf("loc", "number"),
+        "opcodeExtension" to Extensions.Location.SETZ
+    ),
+    "loc.setPitch" to mutableMapOf(
+        "arguments" to listOf("loc", "number"),
+        "opcodeExtension" to Extensions.Location.SETPITCH
+    ),
+    "loc.setYaw" to mutableMapOf(
+        "arguments" to listOf("loc", "number"),
+        "opcodeExtension" to Extensions.Location.SETYAW
+    ),
+
     "world.setBlock" to mutableMapOf(
         "arguments" to listOf("loc", "string"),
         "opcodeExtension" to Extensions.World.SETBLOCK
@@ -105,28 +104,23 @@ val commandRegistry = mutableMapOf(
         "arguments" to listOf("loc"),
         "opcodeExtension" to Extensions.World.GETBLOCK
     ),
-
-
-
+    "number.random" to mutableMapOf(
+        "arguments" to listOf("number", "number"),
+        "opcodeExtension" to Extensions.Number.RANDOM
+    )
 )
 
-fun findOpcodeInRegistry(opcode: Int): MutableMap.MutableEntry<String, MutableMap<String, Any>>? {
+fun findOpcodeInRegistry(opcode: Int, searchExtensions: Boolean): MutableMap.MutableEntry<String, MutableMap<String, Any>>? {
     for(pair in commandRegistry) {
-        if(pair.value["opcode"] != null && pair.value["opcode"] == opcode.toByte()) {
-            return pair
-        }
-        if(pair.value["opcodeExtension"] != null && pair.value["opcodeExtension"] == opcode.toShort()) {
-            return pair
+        if(searchExtensions) {
+            if(pair.value["opcodeExtension"] != null && pair.value["opcodeExtension"] == opcode.toShort()) {
+                return pair
+            }
+        } else {
+            if (pair.value["opcode"] != null && pair.value["opcode"] == opcode.toByte()) {
+                return pair
+            }
         }
     }
     return null
 }
-
-val events = mapOf(
-    "callable" to 0,
-    "startup" to 1,
-    "join" to 2,
-    "quit" to 3,
-    "command" to 4,
-    "playerTick" to 5,
-)

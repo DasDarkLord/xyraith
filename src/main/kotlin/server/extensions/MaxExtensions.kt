@@ -6,6 +6,7 @@ import server.interpreter.Interpreter
 
 fun allPossibleExtensions(interpreter: Interpreter, player: Player?, world: InstanceContainer?) {
     locExtensions(interpreter)
+    numberExtension(interpreter)
     if(player != null) {
         playerExtension(interpreter, player)
     }

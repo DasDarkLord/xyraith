@@ -1,8 +1,7 @@
 package server.extensions
 
-import Extensions
+import registry.Extensions
 import net.kyori.adventure.text.minimessage.MiniMessage
-import net.minestom.server.coordinate.Point
 import net.minestom.server.coordinate.Pos
 import net.minestom.server.entity.Player
 import server.Value

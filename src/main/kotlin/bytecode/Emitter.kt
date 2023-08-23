@@ -1,16 +1,16 @@
 package bytecode
 
 import Logger
+import events
 import ir.Argument
 import ir.BasicBlock
 import ir.Node
-import commandRegistry
-import events
+import registry.commandRegistry
 import java.nio.ByteBuffer
 
 class Emitter(val blocks: List<BasicBlock>) {
     val array = ByteBuffer.allocate(1000)
-    var stackCounter: Short = 1
+    var stackCounter: Short = 15000
     val constants: MutableMap<Argument, Int> = mutableMapOf()
     val constantsArray = ByteBuffer.allocate(1000)
 
@@ -23,7 +23,7 @@ class Emitter(val blocks: List<BasicBlock>) {
     fun startEmitting(): ByteBuffer {
         Logger.trace("Emitter State | Starting emission (registers: $stackCounter)")
         blocks.forEach {
-            stackCounter = 1
+            stackCounter = 100
             emitBlock(it)
         }
         for(x in 1..20) {
@@ -44,7 +44,17 @@ class Emitter(val blocks: List<BasicBlock>) {
             array.put(-127)
         }
         array.putInt(block.id)
-        array.putInt(events[block.eventId]!!)
+        println("eventId: ${block.eventId}")
+        if(block.eventId.startsWith(":")) {
+            val sym = Argument.Symbol(block.eventId)
+            if(!constants.containsKey(sym)) {
+                insertArgument(sym)
+            }
+            array.putInt(6)
+            array.putInt(constants[sym]!!)
+        } else {
+            array.putInt(events[block.eventId]!!)
+        }
 
         block.code.forEach {
             emitInstruction(it)
@@ -66,10 +76,10 @@ class Emitter(val blocks: List<BasicBlock>) {
             Logger.trace("Emitter State | Emitting instruction with $size registers used & regular opcodes (registers: $stackCounter) (opcode inserted: ${commandRegistry[node.name]!!["opcode"] as Byte})")
         }
 
-        array.putShort((stackCounter - size).toShort())
-        stackCounter = (stackCounter - size).toShort()
+        array.putShort((stackCounter - size).toShort()) // 0 | 5 (-5)
+        stackCounter = (stackCounter - size).toShort() // -5 | 5
         for(x in 1..size) {
-            array.putShort(++stackCounter)
+            array.putShort(++stackCounter) // -5, -4, -3, -2, -1 | 5
         }
         stackCounter = (stackCounter - size).toShort()
 

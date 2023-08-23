@@ -2,7 +2,8 @@ package server.interpreter
 
 import blockMap
 import constants
-import findOpcodeInRegistry
+import registry.findOpcodeInRegistry
+import functions
 import server.Value
 import java.nio.BufferUnderflowException
 
@@ -42,7 +43,7 @@ fun Interpreter.disassemble() {
                         constants[id] = Value.Symbol(str)
                         println("  #$id = :$str")
                     }
-                    if(ty.toInt() == 3) {
+                    if(ty.toInt() == 5) {
                         val d = buffer.getInt()
                         constants[id] = Value.BasicBlockRef(d)
                         println("  #$id = {basicBlock#$d}")
@@ -58,7 +59,12 @@ fun Interpreter.disassemble() {
             val header = when(event) {
                 0 -> "block@$k:"
                 1 -> "event::join@$k:"
-                else -> "null@$k:"
+                6 -> {
+                    val constant = buffer.getInt()
+                    functions[constants[constant]!!] = k
+                    "function{$constant}"
+                }
+                else -> "unknown@$k:"
             }
             println(header)
             while(true) {
@@ -69,12 +75,10 @@ fun Interpreter.disassemble() {
                         val constant = buffer.getInt()
                         println("  mov r$reg, #$constant")
                     } else {
-                        println("byte: $byte")
                         if(byte.toInt() == 127) {
                             val nid = buffer.getShort()
-                            println("short: $nid")
                             val newPair2: MutableMap.MutableEntry<String, MutableMap<String, Any>> = findOpcodeInRegistry(
-                                nid.toInt()
+                                nid.toInt(), true
                             )!!
                             val regsUsed = (newPair2.value["arguments"]!! as List<*>).size
                             val name = newPair2.key
@@ -87,7 +91,7 @@ fun Interpreter.disassemble() {
                             continue
                         } else {
                             val newPair: MutableMap.MutableEntry<String, MutableMap<String, Any>> = findOpcodeInRegistry(
-                                byte.toInt()
+                                byte.toInt(), false
                             )!!
                             val regsUsed = (newPair.value["arguments"]!! as List<*>).size
                             val name = newPair.key

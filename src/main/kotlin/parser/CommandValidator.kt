@@ -1,6 +1,6 @@
 package parser
 
-import commandRegistry
+import registry.commandRegistry
 import lexer.Token
 
 fun verifyBuiltinCommand(nameToken: Token.Identifier, arguments: List<Value>) {
@@ -13,11 +13,11 @@ fun verifyBuiltinCommand(nameToken: Token.Identifier, arguments: List<Value>) {
     var argumentPointer = 0
     typeCheckList.forEach { type ->
         val type = type as String
-        if(argumentPointer > arguments.size && !type.endsWith("?")) {
+        if(argumentPointer >= arguments.size) {
             throw IncorrectArgument(type, "end of command", command, nameToken.spanStart, nameToken.spanEnd)
         }
-        val next = arguments[argumentPointer]
-        argumentPointer++
+        println("$argumentPointer $typeCheckList $nameToken")
+        val next = arguments[argumentPointer++]
         if(type == "number") {
             if(next !is Value.Number && next !is Value.Symbol && next !is Value.Command) {
                 throw IncorrectArgument("number", "another type", command, nameToken.spanStart, nameToken.spanEnd)

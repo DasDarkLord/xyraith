@@ -17,7 +17,7 @@ import kotlin.math.roundToInt
 fun reduceStrength(blocks: List<BasicBlock>): List<BasicBlock> {
     val output = mutableListOf<BasicBlock>()
     blocks.forEach { block ->
-        val addedBlock = BasicBlock(block.id, mutableListOf(), block.eventId)
+        val addedBlock = BasicBlock(block.id, mutableListOf(), block.eventId, block.eventType)
         block.code.forEach { node ->
             fun localLoop() {
                 var addedNode = node

@@ -29,18 +29,45 @@ class Parser(private val input: MutableList<Token>) {
 
         val eventToken = nextToken()
         standardMatch(eventToken, TokenType.Identifier)
-        val nameToken = nextToken()
-        standardMatch(nameToken, TokenType.Identifier)
-        if(nameToken !is Token.Identifier) {
+        if(eventToken !is Token.Identifier) {
             throw Unreachable()
         }
-        if(!events.containsKey(nameToken.value)) {
-            throw InvalidEvent(nameToken.value, nameToken.spanStart, nameToken.spanEnd)
+        val nameToken = nextToken()
+        if(eventToken.value == "func") {
+            standardMatch(nameToken, TokenType.Symbol)
+            if(nameToken !is Token.Symbol) {
+                throw Unreachable()
+            }
+        } else {
+            standardMatch(nameToken, TokenType.Identifier)
+            if(nameToken !is Token.Identifier) {
+                throw Unreachable()
+            }
         }
-        val block = parseBlock(nameToken.value)
-        val name = nameToken.value
-        standardMatch(nextToken(), TokenType.RightParen)
-        return Ast.Event(name, block)
+
+        when (nameToken) {
+            is Token.Identifier -> {
+                if(!events.containsKey(nameToken.value)) {
+                    throw InvalidEvent(nameToken.value, nameToken.spanStart, nameToken.spanEnd)
+                }
+                val block = parseBlock(nameToken.value)
+                val name = nameToken.value
+                standardMatch(nextToken(), TokenType.RightParen)
+                return Ast.Event(name, block, "event")
+            }
+
+            is Token.Symbol -> {
+                val block = parseBlock(nameToken.value)
+                val name = nameToken.value
+                standardMatch(nextToken(), TokenType.RightParen)
+                return Ast.Event(name, block, "func")
+            }
+
+            else -> {
+                throw Unreachable()
+            }
+        }
+
     }
 
     fun parseAll(): List<Ast.Event> {
@@ -97,14 +124,14 @@ class Parser(private val input: MutableList<Token>) {
             }
             is Token.LeftParen -> {
                 val next2 = nextToken()
-                if(next2 is Token.LeftParen) {
+                return if(next2 is Token.LeftParen) {
                     pointer--
                     pointer--
-                    return Value.Block(parseBlock("callable"))
+                    Value.Block(parseBlock("callable"))
                 } else if(next2 is Token.Identifier) {
                     pointer--
                     pointer--
-                    return Value.Command(parseCommand())
+                    Value.Command(parseCommand())
                 } else {
                     throw UnexpectedToken(TokenType.Identifier, next2.toType(), next2.spanStart, next2.spanEnd)
                 }

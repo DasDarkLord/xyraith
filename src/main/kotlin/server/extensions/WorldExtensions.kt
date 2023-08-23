@@ -14,7 +14,6 @@ fun worldExtensions(interpreter: Interpreter, instanceContainer: InstanceContain
         val pos = interpreter.registers[it.getShort().toInt()] as Value.Position
         val block = interpreter.registers[it.getShort().toInt()].toDisplay()
         if(Block.fromNamespaceId(block) != null) {
-            println("no null :)")
             instanceContainer.setBlock(pos.x.toInt(), pos.y.toInt(), pos.z.toInt(), Block.fromNamespaceId(block)!!)
         } else {
             println("Warning with world.setBlock: Invalid block `$block`")

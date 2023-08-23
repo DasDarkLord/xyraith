@@ -1,8 +1,8 @@
 package ir
 
-class BasicBlock(val id: Int, val code: MutableList<Node>, val eventId: String) {
+class BasicBlock(val id: Int, val code: MutableList<Node>, val eventId: String, val eventType: String) {
     override fun toString(): String {
-        return """{"type":"basicBlock","id":$id,"code":$code}"""
+        return """{"type":"basicBlock","id":$id,"type","$eventType","code":$code}"""
     }
     fun display(): String {
         var display = ""

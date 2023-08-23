@@ -10,10 +10,10 @@ class Interpreter(val bytes: ByteBuffer) {
     val variables: MutableMap<Value, Value> = mutableMapOf()
 
     private val opcodes: List<(ByteBuffer) -> Unit> =
-        listOf(::mov, ::add, ::consoleLog, ::getCurrentTime, ::store, ::load, ::pos, ::vec)
+        listOf(::mov, ::add, ::consoleLog, ::getCurrentTime, ::store, ::load, ::pos, ::vec, ::call)
 
     fun interpretEvent(id: Int) {
-        Logger.debug("Interpreter | Interpreting event $id")
+        // Logger.debug("Interpreter | Interpreting event $id")
         for(pair in blockMap) {
             val k = pair.key
             val v = pair.value.asReadOnlyBuffer()
@@ -26,10 +26,13 @@ class Interpreter(val bytes: ByteBuffer) {
         }
     }
 
-    private fun interpretBlock(id: Int) {
+    fun interpretBlock(id: Int) {
         Logger.debug("Interpreter | Interpreting block $id")
         val block = blockMap[id]!!.asReadOnlyBuffer()
         val eventId = block.getInt()
+        if(eventId == 6) {
+            block.getInt() // skip the constant req
+        }
         while(true) {
             if(!block.hasRemaining()) break
             interpretOpcode(block)

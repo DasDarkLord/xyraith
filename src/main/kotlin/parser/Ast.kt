@@ -1,9 +1,9 @@
 package parser
 
 sealed class Ast {
-    class Event(val name: String, val code: Block) : Ast() {
+    class Event(val name: String, val code: Block, val type: String) : Ast() {
         override fun toString(): String {
-            return """{"name": "$name","code": $code}""".trimIndent()
+            return """{"name": "$name","type":"$type","code": $code}""".trimIndent()
         }
     }
     class Block(val nodes: List<Ast.Command>, val eventName: String) : Ast() {
