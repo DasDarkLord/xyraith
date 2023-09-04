@@ -1,7 +1,4 @@
 (event startup (
-    (world.setBlock (vec 0 68 0) "minecraft:iron_block")
     (store :x 0)
-    (world.setBlock (vec (load :x) 0 0) "minecraft:iron_block")
     (store :x (add (load :x) 3))
-    (world.setBlock (vec (load :x) 0 0) "minecraft:iron_block")
 ))

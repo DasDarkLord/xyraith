@@ -12,6 +12,7 @@ fun Interpreter.disassemble() {
         val k = pair.key
         val v = pair.value.asReadOnlyBuffer()
         val buffer = v
+        val registerState = MutableList<Value>(255) { Value.Null }
         if(k == -2122219135) {
             println("CONSTANTS:")
             while(true) {
@@ -73,7 +74,10 @@ fun Interpreter.disassemble() {
                     if(byte.toInt() == 0) {
                         val reg = buffer.getShort()
                         val constant = buffer.getInt()
-                        println("  mov r$reg, #$constant")
+                        println("  mov r$reg, ${constants[constant]!!.toDisplay()}")
+                        if(reg >= 0) {
+                            registerState[reg.toInt()] = constants[constant]!!
+                        }
                     } else {
                         if(byte.toInt() == 127) {
                             val nid = buffer.getShort()
@@ -85,7 +89,11 @@ fun Interpreter.disassemble() {
                             print("  $name ")
                             for(x in 1..(regsUsed+1)) {
                                 val reg = buffer.getShort()
-                                print("r$reg, ")
+                                if(reg >= 0) {
+                                    print("r$reg (${registerState[reg.toInt()]}), ")
+                                } else {
+                                    print("r$reg (no answer), ")
+                                }
                             }
                             println()
                             continue
@@ -98,7 +106,12 @@ fun Interpreter.disassemble() {
                             print("  $name ")
                             for(x in 1..(regsUsed+1)) {
                                 val reg = buffer.getShort()
-                                print("r$reg, ")
+                                if(reg >= 0) {
+                                    print("r$reg (${registerState[reg.toInt()]}), ")
+                                } else {
+                                    print("r$reg (no answer), ")
+                                }
+
                             }
                             println()
                         }

@@ -7,7 +7,7 @@ import net.minestom.server.entity.Player
 import server.Value
 import server.interpreter.Interpreter
 
-fun playerExtension(interpreter: Interpreter, player: Player) {
+fun playerExtension(interpreter: Interpreter) {
     /*
     Extensions 1-1000 handle the player
      */
@@ -15,31 +15,33 @@ fun playerExtension(interpreter: Interpreter, player: Player) {
         val target = it.getShort()
         val reg = it.getShort().toInt()
         val message = MiniMessage.miniMessage().deserialize(interpreter.registers[reg].toDisplay())
-        player.sendMessage(message)
+        interpreter.player?.sendMessage(message)
     }
     interpreter.addExtensionInstruction(Extensions.Player.SETSPAWNPOINT) {
         val target = it.getShort()
         val x = interpreter.registers[it.getShort().toInt()].toNumber()
         val y = interpreter.registers[it.getShort().toInt()].toNumber()
         val z = interpreter.registers[it.getShort().toInt()].toNumber()
-        player.respawnPoint = Pos(x, y, z)
+        interpreter.player?.respawnPoint = Pos(x, y, z)
     }
     interpreter.addExtensionInstruction(Extensions.Player.GETLOCATION) {
         val target = it.getShort().toInt()
-        interpreter.registers[target] = Value.Position(
-            player.position.x,
-            player.position.y,
-            player.position.z,
-            player.position.pitch.toDouble(),
-            player.position.yaw.toDouble()
-        )
+        if(interpreter.player != null) {
+            interpreter.registers[target] = Value.Position(
+                interpreter.player!!.position.x,
+                interpreter.player!!.position.y,
+                interpreter.player!!.position.z,
+                interpreter.player!!.position.pitch.toDouble(),
+                interpreter.player!!.position.yaw.toDouble()
+            )
+        }
     }
     interpreter.addExtensionInstruction(Extensions.Player.TELEPORT) {
         val target = it.getShort().toInt()
         val loc = it.getShort().toInt()
         val value = interpreter.registers[loc]
         if(value is Value.Position) {
-            player.teleport(Pos(
+            interpreter.player?.teleport(Pos(
                 value.x,
                 value.y,
                 value.z,

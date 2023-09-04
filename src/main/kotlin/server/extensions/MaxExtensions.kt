@@ -8,10 +8,13 @@ fun allPossibleExtensions(interpreter: Interpreter, player: Player?, world: Inst
     locExtensions(interpreter)
     numberExtension(interpreter)
     if(player != null) {
-        playerExtension(interpreter, player)
+        interpreter.player = player
     }
+    playerExtension(interpreter)
     if(world != null) {
-        worldExtensions(interpreter, world)
+        interpreter.instance = world
+
     }
+    worldExtensions(interpreter)
 
 }

@@ -22,6 +22,12 @@ object Extensions {
         const val SETZ = 2008.toShort()
         const val SETPITCH = 2009.toShort()
         const val SETYAW = 2010.toShort()
+        const val SHIFTX = 2011.toShort()
+        const val SHIFTY = 2012.toShort()
+        const val SHIFTZ = 2013.toShort()
+        const val SHIFTPITCH = 2014.toShort()
+        const val SHIFTYAW = 2015.toShort()
+
     }
     object Number {
         const val RANDOM = 3000.toShort()

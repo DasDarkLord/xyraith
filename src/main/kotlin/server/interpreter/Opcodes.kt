@@ -21,25 +21,25 @@ fun Interpreter.add(buf: ByteBuffer) {
 
 fun Interpreter.consoleLog(buf: ByteBuffer) {
     buf.getShort()
-    val reg = buf.getShort().toInt()
-    println(registers[reg].toDisplay())
+    val reg = eatRegister(buf)
+    println(reg.toDisplay())
 }
 
 fun Interpreter.getCurrentTime(buf: ByteBuffer) {
     val unixTime = System.currentTimeMillis()
-    val target = buf.getShort().toInt()
+    val target = eatRawRegister(buf)
     registers[target] = Value.Number(unixTime.toDouble() / 1000.0)
 }
 
 fun Interpreter.store(buf: ByteBuffer) {
-    val target = buf.getShort().toInt()
-    val storeIn = buf.getShort().toInt()
-    val value = buf.getShort().toInt()
+    val target = eatRawRegister(buf)
+    val storeIn = eatRegister(buf)
+    val value = eatRegister(buf)
 
 
     registers[target] = Value.Null
     println("vars: $variables")
-    variables[registers[storeIn]] = registers[value]
+    variables[storeIn] = value
 }
 
 fun Interpreter.load(buf: ByteBuffer) {

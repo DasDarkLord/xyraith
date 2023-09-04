@@ -1,6 +1,8 @@
 package server.interpreter
 
 import blockMap
+import net.minestom.server.entity.Player
+import net.minestom.server.instance.InstanceContainer
 import server.*
 import java.nio.ByteBuffer
 
@@ -8,6 +10,9 @@ class Interpreter(val bytes: ByteBuffer) {
     val instructions: MutableMap<Short, (ByteBuffer) -> Unit> = mutableMapOf()
     val registers: MutableList<Value> = MutableList(255) { return@MutableList Value.Null }
     val variables: MutableMap<Value, Value> = mutableMapOf()
+
+    var player: Player? = null
+    var instance: InstanceContainer? = null
 
     private val opcodes: List<(ByteBuffer) -> Unit> =
         listOf(::mov, ::add, ::consoleLog, ::getCurrentTime, ::store, ::load, ::pos, ::vec, ::call)
@@ -50,11 +55,13 @@ class Interpreter(val bytes: ByteBuffer) {
             val short: Short = buf.getShort()
             Logger.debug("Interpreter | Accessing subcode $short")
             val func = instructions[short]
-            if(func != null) {
-                func(buf)
+            if(func == null) {
+                Logger.error("Encountered an error during interpreting, shortcode $short isn't a valid shortcode. Please contact support on the Xyraith discord with your code.")
+                throw IllegalArgumentException()
             } else {
-                Logger.error("Encountered an error during interpreting, shortcode $short isn't valid in this context.")
+                func(buf)
             }
+
         }
     }
 
@@ -66,5 +73,12 @@ class Interpreter(val bytes: ByteBuffer) {
 
     fun addExtensionInstruction(id: Short, callback: (ByteBuffer) -> Unit) {
         instructions[id] = callback
+    }
+
+    fun eatRegister(buf: ByteBuffer): Value {
+        return registers[buf.getShort().toInt()]
+    }
+    fun eatRawRegister(buf: ByteBuffer): Int {
+        return buf.getShort().toInt()
     }
 }
