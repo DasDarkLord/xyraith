@@ -1,6 +1,7 @@
 package parser
 
 import code.Visitable
+import lexer.SpanData
 import registry.commandRegistry
 import lexer.Token
 
@@ -8,41 +9,40 @@ data class NodeValidatorData<T>(
     val command: String,
     val arguments: Iterator<Value>,
     val node: T,
-    val spanStart: Int,
-    val spanEnd: Int,
+    val span: SpanData,
 )
 
 fun verifyBuiltinCommand(nameToken: Token.Identifier, arguments: List<Value>) {
     val command = nameToken.value
 
     if(!commandRegistry.containsKey(command)) {
-        throw InvalidCommand(command, nameToken.spanStart, nameToken.spanEnd)
+        throw InvalidCommand(command, nameToken.span)
     }
 
     val obj: Visitable = commandRegistry[command]!!["object"]!! as Visitable
     val argIter = arguments.iterator()
     for(node in obj.arguments.list) {
         if(node is SingleArgumentNode) {
-            verifyNode(NodeValidatorData(command, argIter, node, nameToken.spanStart, nameToken.spanEnd))
+            verifyNode(NodeValidatorData(command, argIter, node, nameToken.span))
         }
     }
 }
 
 private fun verifyNode(data: NodeValidatorData<SingleArgumentNode>) {
-    val (command, arguments, node, spanStart, spanEnd) = data
+    val (command, arguments, node, span) = data
     if(!arguments.hasNext()) {
-        throw IncorrectArgument("No Type", node.type.toString(), command, spanStart, spanEnd)
+        throw IncorrectArgument("No Type", node.type.toString(), command, span)
     }
     val nextArgument = arguments.next()
     when(node.type) {
         ArgumentType.NUMBER -> {
             if(nextArgument !is Value.Number) {
-                throw IncorrectArgument(ArgumentType.NUMBER.toString(), node.type.toString(), command, spanStart, spanEnd)
+                throw IncorrectArgument(ArgumentType.NUMBER.toString(), node.type.toString(), command, span)
             }
         }
         ArgumentType.STRING -> {
             if(nextArgument !is Value.String) {
-                throw IncorrectArgument(ArgumentType.STRING.toString(), node.type.toString(), command, spanStart, spanEnd)
+                throw IncorrectArgument(ArgumentType.STRING.toString(), node.type.toString(), command, span)
             }
         }
     }
