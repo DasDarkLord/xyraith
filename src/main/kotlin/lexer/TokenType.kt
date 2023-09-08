@@ -9,4 +9,5 @@ sealed class TokenType {
     data object Symbol : TokenType()
     data object EOF : TokenType()
     data object At : TokenType()
+    data object NewLine : TokenType()
 }

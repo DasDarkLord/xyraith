@@ -2,28 +2,29 @@ package lexer
 
 sealed class Token {
 
-    abstract val spanStart: Int
-    abstract val spanEnd: Int
+    abstract val span: SpanData
 
-    class LeftParen(override val spanStart: Int = 0, override val spanEnd: Int = 0) : Token()
-    class RightParen(override val spanStart: Int = 0, override val spanEnd: Int = 0) : Token()
-    class Identifier(val value: String, override val spanStart: Int = 0, override val spanEnd: Int = 0) : Token()
-    class StringText(val value: String, override val spanStart: Int = 0, override val spanEnd: Int = 0) : Token()
-    class Number(val value: Double, override val spanStart: Int = 0, override val spanEnd: Int = 0) : Token()
-    class Symbol(val value: String, override val spanStart: Int = 0, override val spanEnd: Int = 0) : Token()
-    class EOF(override val spanStart: Int = 0, override val spanEnd: Int = 0) : Token()
-    class At(override val spanStart: Int = 0, override val spanEnd: Int = 0) : Token()
+    class LeftParen(override val span: SpanData) : Token()
+    class RightParen(override val span: SpanData) : Token()
+    class Identifier(val value: String, override val span: SpanData) : Token()
+    class StringText(val value: String, override val span: SpanData) : Token()
+    class Number(val value: Double, override val span: SpanData) : Token()
+    class Symbol(val value: String, override val span: SpanData) : Token()
+    class EOF(override val span: SpanData) : Token()
+    class At(override val span: SpanData) : Token()
+    class NewLine(override val span: SpanData) : Token()
 
     override fun toString(): String {
         return when(this) {
-            is LeftParen -> """{"type":"leftParen","spanStart":$spanStart,"spanEnd":$spanEnd}"""
-            is RightParen -> """{"type":"rightParen","spanStart":$spanStart,"spanEnd":$spanEnd}"""
-            is Identifier -> """{"type":"identifier","value":"${this.value}","spanStart":$spanStart,"spanEnd":$spanEnd}"""
-            is StringText -> """{"type":"string","value":"${this.value}","spanStart":$spanStart,"spanEnd":$spanEnd}"""
-            is Number -> """{"type":"number","value":${this.value},"spanStart":$spanStart,"spanEnd":$spanEnd}"""
-            is Symbol -> """{"type":"symbol","value":"${this.value}","spanStart":$spanStart,"spanEnd":$spanEnd}"""
+            is LeftParen -> """{"type":"leftParen","span":$span}"""
+            is RightParen -> """{"type":"rightParen","span":$span}"""
+            is Identifier -> """{"type":"identifier","value":"${this.value}","span":$span}"""
+            is StringText -> """{"type":"string","value":"${this.value}","span":$span}"""
+            is Number -> """{"type":"number","value":${this.value},"span":$span}"""
+            is Symbol -> """{"type":"symbol","value":"${this.value}","span":$span}"""
             is EOF -> """"""
-            is At -> """{"type":"at","spanStart":$spanStart,"spanEnd":$spanEnd}}"""
+            is At -> """{"type":"at","span":$span}"""
+            is NewLine -> """{"type":"newLine","span":$span}"""
         }
     }
 
@@ -37,6 +38,7 @@ sealed class Token {
             is Symbol -> TokenType.Symbol
             is EOF -> TokenType.EOF
             is At -> TokenType.At
+            is NewLine -> TokenType.NewLine
         }
     }
 }

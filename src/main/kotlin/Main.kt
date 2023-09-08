@@ -35,6 +35,7 @@ fun main(args: Array<String>) {
         val interpreter = Interpreter(constants, blockMap)
         interpreter.runBlock(1)
     } catch(e: ParserError) {
+        e.printStackTrace()
         println(e.emit())
     }
 }

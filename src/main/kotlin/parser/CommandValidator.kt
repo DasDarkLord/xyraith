@@ -36,12 +36,12 @@ private fun verifyNode(data: NodeValidatorData<SingleArgumentNode>) {
     val nextArgument = arguments.next()
     when(node.type) {
         ArgumentType.NUMBER -> {
-            if(nextArgument is Value.Number) {
+            if(nextArgument !is Value.Number) {
                 throw IncorrectArgument(ArgumentType.NUMBER.toString(), node.type.toString(), command, spanStart, spanEnd)
             }
         }
         ArgumentType.STRING -> {
-            if(nextArgument is Value.String) {
+            if(nextArgument !is Value.String) {
                 throw IncorrectArgument(ArgumentType.STRING.toString(), node.type.toString(), command, spanStart, spanEnd)
             }
         }
