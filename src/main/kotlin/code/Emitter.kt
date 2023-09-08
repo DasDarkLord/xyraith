@@ -44,12 +44,13 @@ Emitter {
         output += "}\n  constantsBytes=${constantsBytes.prettyPrint()}"
         return output
     }
-    fun emit(): Map<Int, ByteBuffer> {
+
+    fun emit() {
         for(event in ast) {
             emitEvent(event)
         }
-        return blockMap
     }
+
     private fun emitEvent(event: Ast.Event) {
         emitBlock(event.code)
     }
@@ -59,7 +60,7 @@ Emitter {
         val blockId = blockIdRecord++
         blockMap[blockId] = ByteBuffer.allocate(BUFFER_SIZE)
         blockMap[blockId]?.put(0)
-        blockMap[blockId]?.put(blockId.toByte())
+        blockMap[blockId]?.putInt(blockId)
         blockMap[blockId]?.put(eventId.toByte())
         for(command in block.nodes) {
             emitCommand(command, blockId)

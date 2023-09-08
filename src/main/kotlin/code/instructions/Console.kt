@@ -1,7 +1,7 @@
 package code.instructions
 
 import code.Visitable
-import code.Visitor
+import code.Interpreter
 
 object Log : Visitable {
     override val code: Int
@@ -9,8 +9,7 @@ object Log : Visitable {
     override val isExtension: Boolean
         get() = false
 
-    override fun visit(visitor: Visitor) {
+    override fun visit(visitor: Interpreter) {
         println(visitor.environment.stack.removeLast().toDisplay())
     }
-
 }
