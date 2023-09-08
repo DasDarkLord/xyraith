@@ -8,19 +8,19 @@ class Lexer(val source: String) {
         while(position < source.length) {
             when {
                 source[position] == '\n' -> {
-                    output.add(Token.NewLine(position, position++))
+                    output.add(Token.NewLine(SpanData(position, position++)))
                 }
                 source[position].isWhitespace() -> {
                     position++
                 }
                 source[position] == '(' || source[position] == '{' || source[position] == '[' -> {
-                    output.add(Token.LeftParen(position, position++))
+                    output.add(Token.LeftParen(SpanData(position, position++)))
                 }
                 source[position] == ')' || source[position] == '}' || source[position] == ']' -> {
-                    output.add(Token.RightParen(position, position++))
+                    output.add(Token.RightParen(SpanData(position, position++)))
                 }
                 source[position] == '@' -> {
-                    output.add(Token.At(position, position++))
+                    output.add(Token.At(SpanData(position, position++)))
                 }
                 source[position].isDigit() || source[position] == '-' -> {
                     val spanStart = position
@@ -29,7 +29,7 @@ class Lexer(val source: String) {
                         number = "$number${source[position]}"
                         position++
                     }
-                    output.add(Token.Number(number.toDouble(), spanStart, position))
+                    output.add(Token.Number(number.toDouble(), SpanData(spanStart, position)))
                 }
                 source[position] == '"' -> {
                     val spanStart = position
@@ -39,7 +39,7 @@ class Lexer(val source: String) {
                         string = "$string${source[position]}"
                         position++
                     }
-                    output.add(Token.StringText(string, spanStart, position))
+                    output.add(Token.StringText(string, SpanData(spanStart, position)))
                     position++
                 }
                 else -> {
@@ -54,9 +54,9 @@ class Lexer(val source: String) {
                         position++
                     }
                     if(symbol.startsWith(":")) {
-                        output.add(Token.Symbol(symbol, spanStart, position))
+                        output.add(Token.Symbol(symbol, SpanData(spanStart, position)))
                     } else {
-                        output.add(Token.Identifier(symbol, spanStart, position))
+                        output.add(Token.Identifier(symbol, SpanData(spanStart, position)))
                     }
                 }
             }
