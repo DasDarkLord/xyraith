@@ -1,9 +1,9 @@
 import bytecode.Emitter
-import ir.Translation
-import ir.optimizations.applyAllTransformations
+import bytecode.Pretransformer
 import lexer.Lexer
 import parser.Parser
 import parser.ParserError
+import parser.Value
 import server.*
 import server.core.startupServer
 import server.interpreter.Interpreter
@@ -36,23 +36,18 @@ fun main(args: Array<String>) {
         val time1 = LocalDate.now()
         val ast = parser.parseAll()
         Logger.trace(ast)
-        val translator = Translation()
-        val blocks = translator.translateAST(ast)
-        val optimizedBlocks = applyAllTransformations(blocks)
-        Logger.trace("$optimizedBlocks")
-        optimizedBlocks.forEach {
-            Logger.trace(it.display())
-        }
-        val emitter = Emitter(optimizedBlocks)
-        var bytes = emitter.startEmitting()
-        bytes = bytes.position(0)
-        val interpreter = Interpreter(bytes)
-        interpreter.transform()
-        globalInterpreter = interpreter
-        Logger.trace("blockmap:")
-        globalInterpreter.printBlockMap()
-        globalInterpreter.disassemble()
-        startupServer()
+        val flattened = Pretransformer(ast).transform()
+        println(flattened)
+//        val emitter = Emitter()
+//        var bytes = emitter.startEmitting(ast)
+//        bytes = bytes.position(0)
+//        val interpreter = Interpreter(bytes)
+//        interpreter.transform()
+//        globalInterpreter = interpreter
+//        Logger.trace("blockmap:")
+//        globalInterpreter.printBlockMap()
+//        globalInterpreter.disassemble()
+//        startupServer()
     } catch(e: ParserError) {
         println(e.emit())
     }

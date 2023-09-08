@@ -1,10 +1,9 @@
 package server.extensions
 
+import parser.Value
 import registry.Extensions
 import net.kyori.adventure.text.minimessage.MiniMessage
 import net.minestom.server.coordinate.Pos
-import net.minestom.server.entity.Player
-import server.Value
 import server.interpreter.Interpreter
 
 fun playerExtension(interpreter: Interpreter) {

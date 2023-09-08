@@ -37,6 +37,10 @@ val commandRegistry = mutableMapOf(
         "opcode" to 8.toByte()
     ),
 
+    "if" to mutableMapOf(
+        "arguments" to listOf("any", "block"),
+        "opcode" to 12.toByte(),
+    ),
     "player.sendMessage" to mutableMapOf(
         "arguments" to listOf("string"),
         "opcodeExtension" to Extensions.Player.SENDMESSAGE
