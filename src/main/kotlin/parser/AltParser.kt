@@ -23,10 +23,21 @@ class Parser(private val input: MutableList<Token>) {
     fun peek(ignoreWhitespace: Boolean = true): Token {
         var b = pointer
         if(ignoreWhitespace) {
+            if(pointer > 0) {
+                val startTok = input[b]
+                if(b+1 > input.size) throw UnexpectedEOF(startTok.span)
+            }
+
             var p = input[++b]
-            while(p is Token.NewLine) p = input[++b]
+            while(p is Token.NewLine) {
+                if(b+1 > input.size) throw UnexpectedEOF(p.span)
+                p = input[++b]
+            }
+
             return p
         } else {
+            val startTok = input[b]
+            if(b+1 > input.size) throw UnexpectedEOF(startTok.span)
             return input[++b]
         }
 
@@ -34,22 +45,27 @@ class Parser(private val input: MutableList<Token>) {
 
     fun next(ignoreWhitespace: Boolean = true): Token {
         if(ignoreWhitespace) {
+            if(pointer > 0) {
+                val startTok = input[pointer]
+                if(pointer+1 > input.size) throw UnexpectedEOF(startTok.span)
+            }
             var p = input[++pointer]
-            while(p is Token.NewLine) p = input[++pointer]
+            while(p is Token.NewLine) {
+                if(pointer+1 > input.size) throw UnexpectedEOF(p.span)
+                p = input[++pointer]
+            }
             return p
         } else {
+            val startTok = input[pointer]
+            if(pointer+1 > input.size) throw UnexpectedEOF(startTok.span)
             return input[++pointer]
         }
     }
 
     fun parseAll(): List<Ast.Event> {
         val output = mutableListOf<Ast.Event>()
-        while(true) {
-            val event = parseEvent() ?: break
-            output.add(event)
-            if(pointer+1 >= input.size) break
-
-        }
+        val event = parseEvent()!!
+        output.add(event)
         return output
     }
 
@@ -113,6 +129,8 @@ class Parser(private val input: MutableList<Token>) {
             if(hasParens) if(peek() is Token.RightParen) break
             args.add(parseArgument())
         }
+        if(hasParens)
+            standardMatch(next(), TokenType.RightParen)
         return Ast.Command(nameToken.value, args)
     }
 

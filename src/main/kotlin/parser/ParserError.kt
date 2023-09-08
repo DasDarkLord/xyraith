@@ -12,6 +12,12 @@ class UnexpectedToken(val expected: TokenType, val found: TokenType, override va
     }
 }
 
+class UnexpectedEOF(override val span: SpanData) : ParserError(span) {
+    override fun emit(): Diagnostic {
+        return Diagnostic(1, "unexpected end of file", span)
+    }
+}
+
 class InvalidCommand(val command: String, override val span: SpanData) : ParserError(span) {
     override fun emit(): Diagnostic {
         return Diagnostic(1, "`$command` is not a valid command", span)
