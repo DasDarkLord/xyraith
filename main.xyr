@@ -1,3 +1,4 @@
-event startup {
-    console.log "Hello world!"
-}
+{event startup {
+    (console.log "Hello world!")
+    console.log "Ok paralS"
+}}
