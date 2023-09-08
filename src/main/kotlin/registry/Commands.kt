@@ -9,11 +9,13 @@ val commandRegistry = (
         it.value.command to mutableMapOf(
             "opcode" to it.value.code.toByte(),
             "command" to it.value.command,
+            "object" to it.value,
         )
     }.toMap().toMutableMap() +
             shortcodes.map {
                 it.value.command to mutableMapOf(
                     "opcodeExtension" to it.value.code.toShort(),
                     "command" to it.value.command,
+                    "object" to it.value,
                 )
             }.toMap().toMutableMap()).toMutableMap()
