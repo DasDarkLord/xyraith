@@ -1,0 +1,4 @@
+package bytecode
+
+class Pretransformer {
+}
