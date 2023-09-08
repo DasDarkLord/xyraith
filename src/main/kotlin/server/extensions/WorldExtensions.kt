@@ -1,8 +1,7 @@
 package server.extensions
 
-import net.minestom.server.instance.InstanceContainer
 import net.minestom.server.instance.block.Block
-import server.Value
+import parser.Value
 import server.interpreter.Interpreter
 
 fun worldExtensions(interpreter: Interpreter) {

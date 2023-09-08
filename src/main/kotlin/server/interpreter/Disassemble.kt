@@ -4,7 +4,7 @@ import blockMap
 import constants
 import registry.findOpcodeInRegistry
 import functions
-import server.Value
+import parser.Value
 import java.nio.BufferUnderflowException
 
 fun Interpreter.disassemble() {
@@ -12,7 +12,7 @@ fun Interpreter.disassemble() {
         val k = pair.key
         val v = pair.value.asReadOnlyBuffer()
         val buffer = v
-        val registerState = MutableList<Value>(255) { Value.Null }
+        val registerState = MutableList<Value>(255) { Value.Null() }
         if(k == -2122219135) {
             println("CONSTANTS:")
             while(true) {
@@ -49,7 +49,6 @@ fun Interpreter.disassemble() {
                         constants[id] = Value.BasicBlockRef(d)
                         println("  #$id = {basicBlock#$d}")
                     }
-
                 } catch(e: BufferUnderflowException) {
                     println()
                     break

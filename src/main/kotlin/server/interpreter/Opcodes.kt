@@ -2,7 +2,7 @@ package server.interpreter
 
 import constants
 import functions
-import server.Value
+import parser.Value
 import java.nio.ByteBuffer
 
 fun Interpreter.mov(buf: ByteBuffer) {
@@ -37,7 +37,7 @@ fun Interpreter.store(buf: ByteBuffer) {
     val value = eatRegister(buf)
 
 
-    registers[target] = Value.Null
+    registers[target] = Value.Null()
     println("vars: $variables")
     variables[storeIn] = value
 }
@@ -50,7 +50,7 @@ fun Interpreter.load(buf: ByteBuffer) {
         registers[target] = variables[registers[loadFrom]]!!
     } else {
         println("Warning: Variable ${registers[loadFrom]} is not in scope. Returning a `null` value from `load`.")
-        registers[target] = Value.Null
+        registers[target] = Value.Null()
     }
 
 }

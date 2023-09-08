@@ -1,5 +1,6 @@
 package server.extensions
 
+import parser.Value
 import net.minestom.server.entity.Player
 import net.minestom.server.instance.InstanceContainer
 import server.interpreter.Interpreter

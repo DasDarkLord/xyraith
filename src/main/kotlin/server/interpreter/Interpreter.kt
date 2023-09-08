@@ -1,17 +1,22 @@
 package server.interpreter
 
 import blockMap
+import net.minestom.server.entity.Entity
 import net.minestom.server.entity.Player
 import net.minestom.server.instance.InstanceContainer
+import parser.Value
 import server.*
 import java.nio.ByteBuffer
 
 class Interpreter(val bytes: ByteBuffer) {
     val instructions: MutableMap<Short, (ByteBuffer) -> Unit> = mutableMapOf()
-    val registers: MutableList<Value> = MutableList(255) { return@MutableList Value.Null }
+    val registers: MutableList<Value> = MutableList(255) { return@MutableList Value.Null() }
     val variables: MutableMap<Value, Value> = mutableMapOf()
 
     var player: Player? = null
+    var defaultPlayer: Player? = null
+    var entity: Entity? = null
+    var defaultEntity: Entity? = null
     var instance: InstanceContainer? = null
 
     private val opcodes: List<(ByteBuffer) -> Unit> =

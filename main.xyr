@@ -1,4 +1,5 @@
 (event startup (
-    (store :x 0)
-    (store :x (add (load :x) 3))
+    (if (player.sendMessage (load :x)) (
+        (console.log ":im Ok")
+    ))
 ))

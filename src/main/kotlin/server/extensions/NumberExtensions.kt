@@ -1,7 +1,7 @@
 package server.extensions
 
+import parser.Value
 import registry.Extensions
-import server.Value
 import server.interpreter.Interpreter
 import kotlin.random.Random
 
