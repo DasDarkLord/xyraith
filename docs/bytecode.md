@@ -1,5 +1,5 @@
 # Bytecode Info
-This document acts as Xyraith's documentation  for it's bytecode format.
+This document acts as Xyraith's documentation  for it's code format.
 
 ## Names
 - **Byte** 1 byte in memory
@@ -35,8 +35,9 @@ Xyraith has a constants table at the start of its files. Repeat the below for ea
     // do more later
 }]
 ```
+When all constants are done, put `0x00` to indicate the end of the constant table.
 ## Basic Blocks
-Xyraith's bytecode is split into "basic blocks". This is the format for them:
+Xyraith's code is split into "basic blocks". This is the format for them:
 ```
 /* block header */
 0x00
@@ -44,7 +45,10 @@ Xyraith's bytecode is split into "basic blocks". This is the format for them:
 [Int - Block ID Constant]
 /* Event ID, see `Events.kt` for list of events and their IDs */
 [Byte - Event ID]
-/* Series of instructions. It must always end with a return instruction. */
+if Event ID is Function {
+    [Int - Constant ID for function name]
+}
+/* Series of instructions. It must always end with a return (`0x00`) instruction. */
 [Instruction opcodes]
 ```
 
@@ -59,6 +63,9 @@ Here is their format:
 ```
 /* Instruction opcode */
 [Byte - 0x00-0xFE representing the opcode]
+if 0x01 (Push) opcode {
+    [Int - Constant to push]
+}
 ```
 
 ### Shortcodes
