@@ -1,4 +1,0 @@
-package bytecode
-
-class Emitter {
-}

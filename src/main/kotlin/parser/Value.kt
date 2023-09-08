@@ -4,32 +4,32 @@ sealed class Value {
     /*
     These values are both used during runtime & compilation
      */
-    class Number(val value: Double) : Value() {
+    data class Number(val value: Double) : Value() {
         override fun toString(): kotlin.String {
             return """{"type":"number","value":$value}"""
         }
     }
-    class String(val value: kotlin.String) : Value() {
+    data class String(val value: kotlin.String) : Value() {
         override fun toString(): kotlin.String {
             return """{"type":"string","value":"$value"}"""
         }
     }
-    class Selector(val value: kotlin.String) : Value() {
+    data class Selector(val value: kotlin.String) : Value() {
         override fun toString(): kotlin.String {
             return """{"type":"selector","value":"$value"}"""
         }
     }
-    class Symbol(val value: kotlin.String) : Value() {
+    data class Symbol(val value: kotlin.String) : Value() {
         override fun toString(): kotlin.String {
             return """{"type":"symbol","value":"$value"}"""
         }
     }
-    class Command(val value: Ast.Command) : Value() {
+    data class Command(val value: Ast.Command) : Value() {
         override fun toString(): kotlin.String {
             return """{"type":"command","value":$value}"""
         }
     }
-    class Block(val value: Ast.Block) : Value() {
+    data class Block(val value: Ast.Block) : Value() {
         override fun toString(): kotlin.String {
             return """{"type":"block","value":$value}"""
         }
@@ -38,19 +38,19 @@ sealed class Value {
     /*
     These values are only used during runtime
      */
-    class BasicBlockRef(val value: Int) : Value() {
+    data class BasicBlockRef(val value: Int) : Value() {
         override fun toString(): kotlin.String {
             return """{"type":"basicBlockRef","value":$value}"""
         }
     }
 
-    class Null : Value() {
+    object Null : Value() {
         override fun toString(): kotlin.String {
             return """{"type":"null","value":"null"}"""
         }
     }
 
-    class Position(
+    data class Position(
         val x: Double,
         val y: Double,
         val z: Double,
@@ -77,4 +77,5 @@ sealed class Value {
     }
 
     fun toNumber(): Double = if(this is Number) value else 0.0
+    fun toPosition(): Position = if(this is Position) this else Position(0.0, 0.0, 0.0, 0.0, 0.0)
 }
