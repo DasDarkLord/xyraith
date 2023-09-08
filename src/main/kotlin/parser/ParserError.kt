@@ -1,31 +1,32 @@
 package parser
 
+import lexer.SpanData
 import lexer.TokenType
 
-abstract class ParserError(open val spanStart: Int, open val spanEnd: Int) : Exception() {
+abstract class ParserError(open val span: SpanData) : Exception() {
     abstract fun emit(): Diagnostic
 }
-class UnexpectedToken(val expected: TokenType, val found: TokenType, override val spanStart: Int, override val spanEnd: Int) : ParserError(spanStart, spanEnd) {
+class UnexpectedToken(val expected: TokenType, val found: TokenType, override val span: SpanData) : ParserError(span) {
     override fun emit(): Diagnostic {
-        return Diagnostic(1, "expected ${this.expected}, found ${this.found}", spanStart, spanEnd)
+        return Diagnostic(1, "expected ${this.expected}, found ${this.found}", span)
     }
 }
 
-class InvalidCommand(val command: String, override val spanStart: Int, override val spanEnd: Int) : ParserError(spanStart, spanEnd) {
+class InvalidCommand(val command: String, override val span: SpanData) : ParserError(span) {
     override fun emit(): Diagnostic {
-        return Diagnostic(1, "`$command` is not a valid command", spanStart, spanEnd)
+        return Diagnostic(1, "`$command` is not a valid command", span)
     }
 }
 
-class IncorrectArgument(val expectedType: String, val foundType: String, val commandName: String, override val spanStart: Int, override val spanEnd: Int) : ParserError(spanStart, spanEnd) {
+class IncorrectArgument(val expectedType: String, val foundType: String, val commandName: String, override val span: SpanData) : ParserError(span) {
     override fun emit(): Diagnostic {
-        return Diagnostic(1, "invalid argument in command $commandName - expected `$expectedType`, found `$foundType`", spanStart, spanEnd)
+        return Diagnostic(1, "invalid argument in command $commandName - expected `$expectedType`, found `$foundType`", span)
     }
 }
 
-class InvalidEvent(val foundEvent: String, override val spanStart: Int, override val spanEnd: Int) : ParserError(spanStart, spanEnd) {
+class InvalidEvent(val foundEvent: String, override val span: SpanData) : ParserError(span) {
     override fun emit(): Diagnostic {
-        return Diagnostic(1, "$foundEvent is not a valid event", spanStart, spanEnd)
+        return Diagnostic(1, "$foundEvent is not a valid event", span)
     }
 }
 

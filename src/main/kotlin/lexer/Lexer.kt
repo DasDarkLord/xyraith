@@ -7,13 +7,16 @@ class Lexer(val source: String) {
         var position = 0
         while(position < source.length) {
             when {
+                source[position] == '\n' -> {
+                    output.add(Token.NewLine(position, position++))
+                }
                 source[position].isWhitespace() -> {
                     position++
                 }
-                source[position] == '(' -> {
+                source[position] == '(' || source[position] == '{' || source[position] == '[' -> {
                     output.add(Token.LeftParen(position, position++))
                 }
-                source[position] == ')' -> {
+                source[position] == ')' || source[position] == '}' || source[position] == ']' -> {
                     output.add(Token.RightParen(position, position++))
                 }
                 source[position] == '@' -> {

@@ -1,10 +1,13 @@
 package parser
 
-class Diagnostic(val errorCode: Int, val problem: String, val spanStart: Int, val spanEnd: Int) {
+import lexer.SpanData
+
+class Diagnostic(val errorCode: Int, val problem: String, val span: SpanData) {
     override fun toString(): String {
+        val (spanStart, spanEnd, file) = span
         return """
 [E$errorCode] $problem
-| Span: $spanStart..$spanEnd
+| Span: $spanStart..$spanEnd ($file.xyr)
         """.trimIndent()
     }
 }
