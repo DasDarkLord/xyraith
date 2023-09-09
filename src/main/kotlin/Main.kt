@@ -4,6 +4,8 @@ import code.Visitable
 import code.server.startServer
 import code.visitables
 import lexer.Lexer
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.minimessage.MiniMessage
 import parser.Parser
 import parser.ParserError
 import java.io.File
@@ -14,8 +16,10 @@ val debug = 5
 var constants: Map<Int, parser.Value> = mapOf()
 var blockMap: MutableMap<Int, ByteBuffer> = mutableMapOf()
 
-fun main(args: Array<String>) {
+val miniMessage = MiniMessage.miniMessage()
+fun mm(str: String): Component = miniMessage.deserialize(str)
 
+fun main(args: Array<String>) {
     val text = File("src/main/xyraith/main.xr").readText()
     val lexer = Lexer(text)
     val tokens = lexer.transform()

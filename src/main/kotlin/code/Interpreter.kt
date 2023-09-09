@@ -49,11 +49,13 @@ class Interpreter(val constants: Map<Int, parser.Value>, val blockMap: Map<Int, 
 
     fun runInstruction(buf: ByteBuffer) {
         val opcode = buf.get()
+        println("comparing opcode: $opcode")
         if(opcode.toInt() == 1) {
             val id = buf.getInt()
             environment.stack.add(constants[id]!!)
         } else if (opcode.toInt() == 127) {
-
+            val id = buf.getShort()
+            shortcodes[id.toInt()]!!.visit(this)
         } else {
             opcodes[opcode.toInt()]!!.visit(this)
         }

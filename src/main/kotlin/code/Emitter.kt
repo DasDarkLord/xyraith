@@ -6,7 +6,7 @@ import parser.Value
 import registry.commandRegistry
 import java.nio.ByteBuffer
 
-val BUFFER_SIZE = 100
+val BUFFER_SIZE = 10000
 
 fun ByteBuffer.prettyPrint(): String {
     var output = "["
@@ -69,6 +69,7 @@ Emitter {
 
     private fun emitCommand(command: Ast.Command, blockId: Int) {
         val entry = commandRegistry[command.name]!!
+        println("entry { opcode: ${entry["opcode"]} | shortcode: ${entry["opcodeExtension"]} | command: ${command} }")
         if(entry["opcode"] != null) {
             val opcode = entry["opcode"]!! as Byte
             for(value in command.arguments) {
@@ -77,10 +78,11 @@ Emitter {
             blockMap[blockId]?.put(opcode)
         } else if(entry["opcodeExtension"] != null) {
             val extension = entry["opcodeExtension"]!! as Short
+            println("emitting extension $extension")
             for(value in command.arguments) {
                 emitValue(value, blockId)
             }
-            blockMap[blockId]?.put(0xFF.toByte())
+            blockMap[blockId]?.put(127.toByte())
             blockMap[blockId]?.putShort(extension)
         }
     }

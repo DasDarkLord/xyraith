@@ -1,3 +1,4 @@
 event join {
-    player.sendMessage "this is so enderae"
+    player.sendMessage "<gray>Welcome to the <white>server<gray>!"
+    player.setHunger 6
 }
