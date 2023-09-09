@@ -1,20 +1,22 @@
 import code.Emitter
 import code.Interpreter
 import code.Visitable
+import code.server.startServer
 import code.visitables
 import lexer.Lexer
 import parser.Parser
 import parser.ParserError
 import java.io.File
+import java.nio.ByteBuffer
 import java.time.LocalDate
 
 val debug = 5
-
-
+var constants: Map<Int, parser.Value> = mapOf()
+var blockMap: MutableMap<Int, ByteBuffer> = mutableMapOf()
 
 fun main(args: Array<String>) {
 
-    val text = File("main.xyr").readText()
+    val text = File("src/main/xyraith/main.xr").readText()
     val lexer = Lexer(text)
     val tokens = lexer.transform()
     Logger.trace("[")
@@ -30,10 +32,10 @@ fun main(args: Array<String>) {
         val emitter = Emitter(ast)
         emitter.emit()
         Logger.trace(emitter)
-        val constants = emitter.constants.map { pair -> pair.value to pair.key }.toMap()
-        val blockMap = emitter.blockMap
-        val interpreter = Interpreter(constants, blockMap)
-        interpreter.runBlock(1)
+        constants = emitter.constants.map { pair -> pair.value to pair.key }.toMap()
+        blockMap = emitter.blockMap
+
+        startServer()
     } catch(e: ParserError) {
         e.printStackTrace()
         println(e.emit())

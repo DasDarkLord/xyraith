@@ -1,0 +1,3 @@
+event join {
+    player.sendMessage "this is so enderae"
+}

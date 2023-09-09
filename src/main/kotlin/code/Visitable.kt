@@ -4,7 +4,11 @@ import code.instructions.*
 import parser.ArgumentList
 
 val visitables: List<Visitable> = listOf(
-    Log, Add,
+    Log,
+
+    Add,
+
+    SendMessage,
 )
 
 interface Visitable {
