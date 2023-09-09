@@ -3,9 +3,7 @@ package code.server
 import code.runEvent
 import net.minestom.server.MinecraftServer
 import net.minestom.server.coordinate.Pos
-import net.minestom.server.event.GlobalEventHandler
-import net.minestom.server.event.player.PlayerLoginEvent
-import net.minestom.server.event.player.PlayerSpawnEvent
+import net.minestom.server.event.player.*
 import net.minestom.server.extras.MojangAuth
 import net.minestom.server.instance.block.Block
 
@@ -17,6 +15,7 @@ fun startServer() {
     val instanceContainer = instanceManager.createInstanceContainer()
     instanceContainer.setGenerator { unit -> unit.modifier().fillHeight(0, 40, Block.SANDSTONE) }
     val globalEventHandler = MinecraftServer.getGlobalEventHandler()
+    runEvent(1)
     globalEventHandler.addListener(PlayerLoginEvent::class.java) { event ->
         val player = event.player
         event.setSpawningInstance(instanceContainer)
@@ -25,8 +24,20 @@ fun startServer() {
     globalEventHandler.addListener(PlayerSpawnEvent::class.java) { event ->
         if(event.isFirstSpawn) {
             val player = event.player
-            runEvent(2, mutableListOf(player))
+            runEvent(2, mutableListOf(player), player.instance)
         }
+    }
+    globalEventHandler.addListener(PlayerDisconnectEvent::class.java) { event ->
+        val player = event.player
+        runEvent(3, mutableListOf(player), player.instance)
+    }
+    globalEventHandler.addListener(PlayerCommandEvent::class.java) { event ->
+        val player = event.player
+        runEvent(4, mutableListOf(player), player.instance)
+    }
+    globalEventHandler.addListener(PlayerTickEvent::class.java) { event ->
+        val player = event.player
+        runEvent(5, mutableListOf(player), player.instance)
     }
     server.start("0.0.0.0", 25565)
 }

@@ -4,6 +4,6 @@ val events = mapOf(
     "join" to 2,
     "quit" to 3,
     "command" to 4,
-    "playerTick" to 5,
+    "tick" to 5,
     "function" to 6,
 )

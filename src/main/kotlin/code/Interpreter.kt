@@ -3,6 +3,7 @@ package code
 import blockMap
 import constants
 import net.minestom.server.entity.Entity
+import net.minestom.server.instance.Instance
 import java.nio.ByteBuffer
 
 val shortcodes: Map<Int, Visitable> = visitables.filter { obj -> obj.isExtension }.associateBy { obj -> obj.code }
@@ -13,7 +14,8 @@ fun ByteBuffer.peek(): Byte {
     this.position(this.position()-1)
     return out
 }
-fun runEvent(eventIdChk: Int, targets: MutableList<Entity> = mutableListOf()) {
+
+fun runEvent(eventIdChk: Int, targets: MutableList<Entity> = mutableListOf(), instance: Instance? = null) {
     for(pair in blockMap) {
         val block = pair.value.duplicate().position(0)
         val zero = block.get()
@@ -24,6 +26,7 @@ fun runEvent(eventIdChk: Int, targets: MutableList<Entity> = mutableListOf()) {
             println("Ok! Calling block ${pair.key}")
             val interpreter = Interpreter(constants, blockMap)
             interpreter.environment.targets = targets
+            interpreter.environment.instance = instance
             interpreter.runBlock(pair.key)
         }
     }
@@ -55,8 +58,12 @@ class Interpreter(val constants: Map<Int, parser.Value>, val blockMap: Map<Int, 
             environment.stack.add(constants[id]!!)
         } else if (opcode.toInt() == 127) {
             val id = buf.getShort()
+            val argumentCount = buf.get()
+            this.environment.argumentCount = argumentCount
             shortcodes[id.toInt()]!!.visit(this)
         } else {
+            val argumentCount = buf.get()
+            this.environment.argumentCount = argumentCount
             opcodes[opcode.toInt()]!!.visit(this)
         }
     }

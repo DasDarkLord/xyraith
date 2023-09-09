@@ -10,6 +10,12 @@ val visitables: List<Visitable> = listOf(
     // Math.kt
     Add, Sub, Mul, Div, Mod,
 
+    // Datatypes.kt
+    Loc,
+
+    // World.kt
+    SetBlock,
+
     // Player.kt
     SendMessage, SendActionBar, SendTitle,
     SetHealth, GetHealth, SetHunger, GetHunger, SetSaturation, GetSaturation,
@@ -20,5 +26,6 @@ interface Visitable {
     val isExtension: Boolean
     val command: String
     val arguments: ArgumentList
+    val description: String
     fun visit(visitor: Interpreter)
 }

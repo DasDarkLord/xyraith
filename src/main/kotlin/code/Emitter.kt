@@ -76,6 +76,7 @@ Emitter {
                 emitValue(value, blockId)
             }
             blockMap[blockId]?.put(opcode)
+            blockMap[blockId]?.put(command.arguments.size.toByte())
         } else if(entry["opcodeExtension"] != null) {
             val extension = entry["opcodeExtension"]!! as Short
             println("emitting extension $extension")
@@ -84,6 +85,7 @@ Emitter {
             }
             blockMap[blockId]?.put(127.toByte())
             blockMap[blockId]?.putShort(extension)
+            blockMap[blockId]?.put(command.arguments.size.toByte())
         }
     }
     private fun emitValue(value: Value, blockId: Int) {
@@ -98,9 +100,11 @@ Emitter {
         constants[value] = id
         println("emitter: $constants")
         when(value) {
-            is Value.BasicBlockRef -> TODO()
-            is Value.Block -> TODO()
-            is Value.Command -> TODO()
+            is Value.BasicBlockRef -> {
+
+            }
+            is Value.Block -> emitBlock(value.value)
+            is Value.Command -> emitCommand(value.value, blockId)
             is Value.Null -> TODO()
             is Value.Number -> {
                 constantsBytes.putInt(constantIdRecord)

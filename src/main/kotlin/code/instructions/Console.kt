@@ -12,8 +12,10 @@ object Log : Visitable {
     override val command: String get() = "console.log"
     override val arguments: ArgumentList
         get() = NodeBuilder()
-            .addSingleArgument(ArgumentType.STRING)
+            .addSingleArgument(ArgumentType.STRING, "String to print")
             .build()
+    override val description: String
+        get() = "Log a message to the console."
 
     override fun visit(visitor: Interpreter) {
         println(visitor.environment.stack.removeLast().toDisplay())

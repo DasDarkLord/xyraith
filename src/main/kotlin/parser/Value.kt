@@ -1,5 +1,7 @@
 package parser
 
+import net.minestom.server.coordinate.Pos
+
 sealed class Value {
     /*
     These values are both used during runtime & compilation
@@ -76,6 +78,21 @@ sealed class Value {
         }
     }
 
-    fun toNumber(): Double = if(this is Number) value else 0.0
-    fun toPosition(): Position = if(this is Position) this else Position(0.0, 0.0, 0.0, 0.0, 0.0)
+    fun castToNumber(): Double = if(this is Number) value else 0.0
+    fun castToString(): kotlin.String = if(this is String) value else toDisplay()
+    fun castToPos(): Pos = if(this is Position) Pos(this.x, this.y, this.z, this.pitch.toFloat(), this.yaw.toFloat()) else Pos(0.0, 0.0, 0.0, 0.0f, 0.0f)
+
+    fun castToArgumentType(): ArgumentType {
+        return when(this) {
+            is BasicBlockRef -> TODO()
+            is Block -> TODO()
+            is Command -> ArgumentType.COMMAND
+            Null -> TODO()
+            is Number -> ArgumentType.NUMBER
+            is Position -> ArgumentType.COMMAND
+            is Selector -> TODO()
+            is String -> ArgumentType.STRING
+            is Symbol -> TODO()
+        }
+    }
 }

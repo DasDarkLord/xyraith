@@ -13,18 +13,17 @@ object Add : Visitable {
     override val command: String get() = "add"
     override val arguments: ArgumentList
         get() = NodeBuilder()
-            .addSingleArgument(ArgumentType.NUMBER)
-            .addSingleArgument(ArgumentType.NUMBER)
+            .addPluralArgument(ArgumentType.NUMBER, "Numbers to add")
             .build()
+    override val description: String
+        get() = "Sum a series of numbers."
 
     override fun visit(visitor: Interpreter) {
-        val lhs = visitor.environment.stack.removeLast()
-        val rhs = visitor.environment.stack.removeLast()
-        if(lhs is Value.Number && rhs is Value.Number) {
-            visitor.environment.stack.add(Value.Number(lhs.value + rhs.value))
-        } else {
-            visitor.environment.stack.add(Value.Number(0.0))
+        var md = 1.0
+        for(x in 1..visitor.environment.argumentCount) {
+            md += visitor.environment.stack.removeLast().castToNumber()
         }
+        visitor.environment.stack.add(Value.Number(md))
     }
 }
 
@@ -34,9 +33,11 @@ object Sub : Visitable {
     override val command: String get() = "sub"
     override val arguments: ArgumentList
         get() = NodeBuilder()
-            .addSingleArgument(ArgumentType.NUMBER)
-            .addSingleArgument(ArgumentType.NUMBER)
+            .addSingleArgument(ArgumentType.NUMBER, "Left hand side")
+            .addSingleArgument(ArgumentType.NUMBER, "Right hand side")
             .build()
+    override val description: String
+        get() = "Subtract two numbers from eachother."
 
     override fun visit(visitor: Interpreter) {
         val lhs = visitor.environment.stack.removeLast()
@@ -55,18 +56,17 @@ object Mul : Visitable {
     override val command: String get() = "mul"
     override val arguments: ArgumentList
         get() = NodeBuilder()
-            .addSingleArgument(ArgumentType.NUMBER)
-            .addSingleArgument(ArgumentType.NUMBER)
+            .addPluralArgument(ArgumentType.NUMBER, "Numbers to multiply")
             .build()
+    override val description: String
+        get() = "Multiply a series of numbers"
 
     override fun visit(visitor: Interpreter) {
-        val lhs = visitor.environment.stack.removeLast()
-        val rhs = visitor.environment.stack.removeLast()
-        if(lhs is Value.Number && rhs is Value.Number) {
-            visitor.environment.stack.add(Value.Number(lhs.value * rhs.value))
-        } else {
-            visitor.environment.stack.add(Value.Number(0.0))
+        var md = 1.0
+        for(x in 1..visitor.environment.argumentCount) {
+            md *= visitor.environment.stack.removeLast().castToNumber()
         }
+        visitor.environment.stack.add(Value.Number(md))
     }
 }
 
@@ -76,14 +76,17 @@ object Div : Visitable {
     override val command: String get() = "div"
     override val arguments: ArgumentList
         get() = NodeBuilder()
-            .addSingleArgument(ArgumentType.NUMBER)
-            .addSingleArgument(ArgumentType.NUMBER)
+            .addSingleArgument(ArgumentType.NUMBER, "Dividend")
+            .addSingleArgument(ArgumentType.NUMBER, "Divisor")
             .build()
+    override val description: String
+        get() = "Divide two numbers"
 
     override fun visit(visitor: Interpreter) {
-        val lhs = visitor.environment.stack.removeLast()
         val rhs = visitor.environment.stack.removeLast()
-        if(lhs is Value.Number && rhs is Value.Number) {
+        val lhs = visitor.environment.stack.removeLast()
+
+        if (lhs is Value.Number && rhs is Value.Number) {
             visitor.environment.stack.add(Value.Number(lhs.value / rhs.value))
         } else {
             visitor.environment.stack.add(Value.Number(0.0))
@@ -97,9 +100,11 @@ object Mod : Visitable {
     override val command: String get() = "mod"
     override val arguments: ArgumentList
         get() = NodeBuilder()
-            .addSingleArgument(ArgumentType.NUMBER)
-            .addSingleArgument(ArgumentType.NUMBER)
+            .addSingleArgument(ArgumentType.NUMBER, "Number to get modulo of")
+            .addSingleArgument(ArgumentType.NUMBER, "Number to modulo by")
             .build()
+    override val description: String
+        get() = "Get the modulo of two numbers."
 
     override fun visit(visitor: Interpreter) {
         val lhs = visitor.environment.stack.removeLast()
