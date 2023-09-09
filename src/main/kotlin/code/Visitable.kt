@@ -4,10 +4,13 @@ import code.instructions.*
 import parser.ArgumentList
 
 val visitables: List<Visitable> = listOf(
+    // Console.kt
     Log,
 
-    Add,
+    // Math.kt
+    Add, Sub, Mul, Div, Mod,
 
+    // Player.kt
     SendMessage, SendActionBar, SendTitle,
     SetHealth, GetHealth, SetHunger, GetHunger, SetSaturation, GetSaturation,
 )
