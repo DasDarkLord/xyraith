@@ -131,6 +131,8 @@ class Parser(private val input: MutableList<Token>) {
         }
         if(hasParens)
             standardMatch(next(), TokenType.RightParen)
+
+        verifyBuiltinCommand(nameToken, args)
         return Ast.Command(nameToken.value, args)
     }
 

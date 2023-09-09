@@ -8,12 +8,9 @@ import parser.NodeBuilder
 import parser.Value
 
 object Add : Visitable {
-    override val code: Int
-        get() = 3
-    override val isExtension: Boolean
-        get() = false
-    override val command: String
-        get() = "add"
+    override val code: Int get() = 3
+    override val isExtension: Boolean get() = false
+    override val command: String get() = "add"
     override val arguments: ArgumentList
         get() = NodeBuilder()
             .addSingleArgument(ArgumentType.NUMBER)

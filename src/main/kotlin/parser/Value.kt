@@ -71,7 +71,7 @@ sealed class Value {
             is Block -> "UNAVAILABLE_DURING_RUNTIME"
             is Command -> "UNAVAILABLE_DURING_RUNTIME"
             is Selector -> value
-            is String -> "\"$value\""
+            is String -> value
             is Symbol -> value
         }
     }

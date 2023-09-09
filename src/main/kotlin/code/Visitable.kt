@@ -8,7 +8,8 @@ val visitables: List<Visitable> = listOf(
 
     Add,
 
-    SendMessage,
+    SendMessage, SendActionBar, SendTitle,
+    SetHealth, GetHealth, SetHunger, GetHunger, SetSaturation, GetSaturation,
 )
 
 interface Visitable {
