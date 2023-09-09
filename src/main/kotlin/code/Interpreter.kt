@@ -1,5 +1,8 @@
 package code
 
+import blockMap
+import constants
+import net.minestom.server.entity.Entity
 import java.nio.ByteBuffer
 
 val shortcodes: Map<Int, Visitable> = visitables.filter { obj -> obj.isExtension }.associateBy { obj -> obj.code }
@@ -10,8 +13,25 @@ fun ByteBuffer.peek(): Byte {
     this.position(this.position()-1)
     return out
 }
+fun runEvent(eventIdChk: Int, targets: MutableList<Entity> = mutableListOf()) {
+    for(pair in blockMap) {
+        val block = pair.value.duplicate().position(0)
+        val zero = block.get()
+        val id = block.getInt()
+        val eventId = block.get()
+        println("eventId: $eventId chk: ${eventIdChk.toInt()}")
+        if(eventId.toInt() == eventIdChk) {
+            println("Ok! Calling block ${pair.key}")
+            val interpreter = Interpreter(constants, blockMap)
+            interpreter.environment.targets = targets
+            interpreter.runBlock(pair.key)
+        }
+    }
+}
+
 class Interpreter(val constants: Map<Int, parser.Value>, val blockMap: Map<Int, ByteBuffer>) {
     val environment: Environment = Environment()
+
 
     fun runBlock(blockId: Int) {
         val block = blockMap[blockId]!!.asReadOnlyBuffer().position(0)
