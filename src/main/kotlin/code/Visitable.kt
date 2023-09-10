@@ -11,7 +11,7 @@ val visitables: List<Visitable> = listOf(
     Add, Sub, Mul, Div, Mod,
 
     // Datatypes.kt
-    Loc,
+    Loc, Item,
 
     // World.kt
     SetBlock,

@@ -8,9 +8,10 @@ import java.nio.ByteBuffer
 
 val BUFFER_SIZE = 10000
 
-fun ByteBuffer.prettyPrint(): String {
+
+fun prettyPrint(buf: ByteBuffer): String {
     var output = "["
-    val cloned = this.duplicate().limit(this.position())
+    val cloned = buf.duplicate().limit(buf.position())
     var count = 1
     for(byte in cloned.array()) {
         count++
@@ -39,9 +40,9 @@ Emitter {
   constants=$constants,
   blockMap={""".trimIndent()
         for(pair in blockMap) {
-            output += """${pair.key}:${pair.value.prettyPrint()}"""
+            output += """${pair.key}:${prettyPrint(pair.value)}"""
         }
-        output += "}\n  constantsBytes=${constantsBytes.prettyPrint()}"
+        output += "}\n  constantsBytes=${prettyPrint(constantsBytes)}"
         return output
     }
 

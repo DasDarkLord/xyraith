@@ -23,4 +23,21 @@ $preproc
 <br>
         """.trimIndent()
     }
+
+    fun toJson(): String {
+        var preproc = ""
+        for(arg in arguments) {
+            preproc += "{\"type\":\"${arg.first}\",\"description\":\"${arg.second}\"},"
+        }
+        preproc = preproc.removeSuffix(",")
+        return """
+{
+    "name": "$commandName",
+    "description": "$commandDescription",
+    "arguments": [
+        $preproc
+    ]
+},
+        """
+    }
 }

@@ -3,6 +3,7 @@ import code.Interpreter
 import code.Visitable
 import code.server.startServer
 import code.visitables
+import docs.dumpCommands
 import docs.generateDocumentation
 import docs.wrapDocumentation
 import lexer.Lexer
@@ -24,28 +25,26 @@ var blockMap: MutableMap<Int, ByteBuffer> = mutableMapOf()
 val miniMessage = MiniMessage.miniMessage()
 fun mm(str: String): Component = miniMessage.deserialize(str)
 
-open class MainKt {
-    companion object {
-        @JvmStatic
-        fun main(args: Array<String>) {
-            when(args.getOrNull(0)) {
-                "run" -> {
-                    println("Running server.. you may see some debug output.")
-                    runServer()
-                }
-                "docs" -> {
-                    println("Generating documentation.")
-                    generateDocs()
-                }
-                else -> {
-                    println("Unknown subcommand.\n")
-                    helpCommand()
-                }
-            }
+fun main(args: Array<String>) {
+    when(args.getOrNull(0)) {
+        "run" -> {
+            println("Running server.. you may see some debug output.")
+            runServer()
+        }
+        "docs" -> {
+            println("Generating documentation.")
+            generateDocs()
+        }
+        "dumpcommandinfo" -> {
+            println("Generating command dump.")
+            generateCommandDump()
+        }
+        else -> {
+            println("Unknown subcommand.\n")
+            helpCommand()
         }
     }
 }
-
 
 fun helpCommand() {
     println("""
@@ -59,15 +58,26 @@ etc. etc.
 Subcommands:
 run - Run the server. Currently grabs code from file at: ./src/main/xyraith/main.xr
 docs - Generate documentation. This will open your web browser.
+
+Advanced Subcommands:
+dumpcommandinfo - Dump a JSON of command info to the file at `docs/commanddump.json`.
+
     """.trimIndent())
 }
 
 fun generateDocs() {
     val docgen = generateDocumentation()
-    val file = File("xyraith_docs_commandsDocumentation.html")
+    val file = File("docs/commandDocs.html")
     file.createNewFile()
     file.writeText(wrapDocumentation(docgen))
-    Desktop.getDesktop().browse(URI("xyraith_docs_commandsDocumentation.html"))
+    Desktop.getDesktop().browse(URI("docs/commandDocs.html"))
+}
+
+fun generateCommandDump() {
+    val docgen = dumpCommands()
+    val file = File("docs/commandDump.jsonc")
+    file.createNewFile()
+    file.writeText(docgen)
 }
 
 fun runServer() {
