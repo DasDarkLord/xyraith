@@ -6,8 +6,7 @@ import parser.Value
 import registry.commandRegistry
 import java.nio.ByteBuffer
 
-val BUFFER_SIZE = 10000
-
+const val BUFFER_SIZE = 10000
 
 fun prettyPrint(buf: ByteBuffer): String {
     var output = "["
@@ -28,12 +27,12 @@ fun prettyPrint(buf: ByteBuffer): String {
 // of memory, so the memory allocated will only be kept
 // if it gets actively used
 
-class Emitter(val ast: List<Ast.Event>) {
+class Emitter(private val ast: List<Ast.Event>) {
     var blockMap: MutableMap<Int, ByteBuffer> = mutableMapOf()
-    var blockIdRecord: Int = 1
-    var constantIdRecord: Int = 1
+    private var blockIdRecord: Int = 1
+    private var constantIdRecord: Int = 1
     var constants: MutableMap<Value, Int> = mutableMapOf()
-    var constantsBytes: ByteBuffer = ByteBuffer.allocate(BUFFER_SIZE)
+    private var constantsBytes: ByteBuffer = ByteBuffer.allocate(BUFFER_SIZE)
     override fun toString(): String {
         var output = """
 Emitter {
@@ -55,6 +54,7 @@ Emitter {
     private fun emitEvent(event: Ast.Event) {
         emitBlock(event.code)
     }
+
     private fun emitBlock(block: Ast.Block) {
         val eventName = block.eventName
         val eventId = events[eventName]!!

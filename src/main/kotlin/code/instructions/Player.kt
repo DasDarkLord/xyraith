@@ -6,6 +6,7 @@ import mm
 import net.kyori.adventure.title.Title
 import net.kyori.adventure.title.TitlePart
 import net.minestom.server.entity.Player
+import net.minestom.server.entity.damage.DamageType
 import parser.ArgumentList
 import parser.ArgumentType
 import parser.NodeBuilder
@@ -215,6 +216,44 @@ object GetSaturation : Visitable {
         for(target in visitor.environment.targets) {
             if(target as? Player != null) {
                 visitor.environment.stack.add(Value.Number(target.foodSaturation.toDouble()))
+            }
+        }
+    }
+}
+
+object Damage : Visitable {
+    override val code: Int get() = 1106
+    override val isExtension: Boolean get() = true
+    override val command: String get() = "player.damage"
+    override val arguments: ArgumentList
+        get() = NodeBuilder()
+            .build()
+    override val description: String
+        get() = "Get a player's saturation points."
+
+    override fun visit(visitor: Interpreter) {
+        for(target in visitor.environment.targets) {
+            if(target as? Player != null) {
+                target.damage(DamageType.VOID, visitor.environment.stack.removeLast().castToNumber().toFloat())
+            }
+        }
+    }
+}
+
+object Heal : Visitable {
+    override val code: Int get() = 1107
+    override val isExtension: Boolean get() = true
+    override val command: String get() = "player.heal"
+    override val arguments: ArgumentList
+        get() = NodeBuilder()
+            .build()
+    override val description: String
+        get() = "Get a player's saturation points."
+
+    override fun visit(visitor: Interpreter) {
+        for(target in visitor.environment.targets) {
+            if(target as? Player != null) {
+                target.health += visitor.environment.stack.removeLast().castToNumber().toFloat()
             }
         }
     }
