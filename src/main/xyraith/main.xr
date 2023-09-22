@@ -1,4 +1,4 @@
 event join {
-    player.sendMessage "<gray>Welcome to the <white>server<gray>!"
-    world.setBlock (loc 0 50 0) "minecraft:stone"
+    player.sendMessage "Welcome to the server!"
+    world.setBlock (loc 0 60 0) "minecraft:stone"
 }

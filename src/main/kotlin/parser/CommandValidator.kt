@@ -8,11 +8,12 @@ import lexer.Token
 data class NodeValidatorData<T>(
     val command: String,
     val arguments: Iterator<Value>,
+    val spans: Iterator<SpanData>,
     val node: T,
-    val span: SpanData,
+    val nameSpan: SpanData,
 )
 
-fun verifyBuiltinCommand(nameToken: Token.Identifier, arguments: List<Value>) {
+fun verifyBuiltinCommand(nameToken: Token.Identifier, arguments: List<Value>, spans: List<SpanData>) {
     val command = nameToken.value
 
     if(!commandRegistry.containsKey(command)) {
@@ -21,54 +22,63 @@ fun verifyBuiltinCommand(nameToken: Token.Identifier, arguments: List<Value>) {
 
     val obj: Visitable = commandRegistry[command]!!["object"]!! as Visitable
     val argIter = arguments.iterator()
+    val spanIter = spans.iterator()
     for(node in obj.arguments.list) {
+        println("node!!!: $node")
         when(node) {
-            is SingleArgumentNode -> verifySingleNode(NodeValidatorData(command, argIter, node, nameToken.span))
-            is OptionalArgumentNode -> verifyOptionalNode(NodeValidatorData(command, argIter, node, nameToken.span))
-            is PluralArgumentNode -> verifyPluralNode(NodeValidatorData(command, argIter, node, nameToken.span))
+            is SingleArgumentNode -> verifySingleNode(NodeValidatorData(command, argIter, spanIter, node, nameToken.span))
+            is OptionalArgumentNode -> verifyOptionalNode(NodeValidatorData(command, argIter, spanIter, node, nameToken.span))
+            is PluralArgumentNode -> verifyPluralNode(NodeValidatorData(command, argIter, spanIter, node, nameToken.span))
         }
     }
     if(argIter.hasNext()) throw IncorrectArgument("No Type", "too many arguments", command, nameToken.span)
 }
 
 private fun verifySingleNode(data: NodeValidatorData<SingleArgumentNode>) {
-    val (command, arguments, node, span) = data
+    val (command, arguments, spans, node, nameSpan) = data
+    var nextSpan: SpanData = nameSpan
     if(!arguments.hasNext()) {
-        throw IncorrectArgument("No Type", node.type.toString(), command, span)
+        throw IncorrectArgument("No Type", node.type.toString(), command, nameSpan)
     }
     val nextArgument = arguments.next()
+    nextSpan = spans.next()
     if(node.type != nextArgument.castToArgumentType()) {
-        throw IncorrectArgument(nextArgument.castToArgumentType().toString(), node.type.toString(), command, span)
+        throw IncorrectArgument(nextArgument.castToArgumentType().toString(), node.type.toString(), command, nextSpan)
     }
 }
 
 private fun verifyOptionalNode(data: NodeValidatorData<OptionalArgumentNode>) {
-    val (command, arguments, node, span) = data
+    val (command, arguments, spans, node, nameSpan) = data
+    var nextSpan: SpanData = nameSpan
+    println("arguments!!!!!!!!!!!!!!!!~: $arguments (${arguments.hasNext()})")
     if(!arguments.hasNext()) {
         return
     }
     val nextArgument = arguments.next()
+    nextSpan = spans.next()
     if(node.type != nextArgument.castToArgumentType()) {
-        throw IncorrectArgument(nextArgument.castToArgumentType().toString(), node.type.toString(), command, span)
+        throw IncorrectArgument(nextArgument.castToArgumentType().toString(), node.type.toString(), command, nextSpan)
     }
 }
 
 private fun verifyPluralNode(data: NodeValidatorData<PluralArgumentNode>) {
-    val (command, arguments, node, span) = data
+    val (command, arguments, spans, node, nameSpan) = data
     if(!arguments.hasNext()) {
         return
     }
     var argCount = 0
+    var nextSpan: SpanData = nameSpan
     while(true) {
         if(!arguments.hasNext()) {
             if(argCount == 0) {
-                throw IncorrectArgument(node.type.toString(), "No Type", command, span)
+                throw IncorrectArgument(node.type.toString(), "No Type", command, nextSpan)
             }
             return
         }
         val nextArgument = arguments.next()
+        nextSpan = spans.next()
         if(nextArgument.castToArgumentType() != node.type) {
-            throw IncorrectArgument(node.type.toString(), nextArgument.castToArgumentType().toString(), command, span)
+            throw IncorrectArgument(node.type.toString(), nextArgument.castToArgumentType().toString(), command, nextSpan)
         }
         argCount++
     }

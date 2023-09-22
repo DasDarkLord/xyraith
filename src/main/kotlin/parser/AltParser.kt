@@ -66,7 +66,7 @@ class Parser(private val input: MutableList<Token>) {
 
     fun parseAll(): List<Ast.Event> {
         val output = mutableListOf<Ast.Event>()
-        while(!hasNext()) {
+        while(hasNext()) {
             val event = parseEvent()!!
             output.add(event)
         }
@@ -128,19 +128,22 @@ class Parser(private val input: MutableList<Token>) {
         standardMatch(nameToken, TokenType.Identifier)
         if(nameToken !is Token.Identifier) throw Unreachable()
         val args = mutableListOf<Value>()
+        val spans = mutableListOf<SpanData>()
         while(true) {
             if(!hasParens) if(peek(false) is Token.NewLine) break
             if(hasParens) if(peek() is Token.RightParen) break
+            spans.add(peek().span)
             args.add(parseArgument())
         }
         if(hasParens)
             standardMatch(next(), TokenType.RightParen)
 
-        verifyBuiltinCommand(nameToken, args)
+        verifyBuiltinCommand(nameToken, args, spans)
         return Ast.Command(nameToken.value, args)
     }
 
     private fun parseArgument(): Value {
+        println("parsing argument of tok: ${peek()}")
         when(val next = next()) {
             is Token.At -> {
                 val next2 = next()

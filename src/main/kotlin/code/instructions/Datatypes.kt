@@ -17,8 +17,9 @@ object Loc : Visitable {
             .addSingleArgument(ArgumentType.NUMBER, "Y coordinate")
             .addSingleArgument(ArgumentType.NUMBER, "Z coordinate")
             .addOptionalArgument(ArgumentType.NUMBER, Value.Number(0.0), "Pitch coordinate")
-            .addOptionalArgument(ArgumentType.NUMBER, Value.Number(0.0), "Yaw coordinate")
+            .addOptionalArgument(ArgumentType.NUMBER, Value.Number(0.0),"Yaw coordinate")
             .build()
+
     override val description: String
         get() = "Generate a location from coordinates."
 
@@ -41,12 +42,13 @@ object Loc : Visitable {
 object Item : Visitable {
     override val code: Int get() = 11
     override val isExtension: Boolean get() = false
-    override val command: String get() = "loc"
+    override val command: String get() = "item"
     override val arguments: ArgumentList
         get() = NodeBuilder()
             .addSingleArgument(ArgumentType.STRING, "Namespace ID")
             .addOptionalArgument(ArgumentType.NUMBER, Value.Number(1.0), "Amount of item")
             .build()
+
     override val description: String
         get() = "Generate a location from coordinates."
 

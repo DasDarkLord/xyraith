@@ -82,7 +82,7 @@ fun generateCommandDump() {
 
 fun runServer() {
     val text = File("src/main/xyraith/main.xr").readText()
-    val lexer = Lexer(text)
+    val lexer = Lexer(text, "src/main/xyraith/main.xr")
     val tokens = lexer.transform()
     Logger.trace("[")
     tokens.forEach {
