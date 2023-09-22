@@ -12,15 +12,17 @@ class Parser(private val input: MutableList<Token>) {
     var pointer = -1
     var lastNext: Token = Token.Identifier("lkhdaskjld", SpanData(0, 0, "somethign went wrong fhere"))
 
-    fun standardMatch(found: Token, expected: TokenType) {
-        if(found.toType() != expected) throw UnexpectedToken(expected, found.toType(), found.span)
+    private fun standardMatch(found: Token, expected: TokenType) {
+        if(found.toType() != expected) {
+            throw UnexpectedToken(expected, found.toType(), found.span)
+        }
     }
 
     fun hasNext(): Boolean {
         return input.getOrNull(pointer+1) != null
     }
 
-    fun peek(ignoreWhitespace: Boolean = true): Token {
+    private fun peek(ignoreWhitespace: Boolean = true): Token {
         var b = pointer
         if(ignoreWhitespace) {
             if(pointer > 0) {
@@ -64,8 +66,10 @@ class Parser(private val input: MutableList<Token>) {
 
     fun parseAll(): List<Ast.Event> {
         val output = mutableListOf<Ast.Event>()
-        val event = parseEvent()!!
-        output.add(event)
+        while(!hasNext()) {
+            val event = parseEvent()!!
+            output.add(event)
+        }
         return output
     }
 

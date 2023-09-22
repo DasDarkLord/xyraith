@@ -1,5 +1,4 @@
 event join {
     player.sendMessage "<gray>Welcome to the <white>server<gray>!"
-    player.setHunger 6
     world.setBlock (loc 0 50 0) "minecraft:stone"
 }
