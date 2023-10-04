@@ -1,4 +1,8 @@
 event join {
-    player.sendMessage "Welcome to the server!"
-    world.setBlock (loc 0 60 0) "minecraft:stone"
+    player.teleport (loc 0 100 0)
+    player.gamemode creative
+    player.sendMessage "<gray>Welcome to the <white>server<gray>!"
+    foreach :index (range 1 10) {
+        player.sendMessage (load :index)
+    }
 }

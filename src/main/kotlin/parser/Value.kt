@@ -46,6 +46,12 @@ sealed class Value {
         }
     }
 
+    data class Array(val value: List<Value>) : Value() {
+        override fun toString(): kotlin.String {
+            return """{"type":"list","value":$value}"""
+        }
+    }
+
     object Null : Value() {
         override fun toString(): kotlin.String {
             return """{"type":"null","value":"null"}"""
@@ -75,6 +81,7 @@ sealed class Value {
             is Selector -> value
             is String -> value
             is Symbol -> value
+            is Array -> value.toString()
         }
     }
 
@@ -84,15 +91,23 @@ sealed class Value {
 
     fun castToArgumentType(): ArgumentType {
         return when(this) {
-            is BasicBlockRef -> TODO()
-            is Block -> TODO()
+            is BasicBlockRef -> TODO("not available at compile-tiem")
+            is Block -> ArgumentType.BLOCK
             is Command -> ArgumentType.COMMAND
-            Null -> TODO()
+            Null -> TODO("not available at compile-tiem")
             is Number -> ArgumentType.NUMBER
             is Position -> ArgumentType.COMMAND
-            is Selector -> TODO()
+            is Selector -> ArgumentType.SELECTOR
             is String -> ArgumentType.STRING
-            is Symbol -> TODO()
+            is Symbol -> ArgumentType.SYMBOL
+            is Array -> ArgumentType.LIST
         }
+    }
+
+    fun castToCommandName(): kotlin.String {
+        if(this is Value.Command) {
+            return this.value.name
+        }
+        return ""
     }
 }

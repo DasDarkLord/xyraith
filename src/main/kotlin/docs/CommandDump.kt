@@ -8,7 +8,8 @@ fun dumpCommands(): String {
         val documentation = CommandDocument(
             obj.command,
             decomposeList(obj.arguments),
-            obj.description
+            obj.description,
+            obj.returnType
         )
         output += documentation.toJson()
     }

@@ -5,23 +5,25 @@ import parser.ArgumentType
 data class CommandDocument(
     val commandName: String,
     val arguments: List<Pair<String, String>>,
-    val commandDescription: String
+    val commandDescription: String,
+    val returnType: ArgumentType,
 ) {
     fun toHtml(): String {
         var preproc = ""
         for(arg in arguments) {
-            preproc += "<b>${arg.first}</b> - ${arg.second}<br>"
+            preproc += "- **${arg.first}** ${arg.second}\n"
+        }
+        if(arguments.isEmpty()) {
+            preproc = "None"
         }
         return """
-<h2>$commandName</h2>
+## $commandName
 $commandDescription
-
-<h3>Command Parameters</h3>
+### Command Parameters
 $preproc
-<br>
-<br>
-<br>
-        """.trimIndent()
+### Return Type
+Returns $returnType.%%spec_nl%%
+        """.trimIndent().replace("%%spec_nl%%", "\n")
     }
 
     fun toJson(): String {
@@ -36,7 +38,8 @@ $preproc
     "description": "$commandDescription",
     "arguments": [
         $preproc
-    ]
+    ],
+    "return_type": "$returnType",
 },
         """
     }

@@ -74,7 +74,6 @@ class Parser(private val input: MutableList<Token>) {
     }
 
     private fun parseEvent(): Ast.Event? {
-        println("parsing event...")
         val eventParenthesis = peek() is Token.LeftParen
         if(eventParenthesis) standardMatch(next(), TokenType.LeftParen)
         val eventToken = next()
@@ -137,14 +136,12 @@ class Parser(private val input: MutableList<Token>) {
         }
         if(hasParens)
             standardMatch(next(), TokenType.RightParen)
-
         verifyBuiltinCommand(nameToken, args, spans)
         return Ast.Command(nameToken.value, args)
     }
 
     private fun parseArgument(): Value {
-        println("parsing argument of tok: ${peek()}")
-        when(val next = next()) {
+        when(val next = next(false)) {
             is Token.At -> {
                 val next2 = next()
                 if(next2 !is Token.Identifier) {
@@ -153,8 +150,8 @@ class Parser(private val input: MutableList<Token>) {
                 return Value.Selector(next2.value)
             }
             is Token.LeftParen -> {
-                val next2 = peek()
-                return if(next2 is Token.LeftParen) {
+                val next2 = peek(false)
+                return if(next2 is Token.LeftParen || next2 is Token.NewLine) {
                     pointer--
                     Value.Block(parseBlock("callable"))
                 } else if(next2 is Token.Identifier) {

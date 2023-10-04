@@ -23,41 +23,50 @@ fun verifyBuiltinCommand(nameToken: Token.Identifier, arguments: List<Value>, sp
     val obj: Visitable = commandRegistry[command]!!["object"]!! as Visitable
     val argIter = arguments.iterator()
     val spanIter = spans.iterator()
-    for(node in obj.arguments.list) {
-        println("node!!!: $node")
+    obj.arguments.list.forEachIndexed { _, node ->
         when(node) {
             is SingleArgumentNode -> verifySingleNode(NodeValidatorData(command, argIter, spanIter, node, nameToken.span))
             is OptionalArgumentNode -> verifyOptionalNode(NodeValidatorData(command, argIter, spanIter, node, nameToken.span))
             is PluralArgumentNode -> verifyPluralNode(NodeValidatorData(command, argIter, spanIter, node, nameToken.span))
         }
     }
-    if(argIter.hasNext()) throw IncorrectArgument("No Type", "too many arguments", command, nameToken.span)
+    // if(arguments.size > obj.arguments.list.size) throw IncorrectArgument("no type", "too many arguments", command, nameToken.span)
+
 }
 
 private fun verifySingleNode(data: NodeValidatorData<SingleArgumentNode>) {
     val (command, arguments, spans, node, nameSpan) = data
     var nextSpan: SpanData = nameSpan
     if(!arguments.hasNext()) {
-        throw IncorrectArgument("No Type", node.type.toString(), command, nameSpan)
+        throw IncorrectArgument("No Type", node.type.toString(), command, nextSpan)
     }
     val nextArgument = arguments.next()
+    var nextType = nextArgument.castToArgumentType()
+    if(nextArgument.castToArgumentType() == ArgumentType.COMMAND) {
+        val visitable = commandRegistry[nextArgument.castToCommandName()]?.get("object")!! as Visitable
+        nextType = visitable.returnType
+    }
     nextSpan = spans.next()
-    if(node.type != nextArgument.castToArgumentType()) {
-        throw IncorrectArgument(nextArgument.castToArgumentType().toString(), node.type.toString(), command, nextSpan)
+    if(node.type != nextType && node.type != ArgumentType.ANY && nextType != ArgumentType.ANY) {
+        throw IncorrectArgument(node.type.toString(), nextType.toString(), command, nextSpan)
     }
 }
 
 private fun verifyOptionalNode(data: NodeValidatorData<OptionalArgumentNode>) {
     val (command, arguments, spans, node, nameSpan) = data
     var nextSpan: SpanData = nameSpan
-    println("arguments!!!!!!!!!!!!!!!!~: $arguments (${arguments.hasNext()})")
     if(!arguments.hasNext()) {
         return
     }
     val nextArgument = arguments.next()
+    var nextType = nextArgument.castToArgumentType()
+    if(nextArgument.castToArgumentType() == ArgumentType.COMMAND) {
+        val visitable = commandRegistry[nextArgument.castToCommandName()]?.get("object")!! as Visitable
+        nextType = visitable.returnType
+    }
     nextSpan = spans.next()
-    if(node.type != nextArgument.castToArgumentType()) {
-        throw IncorrectArgument(nextArgument.castToArgumentType().toString(), node.type.toString(), command, nextSpan)
+    if(node.type != nextType && node.type != ArgumentType.ANY && nextType != ArgumentType.ANY) {
+        throw IncorrectArgument(node.type.toString(), nextType.toString(), command, nextSpan)
     }
 }
 
@@ -76,9 +85,14 @@ private fun verifyPluralNode(data: NodeValidatorData<PluralArgumentNode>) {
             return
         }
         val nextArgument = arguments.next()
+        var nextType = nextArgument.castToArgumentType()
+        if(nextArgument.castToArgumentType() == ArgumentType.COMMAND) {
+            val visitable = commandRegistry[nextArgument.castToCommandName()]?.get("object")!! as Visitable
+            nextType = visitable.returnType
+        }
         nextSpan = spans.next()
-        if(nextArgument.castToArgumentType() != node.type) {
-            throw IncorrectArgument(node.type.toString(), nextArgument.castToArgumentType().toString(), command, nextSpan)
+        if(node.type != nextType && node.type != ArgumentType.ANY && nextType != ArgumentType.ANY) {
+            throw IncorrectArgument(node.type.toString(), nextType.toString(), command, nextSpan)
         }
         argCount++
     }

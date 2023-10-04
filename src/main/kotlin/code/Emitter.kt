@@ -70,7 +70,6 @@ Emitter {
 
     private fun emitCommand(command: Ast.Command, blockId: Int) {
         val entry = commandRegistry[command.name]!!
-        println("entry { opcode: ${entry["opcode"]} | shortcode: ${entry["opcodeExtension"]} | command: ${command} }")
         if(entry["opcode"] != null) {
             val opcode = entry["opcode"]!! as Byte
             for(value in command.arguments) {
@@ -80,7 +79,6 @@ Emitter {
             blockMap[blockId]?.put(command.arguments.size.toByte())
         } else if(entry["opcodeExtension"] != null) {
             val extension = entry["opcodeExtension"]!! as Short
-            println("emitting extension $extension")
             for(value in command.arguments) {
                 emitValue(value, blockId)
             }
@@ -90,22 +88,29 @@ Emitter {
         }
     }
     private fun emitValue(value: Value, blockId: Int) {
-        blockMap[blockId]?.put(1)
-        println("emitter: $constants")
         if(constants.containsKey(value)) {
+            blockMap[blockId]?.put(1)
             blockMap[blockId]?.putInt(constants[value]!!)
             return
         }
         val id = constantIdRecord++
-        blockMap[blockId]?.putInt(id)
-        constants[value] = id
-        println("emitter: $constants")
+        if(value !is Value.Command) {
+            blockMap[blockId]?.put(1)
+            blockMap[blockId]?.putInt(id)
+            constants[value] = id
+        }
         when(value) {
-            is Value.BasicBlockRef -> {
-
+            is Value.BasicBlockRef -> TODO("this isnt compilable")
+            is Value.Block -> {
+                emitBlock(value.value)
+                constantsBytes.putInt(constantIdRecord)
+                constantsBytes.put(4)
+                constantsBytes.putInt(blockIdRecord-1)
+                constants[Value.BasicBlockRef(blockIdRecord-1)] = id
             }
-            is Value.Block -> emitBlock(value.value)
-            is Value.Command -> emitCommand(value.value, blockId)
+            is Value.Command -> {
+                emitCommand(value.value, blockId)
+            }
             is Value.Null -> TODO()
             is Value.Number -> {
                 constantsBytes.putInt(constantIdRecord)
@@ -122,7 +127,15 @@ Emitter {
                 }
                 constantsBytes.putShort(0.toShort())
             }
-            is Value.Symbol -> TODO()
+            is Value.Symbol -> {
+                constantsBytes.putInt(constantIdRecord)
+                constantsBytes.put(3)
+                for(char in value.value.toCharArray()) {
+                    constantsBytes.putChar(char)
+                }
+                constantsBytes.putShort(0.toShort())
+            }
+            is Value.Array -> TODO()
         }
 
     }

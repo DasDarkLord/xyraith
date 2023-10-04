@@ -19,3 +19,25 @@ val commandRegistry = (
                     "object" to it.value,
                 )
             }.toMap().toMutableMap()).toMutableMap()
+
+fun validateRegistry() {
+    val opcodes = mutableListOf<Int>()
+    val shortcodes = mutableListOf<Int>()
+    for(code in commandRegistry) {
+        val extension = code.value["opcodeExtension"] as? Int
+        val opcode = code.value["opcode"] as? Int
+        if(!shortcodes.contains(extension)) {
+            if(extension != null)
+                shortcodes.add(extension)
+        } else {
+            println("WARNING: Duplicate shortcode $extension")
+        }
+
+        if(!opcodes.contains(opcode)) {
+            if(opcode != null)
+                opcodes.add(opcode)
+        } else {
+            println("WARNING: Duplicate shortcode $opcode")
+        }
+    }
+}

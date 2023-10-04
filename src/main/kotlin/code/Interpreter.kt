@@ -3,6 +3,7 @@ package code
 import blockMap
 import constants
 import net.minestom.server.entity.Entity
+import net.minestom.server.event.Event
 import net.minestom.server.instance.Instance
 import java.nio.ByteBuffer
 
@@ -15,18 +16,17 @@ fun peek(buf: ByteBuffer): Byte {
     return out
 }
 
-fun runEvent(eventIdChk: Int, targets: MutableList<Entity> = mutableListOf(), instance: Instance? = null) {
+fun runEvent(eventIdChk: Int, targets: MutableList<Entity> = mutableListOf(), instance: Instance? = null, event: Event? = null) {
     for(pair in blockMap) {
         val block = pair.value.duplicate().position(0)
         val zero = block.get()
         val id = block.getInt()
         val eventId = block.get()
-        println("eventId: $eventId chk: ${eventIdChk.toInt()}")
         if(eventId.toInt() == eventIdChk) {
-            println("Ok! Calling block ${pair.key}")
             val interpreter = Interpreter(constants, blockMap)
             interpreter.environment.targets = targets
             interpreter.environment.instance = instance
+            interpreter.environment.event = event
             interpreter.runBlock(pair.key)
         }
     }
@@ -41,18 +41,15 @@ class Interpreter(val constants: Map<Int, parser.Value>, val blockMap: Map<Int, 
         val zero = block.get()
         val id = block.getInt()
         val eventId = block.get()
-        println("zero: $zero, id: $id, eventId: $eventId")
         var opcode = peek(block)
-        println("peeked: $opcode")
         while(opcode.toInt() != 0) {
             runInstruction(block)
             opcode = peek(block)
         }
     }
 
-    fun runInstruction(buf: ByteBuffer) {
+    private fun runInstruction(buf: ByteBuffer) {
         val opcode = buf.get()
-        println("comparing opcode: $opcode")
         if(opcode.toInt() == 1) {
             val id = buf.getInt()
             environment.stack.add(constants[id]!!)

@@ -2,6 +2,7 @@ package code
 
 import code.instructions.*
 import parser.ArgumentList
+import parser.ArgumentType
 
 val visitables: List<Visitable> = listOf(
     // Console.kt
@@ -9,16 +10,28 @@ val visitables: List<Visitable> = listOf(
 
     // Math.kt
     Add, Sub, Mul, Div, Mod,
+    Random, Range,
+    Perlin,
 
     // Datatypes.kt
     Loc, Item,
 
     // World.kt
     SetBlock,
+    SetChatFormat,
+    LoadAnvilWorld,
 
     // Player.kt
     SendMessage, SendActionBar, SendTitle,
-    SetHealth, GetHealth, SetHunger, GetHunger, SetSaturation, GetSaturation,
+    SetHealth, GetHealth, SetHunger, GetHunger, SetSaturation, GetSaturation, Heal, Damage,
+    Teleport,
+    SetGamemode,
+
+    // Variables.kt
+    FLocalStore, FLocalLoad,
+
+    // ControlFlow.kt
+    ForEach,
 )
 
 interface Visitable {
@@ -27,5 +40,6 @@ interface Visitable {
     val command: String
     val arguments: ArgumentList
     val description: String
+    val returnType: ArgumentType
     fun visit(visitor: Interpreter)
 }

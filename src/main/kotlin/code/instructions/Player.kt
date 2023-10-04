@@ -5,6 +5,7 @@ import code.Visitable
 import mm
 import net.kyori.adventure.title.Title
 import net.kyori.adventure.title.TitlePart
+import net.minestom.server.entity.GameMode
 import net.minestom.server.entity.Player
 import net.minestom.server.entity.damage.DamageType
 import parser.ArgumentList
@@ -21,6 +22,8 @@ object SendMessage : Visitable {
         get() = NodeBuilder()
             .addSingleArgument(ArgumentType.STRING, "Message to send")
             .build()
+    override val returnType: ArgumentType
+        get() = ArgumentType.NONE
     override val description: String
         get() = "Send the player a message in chat."
 
@@ -42,6 +45,8 @@ object SendActionBar : Visitable {
         get() = NodeBuilder()
             .addSingleArgument(ArgumentType.STRING, "Actionbar to send")
             .build()
+    override val returnType: ArgumentType
+        get() = ArgumentType.NONE
     override val description: String
         get() = "Send a player a message in the actionbar."
 
@@ -67,6 +72,8 @@ object SendTitle : Visitable {
             .addOptionalArgument(ArgumentType.NUMBER, Value.Number(500.0),"Fade in time")
             .addOptionalArgument(ArgumentType.NUMBER, Value.Number(500.0),"Fade out time")
             .build()
+    override val returnType: ArgumentType
+        get() = ArgumentType.NONE
     override val description: String
         get() = "Send a player a message through a title."
 
@@ -109,6 +116,8 @@ object SetHealth : Visitable {
         get() = NodeBuilder()
             .addSingleArgument(ArgumentType.NUMBER, "Health to set (2 HP = 1 heart)")
             .build()
+    override val returnType: ArgumentType
+        get() = ArgumentType.NONE
     override val description: String
         get() = "Set a player's health."
 
@@ -129,6 +138,8 @@ object GetHealth : Visitable {
     override val arguments: ArgumentList
         get() = NodeBuilder()
             .build()
+    override val returnType: ArgumentType
+        get() = ArgumentType.NUMBER
     override val description: String
         get() = "Get a player's health."
 
@@ -149,6 +160,8 @@ object SetHunger : Visitable {
         get() = NodeBuilder()
             .addSingleArgument(ArgumentType.NUMBER, "Points to set hunger to")
             .build()
+    override val returnType: ArgumentType
+        get() = ArgumentType.NONE
     override val description: String
         get() = "Set a player's hunger points."
 
@@ -169,6 +182,8 @@ object GetHunger : Visitable {
     override val arguments: ArgumentList
         get() = NodeBuilder()
             .build()
+    override val returnType: ArgumentType
+        get() = ArgumentType.NUMBER
     override val description: String
         get() = "Get a player's hunger points."
 
@@ -189,6 +204,8 @@ object SetSaturation : Visitable {
         get() = NodeBuilder()
             .addSingleArgument(ArgumentType.NUMBER, "Points to set saturation to")
             .build()
+    override val returnType: ArgumentType
+        get() = ArgumentType.NONE
     override val description: String
         get() = "Set a player's saturation points."
 
@@ -203,12 +220,14 @@ object SetSaturation : Visitable {
 }
 
 object GetSaturation : Visitable {
-    override val code: Int get() = 1105
+    override val code: Int get() = 1106
     override val isExtension: Boolean get() = true
     override val command: String get() = "player.getSaturation"
     override val arguments: ArgumentList
         get() = NodeBuilder()
             .build()
+    override val returnType: ArgumentType
+        get() = ArgumentType.NUMBER
     override val description: String
         get() = "Get a player's saturation points."
 
@@ -222,14 +241,16 @@ object GetSaturation : Visitable {
 }
 
 object Damage : Visitable {
-    override val code: Int get() = 1106
+    override val code: Int get() = 1107
     override val isExtension: Boolean get() = true
     override val command: String get() = "player.damage"
     override val arguments: ArgumentList
         get() = NodeBuilder()
             .build()
+    override val returnType: ArgumentType
+        get() = ArgumentType.NONE
     override val description: String
-        get() = "Get a player's saturation points."
+        get() = "Deal damage to a player."
 
     override fun visit(visitor: Interpreter) {
         for(target in visitor.environment.targets) {
@@ -241,19 +262,90 @@ object Damage : Visitable {
 }
 
 object Heal : Visitable {
-    override val code: Int get() = 1107
+    override val code: Int get() = 1108
     override val isExtension: Boolean get() = true
     override val command: String get() = "player.heal"
     override val arguments: ArgumentList
         get() = NodeBuilder()
             .build()
+    override val returnType: ArgumentType
+        get() = ArgumentType.NONE
     override val description: String
-        get() = "Get a player's saturation points."
+        get() = "Heal a player's health."
 
     override fun visit(visitor: Interpreter) {
         for(target in visitor.environment.targets) {
             if(target as? Player != null) {
                 target.health += visitor.environment.stack.removeLast().castToNumber().toFloat()
+            }
+        }
+    }
+}
+
+object Teleport : Visitable {
+    override val code: Int get() = 1200
+    override val isExtension: Boolean get() = true
+    override val command: String get() = "player.teleport"
+    override val arguments: ArgumentList
+        get() = NodeBuilder()
+            .addSingleArgument(ArgumentType.LOCATION, "Location to teleport")
+            .build()
+    override val returnType: ArgumentType
+        get() = ArgumentType.NONE
+    override val description: String
+        get() = "Teleport a player to a location."
+
+    override fun visit(visitor: Interpreter) {
+        val loc = visitor.environment.stack.removeLast().castToPos()
+        for(entity in visitor.environment.targets) {
+            if(entity is Player) {
+                entity.teleport(loc)
+            }
+        }
+    }
+}
+
+object SetGamemode : Visitable {
+    override val code: Int get() = 1300
+    override val isExtension: Boolean get() = true
+    override val command: String get() = "player.gamemode"
+    override val arguments: ArgumentList
+        get() = NodeBuilder()
+            .addSingleArgument(ArgumentType.STRING, "Game mode to change to.")
+            .build()
+    override val returnType: ArgumentType
+        get() = ArgumentType.NONE
+    override val description: String
+        get() = "Change a player's game mode."
+
+    override fun visit(visitor: Interpreter) {
+        val mode = visitor.environment.stack.removeLast().castToString()
+        if(mode == "gmc" || mode == "c" || mode == "creative") {
+            for(target in visitor.environment.targets) {
+                if(target is Player) {
+                    target.gameMode = GameMode.CREATIVE
+                }
+            }
+        }
+        if(mode == "gms" || mode == "s" || mode == "survival") {
+            for(target in visitor.environment.targets) {
+                if(target is Player) {
+                    target.gameMode = GameMode.SURVIVAL
+                }
+            }
+        }
+        if(mode == "gma" || mode == "a" || mode == "adventure") {
+            for(target in visitor.environment.targets) {
+                if(target is Player) {
+                    target.gameMode = GameMode.ADVENTURE
+                }
+            }
+        }
+        if(mode == "gmsp" || mode == "sp" || mode == "spectator") {
+            for(target in visitor.environment.targets) {
+                if(target is Player) {
+                    target.gameMode = GameMode.SPECTATOR
+                }
             }
         }
     }

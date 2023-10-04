@@ -6,4 +6,7 @@ val events = mapOf(
     "command" to 4,
     "tick" to 5,
     "function" to 6,
+    "leftClick" to 7,
+    "rightClick" to 8,
+    "sneak" to 9,
 )

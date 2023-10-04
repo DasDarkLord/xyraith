@@ -28,7 +28,6 @@ class Diagnostic(val errorCode: Int, val problem: String, val span: SpanData) {
             }
         }
         val (spanStart, spanEnd, file) = span
-        println("lineStart: $lineStart | a: ${span.spanStart-lineStart} | b: ${span.spanEnd-span.spanStart}")
         return """
 [E$errorCode] $problem
 ${" ".repeat(lineCount.toString().length+1)}| In file `$file.xyr`

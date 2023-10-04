@@ -5,19 +5,36 @@ interface ArgumentNode
 enum class ArgumentType {
     NUMBER,
     STRING,
-    COMMAND;
+    COMMAND,
+    LOCATION,
+    SYMBOL,
+    ANY,
+    BLOCK,
+    LIST,
+    SELECTOR,
+    NONE,
+    ITEM,
+    ;
 
     override fun toString(): String {
         return when(this) {
             NUMBER -> "Number"
             STRING -> "String"
             COMMAND -> "Command"
+            LOCATION -> "Location"
+            SYMBOL -> "Symbol"
+            ANY -> "Any Value"
+            BLOCK -> "Block"
+            LIST -> "List"
+            SELECTOR -> "Selector"
+            NONE -> "Null"
+            ITEM -> "Item Stack"
         }
     }
 }
 
 class NodeBuilder {
-    val nodes: MutableList<ArgumentNode> = mutableListOf()
+    private val nodes: MutableList<ArgumentNode> = mutableListOf()
 
     fun addSingleArgument(type: ArgumentType, description: String): NodeBuilder {
         this.nodes.add(SingleArgumentNode(type, description))
@@ -33,8 +50,6 @@ class NodeBuilder {
         this.nodes.add(PluralArgumentNode(type, description))
         return this
     }
-
-
 
     fun build(): ArgumentList = ArgumentList(this.nodes)
 }

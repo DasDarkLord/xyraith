@@ -5,27 +5,31 @@ import code.server.startServer
 import code.visitables
 import docs.dumpCommands
 import docs.generateDocumentation
-import docs.wrapDocumentation
 import lexer.Lexer
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
+import net.minestom.server.entity.Player
 import parser.Parser
 import parser.ParserError
 import registry.commandRegistry
+import registry.validateRegistry
 import java.awt.Desktop
 import java.io.File
 import java.net.URI
 import java.nio.ByteBuffer
 import java.time.LocalDate
 
-val debug = 5
+val debug = 1
 var constants: Map<Int, parser.Value> = mapOf()
 var blockMap: MutableMap<Int, ByteBuffer> = mutableMapOf()
 
 val miniMessage = MiniMessage.miniMessage()
 fun mm(str: String): Component = miniMessage.deserialize(str)
 
+var playerList = mutableListOf<Player>()
+
 fun main(args: Array<String>) {
+    validateRegistry()
     when(args.getOrNull(0)) {
         "run" -> {
             println("Running server.. you may see some debug output.")
@@ -67,10 +71,9 @@ dumpcommandinfo - Dump a JSON of command info to the file at `docs/commanddump.j
 
 fun generateDocs() {
     val docgen = generateDocumentation()
-    val file = File("docs/commandDocs.html")
+    val file = File("./docs/commandDocs.md")
     file.createNewFile()
-    file.writeText(wrapDocumentation(docgen))
-    Desktop.getDesktop().browse(URI("docs/commandDocs.html"))
+    file.writeText(docgen)
 }
 
 fun generateCommandDump() {
@@ -84,26 +87,17 @@ fun runServer() {
     val text = File("src/main/xyraith/main.xr").readText()
     val lexer = Lexer(text, "src/main/xyraith/main.xr")
     val tokens = lexer.transform()
-    Logger.trace("[")
-    tokens.forEach {
-        Logger.trace("\t$it,")
-    }
-    Logger.trace("]")
     val parser = Parser(tokens)
-    println("registry: $commandRegistry")
     try {
         val time1 = LocalDate.now()
         val ast = parser.parseAll()
-        Logger.trace(ast)
         val emitter = Emitter(ast)
         emitter.emit()
         Logger.trace(emitter)
         constants = emitter.constants.map { pair -> pair.value to pair.key }.toMap()
         blockMap = emitter.blockMap
-
         startServer()
     } catch(e: ParserError) {
-        e.printStackTrace()
         println(e.emit())
     }
 }
