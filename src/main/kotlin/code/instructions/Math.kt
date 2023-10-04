@@ -198,3 +198,87 @@ object Perlin : Visitable {
         visitor.environment.stack.add(Value.Number(0.0))
     }
 }
+
+object GreaterThan : Visitable {
+    override val code: Int get() = 40
+    override val isExtension: Boolean get() = false
+    override val command: String get() = "ge"
+    override val arguments: ArgumentList
+        get() = NodeBuilder()
+            .addSingleArgument(ArgumentType.NUMBER, "Left hand side")
+            .addSingleArgument(ArgumentType.NUMBER, "Right hand side")
+            .build()
+    override val returnType: ArgumentType
+        get() = ArgumentType.BOOL
+    override val description: String
+        get() = "Check if a number is greater than another"
+
+    override fun visit(visitor: Interpreter) {
+        val rhs = visitor.environment.stack.removeLast().castToNumber()
+        val lhs = visitor.environment.stack.removeLast().castToNumber()
+        visitor.environment.stack.add(Value.Bool(lhs > rhs))
+    }
+}
+
+object GreaterThanOrEqual : Visitable {
+    override val code: Int get() = 41
+    override val isExtension: Boolean get() = false
+    override val command: String get() = "geq"
+    override val arguments: ArgumentList
+        get() = NodeBuilder()
+            .addSingleArgument(ArgumentType.NUMBER, "Left hand side")
+            .addSingleArgument(ArgumentType.NUMBER, "Right hand side")
+            .build()
+    override val returnType: ArgumentType
+        get() = ArgumentType.BOOL
+    override val description: String
+        get() = "Check if a number is greater than or equal to another"
+
+    override fun visit(visitor: Interpreter) {
+        val rhs = visitor.environment.stack.removeLast().castToNumber()
+        val lhs = visitor.environment.stack.removeLast().castToNumber()
+        visitor.environment.stack.add(Value.Bool(lhs >= rhs))
+    }
+}
+
+object LessThan : Visitable {
+    override val code: Int get() = 42
+    override val isExtension: Boolean get() = false
+    override val command: String get() = "le"
+    override val arguments: ArgumentList
+        get() = NodeBuilder()
+            .addSingleArgument(ArgumentType.NUMBER, "Left hand side")
+            .addSingleArgument(ArgumentType.NUMBER, "Right hand side")
+            .build()
+    override val returnType: ArgumentType
+        get() = ArgumentType.BOOL
+    override val description: String
+        get() = "Check if a number is less than another"
+
+    override fun visit(visitor: Interpreter) {
+        val rhs = visitor.environment.stack.removeLast().castToNumber()
+        val lhs = visitor.environment.stack.removeLast().castToNumber()
+        visitor.environment.stack.add(Value.Bool(lhs < rhs))
+    }
+}
+
+object LessThanOrEqual : Visitable {
+    override val code: Int get() = 43
+    override val isExtension: Boolean get() = false
+    override val command: String get() = "leq"
+    override val arguments: ArgumentList
+        get() = NodeBuilder()
+            .addSingleArgument(ArgumentType.NUMBER, "Left hand side")
+            .addSingleArgument(ArgumentType.NUMBER, "Right hand side")
+            .build()
+    override val returnType: ArgumentType
+        get() = ArgumentType.BOOL
+    override val description: String
+        get() = "Check if a number is less than or equal to another"
+
+    override fun visit(visitor: Interpreter) {
+        val rhs = visitor.environment.stack.removeLast().castToNumber()
+        val lhs = visitor.environment.stack.removeLast().castToNumber()
+        visitor.environment.stack.add(Value.Bool(lhs <= rhs))
+    }
+}

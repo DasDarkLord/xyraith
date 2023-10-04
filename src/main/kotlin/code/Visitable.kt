@@ -12,9 +12,10 @@ val visitables: List<Visitable> = listOf(
     Add, Sub, Mul, Div, Mod,
     Random, Range,
     Perlin,
+    GreaterThan, LessThan, GreaterThanOrEqual, LessThanOrEqual,
 
     // Datatypes.kt
-    Loc, Item,
+    Loc, Item, True, False,
 
     // World.kt
     SetBlock,
@@ -31,7 +32,7 @@ val visitables: List<Visitable> = listOf(
     FLocalStore, FLocalLoad,
 
     // ControlFlow.kt
-    ForEach,
+    ForEach, If,
 )
 
 interface Visitable {

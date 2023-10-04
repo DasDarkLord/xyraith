@@ -14,6 +14,7 @@ enum class ArgumentType {
     SELECTOR,
     NONE,
     ITEM,
+    BOOL,
     ;
 
     override fun toString(): String {
@@ -29,6 +30,7 @@ enum class ArgumentType {
             SELECTOR -> "Selector"
             NONE -> "Null"
             ITEM -> "Item Stack"
+            BOOL -> "Boolean"
         }
     }
 }

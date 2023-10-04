@@ -58,6 +58,12 @@ sealed class Value {
         }
     }
 
+    data class Bool(val value: kotlin.Boolean) : Value() {
+        override fun toString(): kotlin.String {
+            return """{"type":"bool","value":$value}"""
+        }
+    }
+
     data class Position(
         val x: Double,
         val y: Double,
@@ -74,20 +80,33 @@ sealed class Value {
         return when(this) {
             is Number -> "$value"
             is Position -> "<$x, $y, $z, $pitch, $yaw>"
-            is BasicBlockRef -> "bb{0}"
+            is BasicBlockRef -> "bb{${this.value}}"
             is Null -> "NUL"
-            is Block -> "UNAVAILABLE_DURING_RUNTIME"
-            is Command -> "UNAVAILABLE_DURING_RUNTIME"
+            is Block -> "UNAVAILABLE_DURING_RUNTIME_BLOCK"
+            is Command -> "UNAVAILABLE_DURING_RUNTIME_COMMAND"
             is Selector -> value
             is String -> value
             is Symbol -> value
             is Array -> value.toString()
+            is Bool -> value.toString()
         }
     }
 
-    fun castToNumber(): Double = if(this is Number) value else 0.0
-    fun castToString(): kotlin.String = if(this is String) value else toDisplay()
-    fun castToPos(): Pos = if(this is Position) Pos(this.x, this.y, this.z, this.pitch.toFloat(), this.yaw.toFloat()) else Pos(0.0, 0.0, 0.0, 0.0f, 0.0f)
+    fun castToNumber(): Double =
+        if(this is Number)
+            value
+        else
+            0.0
+    fun castToString(): kotlin.String =
+        if(this is String)
+            value
+        else
+            toDisplay()
+    fun castToPos(): Pos =
+        if(this is Position)
+            Pos(this.x, this.y, this.z, this.pitch.toFloat(), this.yaw.toFloat())
+        else
+            Pos(0.0, 0.0, 0.0, 0.0f, 0.0f)
 
     fun castToArgumentType(): ArgumentType {
         return when(this) {
@@ -101,6 +120,7 @@ sealed class Value {
             is String -> ArgumentType.STRING
             is Symbol -> ArgumentType.SYMBOL
             is Array -> ArgumentType.LIST
+            is Bool -> ArgumentType.BOOL
         }
     }
 

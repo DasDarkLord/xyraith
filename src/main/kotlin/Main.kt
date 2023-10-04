@@ -1,8 +1,5 @@
-import code.Emitter
-import code.Interpreter
-import code.Visitable
+import code.*
 import code.server.startServer
-import code.visitables
 import docs.dumpCommands
 import docs.generateDocumentation
 import lexer.Lexer
@@ -19,7 +16,7 @@ import java.net.URI
 import java.nio.ByteBuffer
 import java.time.LocalDate
 
-val debug = 1
+val debug = 5
 var constants: Map<Int, parser.Value> = mapOf()
 var blockMap: MutableMap<Int, ByteBuffer> = mutableMapOf()
 
@@ -91,11 +88,14 @@ fun runServer() {
     try {
         val time1 = LocalDate.now()
         val ast = parser.parseAll()
+        Logger.trace(ast)
         val emitter = Emitter(ast)
         emitter.emit()
         Logger.trace(emitter)
+
         constants = emitter.constants.map { pair -> pair.value to pair.key }.toMap()
         blockMap = emitter.blockMap
+        Disassembler.dissasemble(emitter)
         startServer()
     } catch(e: ParserError) {
         println(e.emit())

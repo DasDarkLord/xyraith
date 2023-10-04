@@ -55,7 +55,7 @@ Emitter {
         emitBlock(event.code)
     }
 
-    private fun emitBlock(block: Ast.Block) {
+    private fun emitBlock(block: Ast.Block): Int {
         val eventName = block.eventName
         val eventId = events[eventName]!!
         val blockId = blockIdRecord++
@@ -66,6 +66,7 @@ Emitter {
         for(command in block.nodes) {
             emitCommand(command, blockId)
         }
+        return blockId
     }
 
     private fun emitCommand(command: Ast.Command, blockId: Int) {
@@ -94,7 +95,8 @@ Emitter {
             return
         }
         val id = constantIdRecord++
-        if(value !is Value.Command) {
+        println("Preparing to emit constant $id with $value")
+        if(value !is Value.Command && value !is Value.Block) {
             blockMap[blockId]?.put(1)
             blockMap[blockId]?.putInt(id)
             constants[value] = id
@@ -102,11 +104,16 @@ Emitter {
         when(value) {
             is Value.BasicBlockRef -> TODO("this isnt compilable")
             is Value.Block -> {
-                emitBlock(value.value)
-                constantsBytes.putInt(constantIdRecord)
+                val newId = emitBlock(value.value)
+                println("Emitting block: ${value.value} to $newId with constant $id")
+                constants[Value.BasicBlockRef(newId)] = id
+                println("constant ${constants[Value.BasicBlockRef(newId)]} == $id")
+                constantsBytes.putInt(id)
                 constantsBytes.put(4)
-                constantsBytes.putInt(blockIdRecord-1)
-                constants[Value.BasicBlockRef(blockIdRecord-1)] = id
+                constantsBytes.putInt(newId)
+
+                blockMap[blockId]?.put(1)
+                blockMap[blockId]?.putInt(id)
             }
             is Value.Command -> {
                 emitCommand(value.value, blockId)
@@ -136,6 +143,7 @@ Emitter {
                 constantsBytes.putShort(0.toShort())
             }
             is Value.Array -> TODO()
+            is Value.Bool -> TODO()
         }
 
     }

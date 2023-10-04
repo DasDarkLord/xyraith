@@ -71,3 +71,39 @@ object Item : Visitable {
         visitor.environment.stack.add(Value.Position(x, y, z, pitch, yaw))
     }
 }
+
+object True : Visitable {
+    override val code: Int get() = 12
+    override val isExtension: Boolean get() = false
+    override val command: String get() = "true"
+    override val returnType: ArgumentType
+        get() = ArgumentType.BOOL
+    override val arguments: ArgumentList
+        get() = NodeBuilder()
+            .build()
+
+    override val description: String
+        get() = "Return a true boolean."
+
+    override fun visit(visitor: Interpreter) {
+        visitor.environment.stack.add(Value.Bool(true))
+    }
+}
+
+object False : Visitable {
+    override val code: Int get() = 13
+    override val isExtension: Boolean get() = false
+    override val command: String get() = "false"
+    override val returnType: ArgumentType
+        get() = ArgumentType.BOOL
+    override val arguments: ArgumentList
+        get() = NodeBuilder()
+            .build()
+
+    override val description: String
+        get() = "Return a false boolean."
+
+    override fun visit(visitor: Interpreter) {
+        visitor.environment.stack.add(Value.Bool(false))
+    }
+}
