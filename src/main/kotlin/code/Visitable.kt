@@ -15,7 +15,7 @@ val visitables: List<Visitable> = listOf(
     GreaterThan, LessThan, GreaterThanOrEqual, LessThanOrEqual,
 
     // Datatypes.kt
-    Loc, Item, True, False,
+    Loc, Item, True, False, StringCmd,
 
     // World.kt
     SetBlock,

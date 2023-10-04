@@ -3,9 +3,12 @@ event join {
     player.gamemode creative
     player.sendMessage "<gray>Welcome to the <white>server<gray>!"
     foreach :index (range 1 10) {
-        player.sendMessage (load :index)
+        player.sendMessage (string "<gray>Comparing <yellow>" (load :index) "<gray> against 5.")
         if (le (load :index) 5) {
             player.sendMessage "<red>It's lower than 5. This is so sad."
+        }
+        if (geq (load :index) 5) {
+            player.sendMessage "<green>It's greater than or equal to 5! This is so exciting and newsworthy!"
         }
     }
 }

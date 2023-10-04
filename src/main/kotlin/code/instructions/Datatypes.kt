@@ -107,3 +107,28 @@ object False : Visitable {
         visitor.environment.stack.add(Value.Bool(false))
     }
 }
+
+object StringCmd : Visitable {
+    override val code: Int get() = 14
+    override val isExtension: Boolean get() = false
+    override val command: String get() = "string"
+    override val returnType: ArgumentType
+        get() = ArgumentType.STRING
+    override val arguments: ArgumentList
+        get() = NodeBuilder()
+            .addPluralArgument(ArgumentType.ANY, "Values to concatenate")
+            .build()
+
+    override val description: String
+        get() = "Return a string with all values concatenated."
+
+    override fun visit(visitor: Interpreter) {
+        val size = visitor.environment.argumentCount
+        var output = ""
+        for(x in 1..size) {
+            val addon = visitor.environment.stack.removeLast()
+            output = addon.toDisplay() + output
+        }
+        visitor.environment.stack.add(Value.String(output))
+    }
+}
