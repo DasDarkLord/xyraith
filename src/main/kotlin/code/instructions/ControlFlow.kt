@@ -98,7 +98,7 @@ object Call : Visitable {
 object GetParam : Visitable {
     override val code: Int get() = 23
     override val isExtension: Boolean get() = false
-    override val command: String get() = "getFParam"
+    override val command: String get() = "parameter"
     override val arguments: ArgumentList
         get() = NodeBuilder()
             .addSingleArgument(ArgumentType.NUMBER, "Index of parameter to get")
