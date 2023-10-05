@@ -2,11 +2,12 @@ package code
 
 import events
 import parser.Ast
+import parser.EventType
 import parser.Value
 import registry.commandRegistry
 import java.nio.ByteBuffer
 
-const val BUFFER_SIZE = 10000
+const val BUFFER_SIZE = 1000
 
 fun prettyPrint(buf: ByteBuffer): String {
     var output = "["
@@ -47,24 +48,29 @@ Emitter {
 
     fun emit() {
         for(event in ast) {
-            emitEvent(event)
+            emitBlock(event.code, event.eventType, event.name)
         }
     }
 
-    private fun emitEvent(event: Ast.Event) {
-        emitBlock(event.code)
-    }
-
-    private fun emitBlock(block: Ast.Block): Int {
-        val eventName = block.eventName
-        val eventId = events[eventName]!!
+    private fun emitBlock(block: Ast.Block, eventType: EventType, eventName: String): Int {
         val blockId = blockIdRecord++
         blockMap[blockId] = ByteBuffer.allocate(BUFFER_SIZE)
         blockMap[blockId]?.put(0)
         blockMap[blockId]?.putInt(blockId)
-        blockMap[blockId]?.put(eventId.toByte())
-        for(command in block.nodes) {
-            emitCommand(command, blockId)
+        if(eventType == EventType.FUNCTION) {
+            blockMap[blockId]?.put(6)
+            emitValue(Value.Symbol(eventName), blockId)
+            for(command in block.nodes) {
+                emitCommand(command, blockId)
+            }
+            return blockId
+        } else {
+            val eventId = events[block.eventName]!!
+            println("emitting eventid $eventId")
+            blockMap[blockId]?.put(eventId.toByte())
+            for(command in block.nodes) {
+                emitCommand(command, blockId)
+            }
         }
         return blockId
     }
@@ -104,7 +110,7 @@ Emitter {
         when(value) {
             is Value.BasicBlockRef -> TODO("this isnt compilable")
             is Value.Block -> {
-                val newId = emitBlock(value.value)
+                val newId = emitBlock(value.value, EventType.EVENT, "callable")
                 println("Emitting block: ${value.value} to $newId with constant $id")
                 constants[Value.BasicBlockRef(newId)] = id
                 println("constant ${constants[Value.BasicBlockRef(newId)]} == $id")

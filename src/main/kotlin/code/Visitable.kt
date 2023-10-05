@@ -32,7 +32,7 @@ val visitables: List<Visitable> = listOf(
     FLocalStore, FLocalLoad,
 
     // ControlFlow.kt
-    ForEach, If,
+    ForEach, If, Call, GetParam,
 )
 
 interface Visitable {

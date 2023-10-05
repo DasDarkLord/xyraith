@@ -87,13 +87,19 @@ class Parser(private val input: MutableList<Token>) {
                 if(nameToken !is Token.Identifier) throw Unreachable()
                 if(!events.containsKey(nameToken.value)) throw InvalidEvent(nameToken.value, nameToken.span)
 
-                val block = parseBlock(nameToken.value)
+                val block = parseBlock(nameToken.value, false)
 
                 if(eventParenthesis) standardMatch(next(), TokenType.RightParen)
-                return Ast.Event(nameToken.value, block, "event")
+                return Ast.Event(nameToken.value, block, EventType.EVENT)
             }
-            "function" -> {
-                TODO()
+            "function", "entity", "structure" -> {
+                standardMatch(nameToken, TokenType.Symbol)
+                if(nameToken !is Token.Symbol) throw Unreachable()
+
+                val block = parseBlock(nameToken.value, true)
+
+                if(eventParenthesis) standardMatch(next(), TokenType.RightParen)
+                return Ast.Event(nameToken.value, block, EventType.FUNCTION)
             }
             else -> {
                 println("WARNING: unknown value ${eventToken.value}")
@@ -105,7 +111,7 @@ class Parser(private val input: MutableList<Token>) {
 
     }
 
-    private fun parseBlock(eventName: String): Ast.Block {
+    private fun parseBlock(eventName: String, isFunction: Boolean): Ast.Block {
         val openParen = next()
         standardMatch(openParen, TokenType.LeftParen)
         val commands = mutableListOf<Ast.Command>()
@@ -116,6 +122,9 @@ class Parser(private val input: MutableList<Token>) {
         }
         val closeParen = next()
         standardMatch(closeParen, TokenType.RightParen)
+        if(isFunction) {
+            return Ast.Block(commands, "function")
+        }
         return Ast.Block(commands, eventName)
     }
 
@@ -153,7 +162,7 @@ class Parser(private val input: MutableList<Token>) {
                 val next2 = peek(false)
                 return if(next2 is Token.LeftParen || next2 is Token.NewLine) {
                     pointer--
-                    Value.Block(parseBlock("callable"))
+                    Value.Block(parseBlock("callable", false))
                 } else if(next2 is Token.Identifier) {
                     pointer--
                     Value.Command(parseCommand())

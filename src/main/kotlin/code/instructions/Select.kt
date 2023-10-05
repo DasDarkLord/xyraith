@@ -2,12 +2,9 @@ package code.instructions
 
 import code.Interpreter
 import code.Visitable
-import net.minestom.server.entity.Player
 import parser.ArgumentList
 import parser.ArgumentType
 import parser.NodeBuilder
-import java.lang.IllegalArgumentException
-import java.util.*
 
 // TODO: finish command and make it stable by supporting usernames
 object Select : Visitable {
@@ -24,7 +21,7 @@ object Select : Visitable {
         get() = "Set a block at a location."
 
     override fun visit(visitor: Interpreter) {
-        val selector = visitor.environment.stack.removeLast().castToString()
+        val selector = visitor.environment.stack.popValue().castToString()
 
     }
 }

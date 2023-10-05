@@ -20,6 +20,6 @@ object Log : Visitable {
         get() = "Log a message to the console."
 
     override fun visit(visitor: Interpreter) {
-        println(visitor.environment.stack.removeLast().toDisplay())
+        println(visitor.environment.stack.popValue().toDisplay())
     }
 }

@@ -1,15 +1,16 @@
 package code
 
+import code.stackframe.ListFrames
+import code.stackframe.MapFrames
 import net.minestom.server.entity.Entity
 import net.minestom.server.event.Event
 import net.minestom.server.instance.Instance
 import parser.Value
 
 data class Environment(
-    val localVariables: MutableMap<String, Value> = mutableMapOf(),
-    var functionLocalVariables: MutableMap<String, Value> = mutableMapOf(),
-    var functionLocalVariablesStack: MutableList<Map<String, Value>> = mutableListOf(),
-    val stack: MutableList<Value> = mutableListOf(),
+    val localVariables: MapFrames<String, Value> = MapFrames(),
+    val stack: ListFrames<Value> = ListFrames(),
+    val functionParameters: ListFrames<Value> = ListFrames(),
     var targets: MutableList<Entity> = mutableListOf(),
     var instance: Instance? = null,
     var event: Event? = null,

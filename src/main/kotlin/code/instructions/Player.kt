@@ -28,7 +28,7 @@ object SendMessage : Visitable {
         get() = "Send the player a message in chat."
 
     override fun visit(visitor: Interpreter) {
-        val display = visitor.environment.stack.removeLast().toDisplay()
+        val display = visitor.environment.stack.popValue().toDisplay()
         for(target in visitor.environment.targets) {
             if(target as? Player != null) {
                 target.sendMessage(mm(display))
@@ -51,7 +51,7 @@ object SendActionBar : Visitable {
         get() = "Send a player a message in the actionbar."
 
     override fun visit(visitor: Interpreter) {
-        val display = visitor.environment.stack.removeLast().toDisplay()
+        val display = visitor.environment.stack.popValue().toDisplay()
         for(target in visitor.environment.targets) {
             if(target as? Player != null) {
                 target.sendActionBar(mm(display))
@@ -85,15 +85,15 @@ object SendTitle : Visitable {
         if(visitor.environment.argumentCount >= 3.toByte()) {
             if(visitor.environment.argumentCount >= 4.toByte()) {
                 if(visitor.environment.argumentCount >= 5.toByte()) {
-                    fadeOut = visitor.environment.stack.removeLast().castToNumber()
+                    fadeOut = visitor.environment.stack.popValue().castToNumber()
                 }
-                fadeIn = visitor.environment.stack.removeLast().castToNumber()
+                fadeIn = visitor.environment.stack.popValue().castToNumber()
             }
-            duration = visitor.environment.stack.removeLast().castToNumber()
+            duration = visitor.environment.stack.popValue().castToNumber()
         }
 
-        val subtitle = visitor.environment.stack.removeLast().toDisplay()
-        val title = visitor.environment.stack.removeLast().toDisplay()
+        val subtitle = visitor.environment.stack.popValue().toDisplay()
+        val title = visitor.environment.stack.popValue().toDisplay()
 
         for(target in visitor.environment.targets) {
             if(target as? Player != null) {
@@ -122,7 +122,7 @@ object SetHealth : Visitable {
         get() = "Set a player's health."
 
     override fun visit(visitor: Interpreter) {
-        val health = visitor.environment.stack.removeLast().castToNumber()
+        val health = visitor.environment.stack.popValue().castToNumber()
         for(target in visitor.environment.targets) {
             if(target as? Player != null) {
                 target.health = health.toFloat()
@@ -146,7 +146,7 @@ object GetHealth : Visitable {
     override fun visit(visitor: Interpreter) {
         for(target in visitor.environment.targets) {
             if(target as? Player != null) {
-                visitor.environment.stack.add(Value.Number(target.health.toDouble()))
+                visitor.environment.stack.pushValue(Value.Number(target.health.toDouble()))
             }
         }
     }
@@ -166,7 +166,7 @@ object SetHunger : Visitable {
         get() = "Set a player's hunger points."
 
     override fun visit(visitor: Interpreter) {
-        val food = visitor.environment.stack.removeLast().castToNumber()
+        val food = visitor.environment.stack.popValue().castToNumber()
         for(target in visitor.environment.targets) {
             if(target as? Player != null) {
                 target.food = food.toInt()
@@ -190,7 +190,7 @@ object GetHunger : Visitable {
     override fun visit(visitor: Interpreter) {
         for(target in visitor.environment.targets) {
             if(target as? Player != null) {
-                visitor.environment.stack.add(Value.Number(target.food.toDouble()))
+                visitor.environment.stack.pushValue(Value.Number(target.food.toDouble()))
             }
         }
     }
@@ -210,7 +210,7 @@ object SetSaturation : Visitable {
         get() = "Set a player's saturation points."
 
     override fun visit(visitor: Interpreter) {
-        val food = visitor.environment.stack.removeLast().castToNumber()
+        val food = visitor.environment.stack.popValue().castToNumber()
         for(target in visitor.environment.targets) {
             if(target as? Player != null) {
                 target.foodSaturation = food.toFloat()
@@ -234,7 +234,7 @@ object GetSaturation : Visitable {
     override fun visit(visitor: Interpreter) {
         for(target in visitor.environment.targets) {
             if(target as? Player != null) {
-                visitor.environment.stack.add(Value.Number(target.foodSaturation.toDouble()))
+                visitor.environment.stack.pushValue(Value.Number(target.foodSaturation.toDouble()))
             }
         }
     }
@@ -255,7 +255,7 @@ object Damage : Visitable {
     override fun visit(visitor: Interpreter) {
         for(target in visitor.environment.targets) {
             if(target as? Player != null) {
-                target.damage(DamageType.VOID, visitor.environment.stack.removeLast().castToNumber().toFloat())
+                target.damage(DamageType.VOID, visitor.environment.stack.popValue().castToNumber().toFloat())
             }
         }
     }
@@ -276,7 +276,7 @@ object Heal : Visitable {
     override fun visit(visitor: Interpreter) {
         for(target in visitor.environment.targets) {
             if(target as? Player != null) {
-                target.health += visitor.environment.stack.removeLast().castToNumber().toFloat()
+                target.health += visitor.environment.stack.popValue().castToNumber().toFloat()
             }
         }
     }
@@ -296,7 +296,7 @@ object Teleport : Visitable {
         get() = "Teleport a player to a location."
 
     override fun visit(visitor: Interpreter) {
-        val loc = visitor.environment.stack.removeLast().castToPos()
+        val loc = visitor.environment.stack.popValue().castToPos()
         for(entity in visitor.environment.targets) {
             if(entity is Player) {
                 entity.teleport(loc)
@@ -319,7 +319,7 @@ object SetGamemode : Visitable {
         get() = "Change a player's game mode."
 
     override fun visit(visitor: Interpreter) {
-        val mode = visitor.environment.stack.removeLast().castToString()
+        val mode = visitor.environment.stack.popValue().castToString()
         if(mode == "gmc" || mode == "c" || mode == "creative") {
             for(target in visitor.environment.targets) {
                 if(target is Player) {

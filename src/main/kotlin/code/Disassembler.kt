@@ -18,6 +18,10 @@ object Disassembler {
                 val empty = iter.get()
                 val blockId = iter.getInt()
                 val event = iter.get()
+                if(event.toInt() == 6) {
+                    iter.get()
+                    iter.getInt()
+                }
                 while(true) {
                     val opcode = iter.get()
                     if(opcode.toInt() == 1) {

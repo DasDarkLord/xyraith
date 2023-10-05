@@ -29,15 +29,15 @@ object Loc : Visitable {
         var pitch = 0.0
         var yaw = 0.0
         if(visitor.environment.argumentCount >= 5) {
-            yaw = visitor.environment.stack.removeLast().castToNumber()
+            yaw = visitor.environment.stack.popValue().castToNumber()
         }
         if(visitor.environment.argumentCount >= 4) {
-            pitch = visitor.environment.stack.removeLast().castToNumber()
+            pitch = visitor.environment.stack.popValue().castToNumber()
         }
-        val z = visitor.environment.stack.removeLast().castToNumber()
-        val y = visitor.environment.stack.removeLast().castToNumber()
-        val x = visitor.environment.stack.removeLast().castToNumber()
-        visitor.environment.stack.add(Value.Position(x, y, z, pitch, yaw))
+        val z = visitor.environment.stack.popValue().castToNumber()
+        val y = visitor.environment.stack.popValue().castToNumber()
+        val x = visitor.environment.stack.popValue().castToNumber()
+        visitor.environment.stack.pushValue(Value.Position(x, y, z, pitch, yaw))
     }
 }
 
@@ -60,15 +60,15 @@ object Item : Visitable {
         var pitch = 0.0
         var yaw = 0.0
         if(visitor.environment.argumentCount >= 5) {
-            yaw = visitor.environment.stack.removeLast().castToNumber()
+            yaw = visitor.environment.stack.popValue().castToNumber()
         }
         if(visitor.environment.argumentCount >= 4) {
-            pitch = visitor.environment.stack.removeLast().castToNumber()
+            pitch = visitor.environment.stack.popValue().castToNumber()
         }
-        val z = visitor.environment.stack.removeLast().castToNumber()
-        val y = visitor.environment.stack.removeLast().castToNumber()
-        val x = visitor.environment.stack.removeLast().castToNumber()
-        visitor.environment.stack.add(Value.Position(x, y, z, pitch, yaw))
+        val z = visitor.environment.stack.popValue().castToNumber()
+        val y = visitor.environment.stack.popValue().castToNumber()
+        val x = visitor.environment.stack.popValue().castToNumber()
+        visitor.environment.stack.pushValue(Value.Position(x, y, z, pitch, yaw))
     }
 }
 
@@ -86,7 +86,7 @@ object True : Visitable {
         get() = "Return a true boolean."
 
     override fun visit(visitor: Interpreter) {
-        visitor.environment.stack.add(Value.Bool(true))
+        visitor.environment.stack.pushValue(Value.Bool(true))
     }
 }
 
@@ -104,7 +104,7 @@ object False : Visitable {
         get() = "Return a false boolean."
 
     override fun visit(visitor: Interpreter) {
-        visitor.environment.stack.add(Value.Bool(false))
+        visitor.environment.stack.pushValue(Value.Bool(false))
     }
 }
 
@@ -126,9 +126,9 @@ object StringCmd : Visitable {
         val size = visitor.environment.argumentCount
         var output = ""
         for(x in 1..size) {
-            val addon = visitor.environment.stack.removeLast()
+            val addon = visitor.environment.stack.popValue()
             output = addon.toDisplay() + output
         }
-        visitor.environment.stack.add(Value.String(output))
+        visitor.environment.stack.pushValue(Value.String(output))
     }
 }

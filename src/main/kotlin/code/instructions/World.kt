@@ -26,8 +26,8 @@ object SetBlock : Visitable {
         get() = "Set a block at a location."
 
     override fun visit(visitor: Interpreter) {
-        val mat = visitor.environment.stack.removeLast().castToString()
-        val loc = visitor.environment.stack.removeLast().castToPos()
+        val mat = visitor.environment.stack.popValue().castToString()
+        val loc = visitor.environment.stack.popValue().castToPos()
 
         Block.fromNamespaceId(mat)?.let {
             visitor.environment.instance?.setBlock(loc, it)
@@ -49,7 +49,7 @@ object LoadAnvilWorld : Visitable {
         get() = "Make a world load based on region files."
 
     override fun visit(visitor: Interpreter) {
-        val dir = visitor.environment.stack.removeLast().castToString()
+        val dir = visitor.environment.stack.popValue().castToString()
         val ic = visitor.environment.instance as InstanceContainer
         ic.chunkLoader = AnvilLoader(dir)
     }
@@ -69,7 +69,7 @@ object SetChatFormat : Visitable {
         get() = "Requires `chat` event.\nSet a the format of the outgoing chat message.\nUse {player} to auto-fill in the player, and {message} for the message."
 
     override fun visit(visitor: Interpreter) {
-        val format = visitor.environment.stack.removeLast().castToString()
+        val format = visitor.environment.stack.popValue().castToString()
         val event = visitor.environment.event
         if(event is PlayerChatEvent) {
             val replaced = format.replace("{player}", event.player.username)

@@ -30,7 +30,7 @@ fun main(args: Array<String>) {
     when(args.getOrNull(0)) {
         "run" -> {
             println("Running server.. you may see some debug output.")
-            runServer()
+            runServer(true)
         }
         "docs" -> {
             println("Generating documentation.")
@@ -39,6 +39,10 @@ fun main(args: Array<String>) {
         "dumpcommandinfo" -> {
             println("Generating command dump.")
             generateCommandDump()
+        }
+        "serverless" -> {
+            println("Starting serverlessly...")
+            runServer(false)
         }
         else -> {
             println("Unknown subcommand.\n")
@@ -59,6 +63,7 @@ etc. etc.
 Subcommands:
 run - Run the server. Currently grabs code from file at: ./src/main/xyraith/main.xr
 docs - Generate documentation. This will open your web browser.
+serverless - Run the Xyraith directory without a server.
 
 Advanced Subcommands:
 dumpcommandinfo - Dump a JSON of command info to the file at `docs/commanddump.json`.
@@ -80,7 +85,7 @@ fun generateCommandDump() {
     file.writeText(docgen)
 }
 
-fun runServer() {
+fun runServer(withServer: Boolean) {
     val text = File("src/main/xyraith/main.xr").readText()
     val lexer = Lexer(text, "src/main/xyraith/main.xr")
     val tokens = lexer.transform()
@@ -96,6 +101,10 @@ fun runServer() {
         constants = emitter.constants.map { pair -> pair.value to pair.key }.toMap()
         blockMap = emitter.blockMap
         Disassembler.dissasemble(emitter)
+        if(!withServer) {
+            runEvent(1)
+            return
+        }
         startServer()
     } catch(e: ParserError) {
         println(e.emit())

@@ -19,13 +19,13 @@ object FLocalStore : Visitable {
     override val returnType: ArgumentType
         get() = ArgumentType.NONE
     override val description: String
-        get() = "Set a value of a symbol in function-local scope."
+        get() = "Set a value of a symbol in local scope."
 
     override fun visit(visitor: Interpreter) {
-        val value = visitor.environment.stack.removeLast()
-        val symbol = visitor.environment.stack.removeLast()
+        val value = visitor.environment.stack.popValue()
+        val symbol = visitor.environment.stack.popValue()
         if(symbol is Value.Symbol) {
-            visitor.environment.functionLocalVariables[symbol.value] = value
+            visitor.environment.localVariables[symbol.value] = value
         }
     }
 }
@@ -41,19 +41,18 @@ object FLocalLoad : Visitable {
     override val returnType: ArgumentType
         get() = ArgumentType.ANY
     override val description: String
-        get() = "Get a value of a symbol in function-local scope."
+        get() = "Get a value of a symbol in local scope."
 
     override fun visit(visitor: Interpreter) {
-        val symbol = visitor.environment.stack.removeLast()
+        val symbol = visitor.environment.stack.popValue()
         if(symbol is Value.Symbol) {
-            val push = visitor.environment.functionLocalVariables[symbol.value]
+            val push = visitor.environment.localVariables[symbol.value]
             if(push != null) {
-                visitor.environment.stack.add(push)
+                visitor.environment.stack.pushValue(push)
             } else {
-                println("symbol ${symbol.value} has a problem uhohohohohohohohohkjsahjhdsdfjkndsfnmfnmds")
-                println("vars: ${visitor.environment.functionLocalVariables}")
-                // TODO: make error report good
-                visitor.environment.stack.add(Value.Number(0.0))
+                println("ERROR: Tried to load from local variable `${symbol.value}` when it doesn't exist.")
+                println("Defaulting to loading the number 0.")
+                visitor.environment.stack.pushValue(Value.Number(0.0))
             }
         }
     }

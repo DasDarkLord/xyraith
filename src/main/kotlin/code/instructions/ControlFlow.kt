@@ -23,13 +23,13 @@ object ForEach : Visitable {
         get() = "Loop through a series of items in a list."
 
     override fun visit(visitor: Interpreter) {
-        val block = visitor.environment.stack.removeLast()
-        val list = visitor.environment.stack.removeLast()
-        val symbol = visitor.environment.stack.removeLast()
+        val block = visitor.environment.stack.popValue()
+        val list = visitor.environment.stack.popValue()
+        val symbol = visitor.environment.stack.popValue()
 
         if(block is Value.BasicBlockRef && list is Value.Array && symbol is Value.Symbol) {
             for(subValue in list.value) {
-                visitor.environment.functionLocalVariables[symbol.value] = subValue
+                visitor.environment.localVariables[symbol.value] = subValue
                 visitor.runBlock(block.value)
             }
         }
@@ -51,11 +51,65 @@ object If : Visitable {
         get() = "Run a block if a condition is true"
 
     override fun visit(visitor: Interpreter) {
-        val block = visitor.environment.stack.removeLast()
-        val condition = visitor.environment.stack.removeLast()
+        val block = visitor.environment.stack.popValue()
+        val condition = visitor.environment.stack.popValue()
 
         if(block is Value.BasicBlockRef && condition is Value.Bool && condition.value) {
             visitor.runBlock(block.value)
         }
+    }
+}
+
+object Call : Visitable {
+    override val code: Int get() = 22
+    override val isExtension: Boolean get() = false
+    override val command: String get() = "call"
+    override val arguments: ArgumentList
+        get() = NodeBuilder()
+            .addSingleArgument(ArgumentType.SYMBOL, "Function to call")
+            .addPluralArgument(ArgumentType.ANY, "Arguments to pass")
+            .build()
+    override val returnType: ArgumentType
+        get() = ArgumentType.ANY
+    override val description: String
+        get() = "Call a function and pass it parameters if wanted. Functions do not share local variables."
+
+    override fun visit(visitor: Interpreter) {
+        val arguments = mutableListOf<Value>()
+        for(index in 2..visitor.environment.argumentCount) {
+            val argument = visitor.environment.stack.popValue()
+            arguments.add(argument)
+        }
+        val symbol = visitor.environment.stack.popValue()
+        if(symbol is Value.Symbol) {
+            visitor.environment.stack.pushFrame()
+            visitor.environment.localVariables.pushFrame()
+            visitor.environment.functionParameters.pushFrame(arguments)
+            val returnValue = visitor.runFunction(symbol.value)
+            visitor.environment.stack.popFrame()
+            visitor.environment.localVariables.popFrame()
+            visitor.environment.functionParameters.popFrame()
+            visitor.environment.stack.pushValue(returnValue)
+        }
+
+    }
+}
+
+object GetParam : Visitable {
+    override val code: Int get() = 23
+    override val isExtension: Boolean get() = false
+    override val command: String get() = "getFParam"
+    override val arguments: ArgumentList
+        get() = NodeBuilder()
+            .addSingleArgument(ArgumentType.NUMBER, "Index of parameter to get")
+            .build()
+    override val returnType: ArgumentType
+        get() = ArgumentType.ANY
+    override val description: String
+        get() = "Get a parameter passed to this function by index"
+
+    override fun visit(visitor: Interpreter) {
+        val index = visitor.environment.stack.popValue().castToNumber()
+        visitor.environment.stack.pushValue(visitor.environment.functionParameters[index.toInt()] ?: Value.Null)
     }
 }
