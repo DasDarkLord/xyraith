@@ -113,3 +113,22 @@ object GetParam : Visitable {
         visitor.environment.stack.pushValue(visitor.environment.functionParameters[index.toInt()] ?: Value.Null)
     }
 }
+
+object Return : Visitable {
+    override val code: Int get() = 24
+    override val isExtension: Boolean get() = false
+    override val command: String get() = "return"
+    override val arguments: ArgumentList
+        get() = NodeBuilder()
+            .addOptionalArgument(ArgumentType.ANY, Value.Null, "Value to return")
+            .build()
+    override val returnType: ArgumentType
+        get() = ArgumentType.ANY
+    override val description: String
+        get() = "Get a parameter passed to this function by index"
+
+    override fun visit(visitor: Interpreter) {
+        visitor.environment.returnValue = visitor.environment.stack.popValue()
+        visitor.environment.endBlock = true
+    }
+}

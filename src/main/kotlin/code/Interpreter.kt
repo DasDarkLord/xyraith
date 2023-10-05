@@ -37,7 +37,7 @@ class Interpreter(val constants: Map<Int, Value>, val blockMap: Map<Int, ByteBuf
     val environment: Environment = Environment()
 
 
-    fun runBlock(blockId: Int) {
+    fun runBlock(blockId: Int): Value {
         val block = blockMap[blockId]!!.asReadOnlyBuffer().position(0)
         val zero = block.get()
         val id = block.getInt()
@@ -50,7 +50,11 @@ class Interpreter(val constants: Map<Int, Value>, val blockMap: Map<Int, ByteBuf
         while(opcode.toInt() != 0) {
             runInstruction(block)
             opcode = peek(block)
+            if(environment.endBlock) {
+                return environment.returnValue
+            }
         }
+        return Value.Null
     }
 
     fun runFunction(functionName: String): Value {
@@ -65,8 +69,9 @@ class Interpreter(val constants: Map<Int, Value>, val blockMap: Map<Int, ByteBuf
             buf.get()
             val name = constants[buf.getInt()]
             if(name is Value.Symbol && name.value == functionName) {
-                runBlock(id)
-                return Value.Null
+                val value = runBlock(id)
+                environment.endBlock = false
+                return value
             }
         }
         return Value.Null

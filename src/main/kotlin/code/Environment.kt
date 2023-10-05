@@ -11,6 +11,10 @@ data class Environment(
     val localVariables: MapFrames<String, Value> = MapFrames(),
     val stack: ListFrames<Value> = ListFrames(),
     val functionParameters: ListFrames<Value> = ListFrames(),
+
+    var endBlock: Boolean = false,
+    var returnValue: Value = Value.Null,
+
     var targets: MutableList<Entity> = mutableListOf(),
     var instance: Instance? = null,
     var event: Event? = null,

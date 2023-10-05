@@ -1,9 +1,12 @@
 event startup {
-    console.log "got 1"
-    call :hello "hey"
+    foreach :index (range 1 10) {
+        console.log (call :compare (load :index))
+    }
 }
 
-function :hello {
-    console.log "got here 2"
-    console.log (getFParam 0)
+function :compare {
+    if (le (parameter 0) 5) {
+        return (string (parameter 0) " is less than 5.")
+    }
+    return (string (parameter 0) " is greater than or equal to 5!")
 }
