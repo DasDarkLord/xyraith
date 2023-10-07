@@ -14,7 +14,7 @@ import java.io.File
 import java.nio.ByteBuffer
 import java.time.LocalDate
 
-val debug = 5
+val debug = 1
 var constants: Map<Int, parser.Value> = mapOf()
 var blockMap: MutableMap<Int, ByteBuffer> = mutableMapOf()
 

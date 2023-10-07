@@ -22,18 +22,27 @@ val visitables: List<Visitable> = listOf(
     EventChatSetFormat,
     LoadAnvilWorld,
 
+    // Entity.kt
+    SpawnEntity,
+
     // Player.kt
     SendMessage, SendActionBar, SendTitle,
-    SetHealth, GetHealth, SetHunger, GetHunger, SetSaturation, GetSaturation, Heal, Damage,
-    Teleport,
-    SetGamemode,
+    SetHunger, GetHunger, SetSaturation, GetSaturation,
+    SetGamemode, PlayerUsername,
+
+    // Target.kt
+    Teleport, TargetUUID,
+    SetHealth, GetHealth, Heal, Damage,
 
     // Variables.kt
     FLocalStore, FLocalLoad, GlobalStore, GlobalLoad,
-    EntityStore, EntityLoad,
+    TargetStore, Targetload,
 
     // ControlFlow.kt
     ForEach, If, Call, GetParam, Return,
+
+    // Select.kr
+    Select, ResetSelection,
 )
 
 interface Visitable {

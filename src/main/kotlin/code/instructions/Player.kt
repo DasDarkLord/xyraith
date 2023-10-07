@@ -107,50 +107,6 @@ object SendTitle : Visitable {
     }
 }
 
-object SetHealth : Visitable {
-    override val code: Int get() = 1100
-    override val isExtension: Boolean get() = true
-    override val command: String get() = "player.setHealth"
-    override val arguments: ArgumentList
-        get() = NodeBuilder()
-            .addSingleArgument(ArgumentType.NUMBER, "Health to set (2 HP = 1 heart)")
-            .build()
-    override val returnType: ArgumentType
-        get() = ArgumentType.NONE
-    override val description: String
-        get() = "Set a player's health."
-
-    override fun visit(visitor: Interpreter) {
-        val health = visitor.environment.stack.popValue().castToNumber()
-        for(target in visitor.environment.targets) {
-            if(target as? Player != null) {
-                target.health = health.toFloat()
-            }
-        }
-    }
-}
-
-object GetHealth : Visitable {
-    override val code: Int get() = 1101
-    override val isExtension: Boolean get() = true
-    override val command: String get() = "player.getHealth"
-    override val arguments: ArgumentList
-        get() = NodeBuilder()
-            .build()
-    override val returnType: ArgumentType
-        get() = ArgumentType.NUMBER
-    override val description: String
-        get() = "Get a player's health."
-
-    override fun visit(visitor: Interpreter) {
-        for(target in visitor.environment.targets) {
-            if(target as? Player != null) {
-                visitor.environment.stack.pushValue(Value.Number(target.health.toDouble()))
-            }
-        }
-    }
-}
-
 object SetHunger : Visitable {
     override val code: Int get() = 1102
     override val isExtension: Boolean get() = true
@@ -239,67 +195,24 @@ object GetSaturation : Visitable {
     }
 }
 
-object Damage : Visitable {
-    override val code: Int get() = 1107
+object PlayerUsername : Visitable {
+    override val code: Int get() = 1109
     override val isExtension: Boolean get() = true
-    override val command: String get() = "player.damage"
+    override val command: String get() = "player.username"
     override val arguments: ArgumentList
         get() = NodeBuilder()
             .build()
     override val returnType: ArgumentType
-        get() = ArgumentType.NONE
+        get() = ArgumentType.STRING
     override val description: String
-        get() = "Deal damage to a player."
+        get() = "Get the username of a player"
 
     override fun visit(visitor: Interpreter) {
-        for(target in visitor.environment.targets) {
-            if(target as? Player != null) {
-                target.damage(DamageType.VOID, visitor.environment.stack.popValue().castToNumber().toFloat())
-            }
-        }
-    }
-}
-
-object Heal : Visitable {
-    override val code: Int get() = 1108
-    override val isExtension: Boolean get() = true
-    override val command: String get() = "player.heal"
-    override val arguments: ArgumentList
-        get() = NodeBuilder()
-            .build()
-    override val returnType: ArgumentType
-        get() = ArgumentType.NONE
-    override val description: String
-        get() = "Heal a player's health."
-
-    override fun visit(visitor: Interpreter) {
-        for(target in visitor.environment.targets) {
-            if(target as? Player != null) {
-                target.health += visitor.environment.stack.popValue().castToNumber().toFloat()
-            }
-        }
-    }
-}
-
-object Teleport : Visitable {
-    override val code: Int get() = 1200
-    override val isExtension: Boolean get() = true
-    override val command: String get() = "player.teleport"
-    override val arguments: ArgumentList
-        get() = NodeBuilder()
-            .addSingleArgument(ArgumentType.LOCATION, "Location to teleport")
-            .build()
-    override val returnType: ArgumentType
-        get() = ArgumentType.NONE
-    override val description: String
-        get() = "Teleport a player to a location."
-
-    override fun visit(visitor: Interpreter) {
-        val loc = visitor.environment.stack.popValue().castToPos()
-        for(entity in visitor.environment.targets) {
-            if(entity is Player) {
-                entity.teleport(loc)
-            }
+        val target = visitor.environment.targets.firstOrNull()
+        if(target as? Player != null) {
+            visitor.environment.stack.pushValue(Value.String(target.username))
+        } else {
+            visitor.environment.stack.pushValue(Value.Null)
         }
     }
 }

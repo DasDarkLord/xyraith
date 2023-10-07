@@ -1,7 +1,6 @@
 package typechecker
 
 import parser.Value
-import java.lang.Exception
 
 data class ArgumentList(val list: List<ArgumentNode>) : ArgumentNode
 
@@ -52,8 +51,7 @@ enum class ArgumentType {
         }
     }
 
-    fun isEqualTo(other: ArgumentType): Boolean {
-        println("comparing $this == $other")
+    fun isEqualTypeTo(other: ArgumentType): Boolean {
         val out = when(true) {
             (this == GENERIC_LIST && (other == NUMBER_LIST || other == STRING_LIST)) -> true
             (other == GENERIC_LIST && (this == NUMBER_LIST || this == STRING_LIST)) -> true
@@ -61,12 +59,6 @@ enum class ArgumentType {
             (this == ANY) -> true
             (this == other) -> true
             else -> false
-        }
-        println("result: $out")
-        try {
-            throw KotlinNullPointerException()
-        } catch(e: Exception) {
-            e.printStackTrace()
         }
         return out
 

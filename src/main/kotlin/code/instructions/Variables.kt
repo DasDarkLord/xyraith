@@ -98,10 +98,10 @@ object GlobalLoad : Visitable {
     }
 }
 
-object EntityStore : Visitable {
+object TargetStore : Visitable {
     override val code: Int get() = 54
     override val isExtension: Boolean get() = false
-    override val command: String get() = "entity.store"
+    override val command: String get() = "target.store"
     override val arguments: ArgumentList
         get() = NodeBuilder()
             .addSingleArgument(ArgumentType.SYMBOL, "Symbol to set value of")
@@ -110,7 +110,7 @@ object EntityStore : Visitable {
     override val returnType: ArgumentType
         get() = ArgumentType.NONE
     override val description: String
-        get() = "Set a value of a symbol to the player."
+        get() = "Set a value of a symbol to the targets."
 
     override fun visit(visitor: Interpreter) {
         val value = visitor.environment.stack.popValue()
@@ -133,10 +133,10 @@ object EntityStore : Visitable {
     }
 }
 
-object EntityLoad : Visitable {
+object Targetload : Visitable {
     override val code: Int get() = 55
     override val isExtension: Boolean get() = false
-    override val command: String get() = "entity.load"
+    override val command: String get() = "target.load"
     override val arguments: ArgumentList
         get() = NodeBuilder()
             .addSingleArgument(ArgumentType.SYMBOL, "Symbol to set value of")
@@ -144,7 +144,7 @@ object EntityLoad : Visitable {
     override val returnType: ArgumentType
         get() = ArgumentType.ANY
     override val description: String
-        get() = "Get a value of a symbol to the player."
+        get() = "Get a value of a symbol from the target."
 
     override fun visit(visitor: Interpreter) {
         val symbol = visitor.environment.stack.popValue()

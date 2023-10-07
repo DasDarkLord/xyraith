@@ -30,6 +30,7 @@ class Typechecker {
         }
     }
 
+
     private fun typecheckCommand(command: Ast.Command) {
         val valueIter = command.arguments.iterator()
         if(!commandRegistry.containsKey(command.name))
@@ -37,67 +38,7 @@ class Typechecker {
         val visitable = commandRegistry[command.name]!!["object"]!! as Visitable
         val nodeIter = visitable.arguments.list.iterator()
 
-
-        if(command.name == "store") {
-            if(command.arguments[0] !is Value.Symbol) return
-            val variableName = (command.arguments[0] as Value.Symbol).value
-            val value =
-                if(command.arguments[1] is Value.Command)
-                    getCommandReturnType((command.arguments[1] as Value.Command).value)
-                else
-                    command.arguments[1].castToArgumentType()
-
-            if(!localVariables.containsKey(variableName)) {
-                localVariables[variableName] = value
-            }
-            if(!localVariables[variableName]!!.isEqualTo(value)) {
-                throw VariableWrongType(
-                    variableName,
-                    localVariables[variableName].toString(),
-                    value.toString(),
-                    command.span
-                )
-            }
-        }
-
-        if(command.name == "global.store") {
-            if(command.arguments[0] !is Value.Symbol) return
-            val variableName = (command.arguments[0] as Value.Symbol).value
-            val value =
-                if(command.arguments[1] is Value.Command)
-                    getCommandReturnType((command.arguments[1] as Value.Command).value)
-                else
-                    command.arguments[1].castToArgumentType()
-
-            if(!globalVariables.containsKey(variableName)) {
-                globalVariables[variableName] = value
-            }
-            if(!globalVariables[variableName]!!.isEqualTo(value)) {
-                throw VariableWrongType(
-                    variableName,
-                    globalVariables[variableName].toString(),
-                    value.toString(),
-                    command.span
-                )
-            }
-        }
-
-        if(command.name == "foreach") {
-            val variableName = (command.arguments[0] as Value.Symbol).value
-
-            val expectedType =
-                if(command.arguments[1] is Value.Command)
-                    getCommandReturnType((command.arguments[1] as Value.Command).value)
-                else
-                    command.arguments[1].castToArgumentType()
-            if(!localVariables.containsKey(variableName)) {
-                localVariables[variableName] = expectedType
-            }
-
-            if(!localVariables[variableName]!!.isEqualTo(expectedType)) {
-                throw VariableWrongType(variableName, expectedType.toString(), localVariables[variableName].toString(), command.span)
-            }
-        }
+        typecheckSpecialBehavior(command)
 
         for(value in command.arguments) {
             if(value is Value.Block)
@@ -144,8 +85,7 @@ class Typechecker {
                 if(next is Value.Command) {
                     nextType = getCommandReturnType(next.value, expected)
                 }
-                println("nextType plural = $nextType | expected: $expected")
-                if(!nextType.isEqualTo(expected) && expected != ArgumentType.ANY)
+                if(!nextType.isEqualTypeTo(expected) && expected != ArgumentType.ANY)
                     throw IncorrectArgument(expected.toString(), nextType.toString(), name, span)
             }
         }
@@ -155,8 +95,7 @@ class Typechecker {
             if(next is Value.Command) {
                 nextType = getCommandReturnType(next.value, expected)
             }
-            println("nextType single = $nextType | expected: $expected")
-            if(!nextType.isEqualTo(expected) && expected != ArgumentType.ANY)
+            if(!nextType.isEqualTypeTo(expected) && expected != ArgumentType.ANY)
                 throw IncorrectArgument(expected.toString(), nextType.toString(), name, span)
         }
         if(node is ArgumentNode.OptionalArgumentNode) {
@@ -166,8 +105,7 @@ class Typechecker {
             if(next is Value.Command) {
                 nextType = getCommandReturnType(next.value, expected)
             }
-            println("nextType optional = $nextType | expected: $expected")
-            if(!nextType.isEqualTo(expected) && expected != ArgumentType.ANY)
+            if(!nextType.isEqualTypeTo(expected) && expected != ArgumentType.ANY)
                 throw IncorrectArgument(expected.toString(), nextType.toString(), name, span)
         }
     }
@@ -177,18 +115,18 @@ class Typechecker {
             "load" -> {
                 val symbol = command.arguments[0] as Value.Symbol
                 if(!localVariables.containsKey(symbol.value))
-                    throw LocalVariableWasntDeclared(symbol.value, command.span)
-                if(expectedType != null && localVariables[symbol.value] != expectedType)
-                    throw VariableWrongType(symbol.value, expectedType.toString(), localVariables[symbol.value].toString(), command.span)
+                    throw VariableWasntDeclared(symbol.value, command.span)
+                if(expectedType != null && !localVariables[symbol.value]!!.isEqualTypeTo(expectedType))
+                    throw VariableWrongType(symbol.value, expectedType, localVariables[symbol.value]!!, command.span)
                 println("type is ${localVariables[symbol.value]}")
                 localVariables[symbol.value]!!
             }
             "global.load" -> {
                 val symbol = command.arguments[0] as Value.Symbol
                 if(!globalVariables.containsKey(symbol.value))
-                    throw LocalVariableWasntDeclared(symbol.value, command.span)
-                if(expectedType != null && globalVariables[symbol.value] != expectedType)
-                    throw VariableWrongType(symbol.value, expectedType.toString(), globalVariables[symbol.value].toString(), command.span)
+                    throw VariableWasntDeclared(symbol.value, command.span)
+                if(expectedType != null && !globalVariables[symbol.value]!!.isEqualTypeTo(expectedType))
+                    throw VariableWrongType(symbol.value, expectedType, globalVariables[symbol.value]!!, command.span)
                 println("type is ${globalVariables[symbol.value]}")
                 globalVariables[symbol.value]!!
             }
@@ -199,5 +137,88 @@ class Typechecker {
         }
     }
 
+    private fun typecheckSpecialBehavior(command: Ast.Command) {
+        when(command.name) {
+            "store" -> {
+                if(command.arguments[0] !is Value.Symbol) return
+                val variableName = (command.arguments[0] as Value.Symbol).value
+                val value =
+                    if(command.arguments[1] is Value.Command)
+                        getCommandReturnType((command.arguments[1] as Value.Command).value)
+                    else
+                        command.arguments[1].castToArgumentType()
+
+                if(!localVariables.containsKey(variableName)) {
+                    localVariables[variableName] = value
+                }
+                if(!localVariables[variableName]!!.isEqualTypeTo(value)) {
+                    throw VariableWrongType(
+                        variableName,
+                        localVariables[variableName]!!,
+                        value,
+                        command.span
+                    )
+                }
+            }
+            "global.store" -> {
+                if(command.arguments[0] !is Value.Symbol) return
+                val variableName = (command.arguments[0] as Value.Symbol).value
+                val value =
+                    if(command.arguments[1] is Value.Command)
+                        getCommandReturnType((command.arguments[1] as Value.Command).value)
+                    else
+                        command.arguments[1].castToArgumentType()
+
+                if(!globalVariables.containsKey(variableName)) {
+                    globalVariables[variableName] = value
+                }
+                if(!globalVariables[variableName]!!.isEqualTypeTo(value)) {
+                    throw VariableWrongType(
+                        variableName,
+                        globalVariables[variableName]!!,
+                        value,
+                        command.span
+                    )
+                }
+            }
+            "target.store" -> {
+                if(command.arguments[0] !is Value.Symbol) return
+                val variableName = (command.arguments[0] as Value.Symbol).value
+                val value =
+                    if(command.arguments[1] is Value.Command)
+                        getCommandReturnType((command.arguments[1] as Value.Command).value)
+                    else
+                        command.arguments[1].castToArgumentType()
+
+                if(!entityVariables.containsKey(variableName)) {
+                    entityVariables[variableName] = value
+                }
+                if(!entityVariables[variableName]!!.isEqualTypeTo(value)) {
+                    throw VariableWrongType(
+                        variableName,
+                        entityVariables[variableName]!!,
+                        value,
+                        command.span
+                    )
+                }
+            }
+            "foreach" -> {
+                val variableName = (command.arguments[0] as Value.Symbol).value
+
+                val expectedType =
+                    if(command.arguments[1] is Value.Command)
+                        getCommandReturnType((command.arguments[1] as Value.Command).value)
+                    else
+                        command.arguments[1].castToArgumentType()
+                if(!localVariables.containsKey(variableName)) {
+                    localVariables[variableName] = expectedType
+                }
+
+                if(!localVariables[variableName]!!.isEqualTypeTo(expectedType)) {
+                    throw VariableWrongType(variableName, expectedType, localVariables[variableName]!!, command.span)
+                }
+            }
+        }
+    }
 
 }
