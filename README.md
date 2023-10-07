@@ -1,4 +1,5 @@
 <div style="align-items:center;">
+    <img src="img/xyraith.png" alt="Xyraith Logo">
     <h1>Xyraith</h1>
 </div>
 
