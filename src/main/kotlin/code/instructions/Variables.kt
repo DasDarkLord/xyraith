@@ -22,7 +22,7 @@ object FLocalStore : Visitable {
     override val description: String
         get() = "Set a value of a symbol in local scope."
 
-    override fun visit(visitor: Interpreter) {
+    override suspend fun visit(visitor: Interpreter) {
         val value = visitor.environment.stack.popValue()
         val symbol = visitor.environment.stack.popValue()
         if(symbol is Value.Symbol) {
@@ -44,7 +44,7 @@ object FLocalLoad : Visitable {
     override val description: String
         get() = "Get a value of a symbol in local scope."
 
-    override fun visit(visitor: Interpreter) {
+    override suspend fun visit(visitor: Interpreter) {
         val symbol = visitor.environment.stack.popValue()
         if(symbol is Value.Symbol) {
             val push = visitor.environment.localVariables[symbol.value] ?: Value.Null
@@ -67,7 +67,7 @@ object GlobalStore : Visitable {
     override val description: String
         get() = "Set a value of a symbol in global scope."
 
-    override fun visit(visitor: Interpreter) {
+    override suspend fun visit(visitor: Interpreter) {
         val value = visitor.environment.stack.popValue()
         val symbol = visitor.environment.stack.popValue()
         if(symbol is Value.Symbol) {
@@ -89,7 +89,7 @@ object GlobalLoad : Visitable {
     override val description: String
         get() = "Get a value of a symbol in global scope."
 
-    override fun visit(visitor: Interpreter) {
+    override suspend fun visit(visitor: Interpreter) {
         val symbol = visitor.environment.stack.popValue()
         if(symbol is Value.Symbol) {
             val push = globalVariables[symbol.value] ?: Value.Null
@@ -112,7 +112,7 @@ object TargetStore : Visitable {
     override val description: String
         get() = "Set a value of a symbol to the targets."
 
-    override fun visit(visitor: Interpreter) {
+    override suspend fun visit(visitor: Interpreter) {
         val value = visitor.environment.stack.popValue()
         val symbol = visitor.environment.stack.popValue()
         if(symbol is Value.Symbol) {
@@ -146,7 +146,7 @@ object Targetload : Visitable {
     override val description: String
         get() = "Get a value of a symbol from the target."
 
-    override fun visit(visitor: Interpreter) {
+    override suspend fun visit(visitor: Interpreter) {
         val symbol = visitor.environment.stack.popValue()
         if(symbol is Value.Symbol) {
             var name = symbol.value

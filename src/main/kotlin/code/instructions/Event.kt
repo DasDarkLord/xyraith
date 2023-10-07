@@ -22,7 +22,7 @@ object EventChatSetFormat : Visitable {
     override val description: String
         get() = "Requires `chat` event.\nSet a the format of the outgoing chat message."
 
-    override fun visit(visitor: Interpreter) {
+    override suspend fun visit(visitor: Interpreter) {
         val message = visitor.environment.stack.popValue().castToString()
         val event = visitor.environment.event
         if(event is PlayerChatEvent) {
@@ -43,7 +43,7 @@ object EventChatGetMessage : Visitable {
     override val description: String
         get() = "Requires `chat` event.\nGets the chat message of the event."
 
-    override fun visit(visitor: Interpreter) {
+    override suspend fun visit(visitor: Interpreter) {
         val format = visitor.environment.stack.popValue().castToString()
         val event = visitor.environment.event
         if(event is PlayerChatEvent) {
@@ -65,7 +65,7 @@ object SetCancelled : Visitable {
     override val description: String
         get() = "Requires a cancellable event. Sets whether an event is cancelled or not."
 
-    override fun visit(visitor: Interpreter) {
+    override suspend fun visit(visitor: Interpreter) {
         val event = visitor.environment.event
         if(event is CancellableEvent) {
             event.isCancelled = true

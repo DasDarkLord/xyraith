@@ -26,7 +26,7 @@ object SendMessage : Visitable {
     override val description: String
         get() = "Send the player a message in chat."
 
-    override fun visit(visitor: Interpreter) {
+    override suspend fun visit(visitor: Interpreter) {
         val display = visitor.environment.stack.popValue().toDisplay()
         for(target in visitor.environment.targets) {
             if(target as? Player != null) {
@@ -49,7 +49,7 @@ object SendActionBar : Visitable {
     override val description: String
         get() = "Send a player a message in the actionbar."
 
-    override fun visit(visitor: Interpreter) {
+    override suspend fun visit(visitor: Interpreter) {
         val display = visitor.environment.stack.popValue().toDisplay()
         for(target in visitor.environment.targets) {
             if(target as? Player != null) {
@@ -76,7 +76,7 @@ object SendTitle : Visitable {
     override val description: String
         get() = "Send a player a message through a title."
 
-    override fun visit(visitor: Interpreter) {
+    override suspend fun visit(visitor: Interpreter) {
         var fadeOut = 500.0
         var fadeIn = 500.0
         var duration = 3000.0
@@ -120,7 +120,7 @@ object SetHunger : Visitable {
     override val description: String
         get() = "Set a player's hunger points."
 
-    override fun visit(visitor: Interpreter) {
+    override suspend fun visit(visitor: Interpreter) {
         val food = visitor.environment.stack.popValue().castToNumber()
         for(target in visitor.environment.targets) {
             if(target as? Player != null) {
@@ -142,7 +142,7 @@ object GetHunger : Visitable {
     override val description: String
         get() = "Get a player's hunger points."
 
-    override fun visit(visitor: Interpreter) {
+    override suspend fun visit(visitor: Interpreter) {
         for(target in visitor.environment.targets) {
             if(target as? Player != null) {
                 visitor.environment.stack.pushValue(Value.Number(target.food.toDouble()))
@@ -164,7 +164,7 @@ object SetSaturation : Visitable {
     override val description: String
         get() = "Set a player's saturation points."
 
-    override fun visit(visitor: Interpreter) {
+    override suspend fun visit(visitor: Interpreter) {
         val food = visitor.environment.stack.popValue().castToNumber()
         for(target in visitor.environment.targets) {
             if(target as? Player != null) {
@@ -186,7 +186,7 @@ object GetSaturation : Visitable {
     override val description: String
         get() = "Get a player's saturation points."
 
-    override fun visit(visitor: Interpreter) {
+    override suspend fun visit(visitor: Interpreter) {
         for(target in visitor.environment.targets) {
             if(target as? Player != null) {
                 visitor.environment.stack.pushValue(Value.Number(target.foodSaturation.toDouble()))
@@ -207,7 +207,7 @@ object PlayerUsername : Visitable {
     override val description: String
         get() = "Get the username of a player"
 
-    override fun visit(visitor: Interpreter) {
+    override suspend fun visit(visitor: Interpreter) {
         val target = visitor.environment.targets.firstOrNull()
         if(target as? Player != null) {
             visitor.environment.stack.pushValue(Value.String(target.username))
@@ -230,7 +230,7 @@ object SetGamemode : Visitable {
     override val description: String
         get() = "Change a player's game mode."
 
-    override fun visit(visitor: Interpreter) {
+    override suspend fun visit(visitor: Interpreter) {
         val mode = visitor.environment.stack.popValue().castToString()
         if(mode == "gmc" || mode == "c" || mode == "creative") {
             for(target in visitor.environment.targets) {

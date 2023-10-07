@@ -24,7 +24,7 @@ object Loc : Visitable {
     override val description: String
         get() = "Generate a location from coordinates."
 
-    override fun visit(visitor: Interpreter) {
+    override suspend fun visit(visitor: Interpreter) {
         var pitch = 0.0
         var yaw = 0.0
         if(visitor.environment.argumentCount >= 5) {
@@ -55,7 +55,7 @@ object Item : Visitable {
     override val description: String
         get() = "Generate an item from an ID and an amount"
 
-    override fun visit(visitor: Interpreter) {
+    override suspend fun visit(visitor: Interpreter) {
         TODO()
     }
 }
@@ -73,7 +73,7 @@ object True : Visitable {
     override val description: String
         get() = "Return a true boolean."
 
-    override fun visit(visitor: Interpreter) {
+    override suspend fun visit(visitor: Interpreter) {
         visitor.environment.stack.pushValue(Value.Bool(true))
     }
 }
@@ -91,7 +91,7 @@ object False : Visitable {
     override val description: String
         get() = "Return a false boolean."
 
-    override fun visit(visitor: Interpreter) {
+    override suspend fun visit(visitor: Interpreter) {
         visitor.environment.stack.pushValue(Value.Bool(false))
     }
 }
@@ -110,7 +110,7 @@ object StringCmd : Visitable {
     override val description: String
         get() = "Return a string with all values concatenated."
 
-    override fun visit(visitor: Interpreter) {
+    override suspend fun visit(visitor: Interpreter) {
         val size = visitor.environment.argumentCount
         var output = ""
         for(x in 1..size) {

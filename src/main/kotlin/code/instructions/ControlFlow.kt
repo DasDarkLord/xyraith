@@ -1,6 +1,12 @@
 package code.instructions
 
+import blockMap
 import code.Interpreter
+import code.stackframe.ListFrames
+import constants
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import typechecker.ArgumentList
 import typechecker.ArgumentType
 import typechecker.NodeBuilder
@@ -21,7 +27,7 @@ object ForEach : Visitable {
     override val description: String
         get() = "Loop through a series of items in a list."
 
-    override fun visit(visitor: Interpreter) {
+    override suspend fun visit(visitor: Interpreter) {
         val block = visitor.environment.stack.popValue()
         val list = visitor.environment.stack.popValue()
         val symbol = visitor.environment.stack.popValue()
@@ -49,7 +55,7 @@ object If : Visitable {
     override val description: String
         get() = "Run a block if a condition is true"
 
-    override fun visit(visitor: Interpreter) {
+    override suspend fun visit(visitor: Interpreter) {
         val block = visitor.environment.stack.popValue()
         val condition = visitor.environment.stack.popValue()
 
@@ -73,7 +79,7 @@ object Call : Visitable {
     override val description: String
         get() = "Call a function and pass it parameters if wanted. Functions do not share local variables."
 
-    override fun visit(visitor: Interpreter) {
+    override suspend fun visit(visitor: Interpreter) {
         val arguments = mutableListOf<Value>()
         for(index in 2..visitor.environment.argumentCount) {
             val argument = visitor.environment.stack.popValue()
@@ -107,7 +113,7 @@ object GetParam : Visitable {
     override val description: String
         get() = "Get a parameter passed to this function by index"
 
-    override fun visit(visitor: Interpreter) {
+    override suspend fun visit(visitor: Interpreter) {
         val index = visitor.environment.stack.popValue().castToNumber()
         visitor.environment.stack.pushValue(visitor.environment.functionParameters[index.toInt()] ?: Value.Null)
     }
@@ -126,8 +132,62 @@ object Return : Visitable {
     override val description: String
         get() = "Get a parameter passed to this function by index"
 
-    override fun visit(visitor: Interpreter) {
+    override suspend fun visit(visitor: Interpreter) {
         visitor.environment.returnValue = visitor.environment.stack.popValue()
         visitor.environment.endBlock = true
+    }
+}
+
+object AsyncCall : Visitable {
+    override val code: Int get() = 25
+    override val isExtension: Boolean get() = false
+    override val command: String get() = "asyncCall"
+    override val arguments: ArgumentList
+        get() = NodeBuilder()
+            .addSingleArgument(ArgumentType.SYMBOL, "Function to call")
+            .addPluralArgument(ArgumentType.ANY, "Arguments to pass")
+            .build()
+    override val returnType: ArgumentType
+        get() = ArgumentType.NONE
+    override val description: String
+        get() = "Call a function asynchronously and pass it parameters if wanted.\nYou can not recievce values back from asynchronous calls."
+
+    override suspend fun visit(visitor: Interpreter) {
+        val arguments = mutableListOf<Value>()
+        for(index in 2..visitor.environment.argumentCount) {
+            val argument = visitor.environment.stack.popValue()
+            arguments.add(argument)
+        }
+        val symbol = visitor.environment.stack.popValue()
+        if(symbol is Value.Symbol) {
+            visitor.coroutineScope.launch {
+                val interpreter = Interpreter(constants, blockMap, this)
+                interpreter.environment.functionParameters.pushFrame(arguments)
+                interpreter.environment.targets = visitor.environment.targets.asReversed().asReversed()
+                interpreter.environment.argumentCount = visitor.environment.argumentCount.inc().dec()
+                interpreter.environment.instance = visitor.environment.instance
+                interpreter.runFunction(symbol.value)
+            }
+        }
+
+    }
+}
+
+object Sleep : Visitable {
+    override val code: Int get() = 26
+    override val isExtension: Boolean get() = false
+    override val command: String get() = "sleep"
+    override val arguments: ArgumentList
+        get() = NodeBuilder()
+            .addSingleArgument(ArgumentType.NUMBER, "Millieconds to sleep for")
+            .build()
+    override val returnType: ArgumentType
+        get() = ArgumentType.NONE
+    override val description: String
+        get() = "Delay the current thread for a given amount of milliseconds."
+
+    override suspend fun visit(visitor: Interpreter) {
+        val number = visitor.environment.stack.popValue().castToNumber()
+        delay(number.toLong())
     }
 }

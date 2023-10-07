@@ -20,7 +20,7 @@ object TargetUUID : Visitable {
     override val description: String
         get() = "Get the UUID of a target"
 
-    override fun visit(visitor: Interpreter) {
+    override suspend fun visit(visitor: Interpreter) {
         val target = visitor.environment.targets.firstOrNull()
         if(target as? Player != null) {
             visitor.environment.stack.pushValue(Value.String(target.uuid.toString()))
@@ -43,7 +43,7 @@ object Teleport : Visitable {
     override val description: String
         get() = "Teleport the targets to a location."
 
-    override fun visit(visitor: Interpreter) {
+    override suspend fun visit(visitor: Interpreter) {
         val loc = visitor.environment.stack.popValue().castToPos()
         for(entity in visitor.environment.targets) {
             entity.teleport(loc)
@@ -64,7 +64,7 @@ object Damage : Visitable {
     override val description: String
         get() = "Deals damage to the targets"
 
-    override fun visit(visitor: Interpreter) {
+    override suspend fun visit(visitor: Interpreter) {
         val num = visitor.environment.stack.popValue().castToNumber()
         for(entity in visitor.environment.targets) {
             if(entity is LivingEntity) {
@@ -87,7 +87,7 @@ object Heal : Visitable {
     override val description: String
         get() = "Heals targets' health"
 
-    override fun visit(visitor: Interpreter) {
+    override suspend fun visit(visitor: Interpreter) {
         val num = visitor.environment.stack.popValue().castToNumber()
         for(entity in visitor.environment.targets) {
             if(entity is LivingEntity) {
@@ -110,7 +110,7 @@ object SetHealth : Visitable {
     override val description: String
         get() = "Sets the targets' health to given value"
 
-    override fun visit(visitor: Interpreter) {
+    override suspend fun visit(visitor: Interpreter) {
         val num = visitor.environment.stack.popValue().castToNumber()
         for(entity in visitor.environment.targets) {
             if(entity is LivingEntity) {
@@ -132,7 +132,7 @@ object GetHealth : Visitable {
     override val description: String
         get() = "Gets the target's health"
 
-    override fun visit(visitor: Interpreter) {
+    override suspend fun visit(visitor: Interpreter) {
         val entity = visitor.environment.targets.firstOrNull() as? LivingEntity
         visitor.environment.stack.pushValue(Value.Number(entity?.health?.toDouble() ?: 0.0))
     }

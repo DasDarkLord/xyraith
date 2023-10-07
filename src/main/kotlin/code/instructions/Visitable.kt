@@ -39,7 +39,7 @@ val visitables: List<Visitable> = listOf(
     TargetStore, Targetload,
 
     // ControlFlow.kt
-    ForEach, If, Call, GetParam, Return,
+    ForEach, If, Call, AsyncCall, GetParam, Return, Sleep,
 
     // Select.kr
     Select, ResetSelection,
@@ -52,5 +52,5 @@ interface Visitable {
     val arguments: ArgumentList
     val description: String
     val returnType: ArgumentType
-    fun visit(visitor: Interpreter)
+    suspend fun visit(visitor: Interpreter)
 }

@@ -1,7 +1,11 @@
 event join {
-    store :uuid (entity.summon minecraft:zombie (loc 5 42 5))
-    select mobs (string uuid= (load :uuid))
-    target.teleport (loc 5 45 5)
-    select players ""
-    target.teleport (loc 10 45 10)
+    target.store :health 100
+    target.store :maxHealth 100
+    asyncCall :playerLoop 0
+}
+
+function :playerLoop {
+    player.setHunger 20
+    player.sendActionBar (string "<red>" (target.load :health) "/" (target.load :maxHealth) " HP")
+    sleep 50
 }

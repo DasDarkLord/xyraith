@@ -22,7 +22,7 @@ object SetBlock : Visitable {
     override val description: String
         get() = "Set a block at a location."
 
-    override fun visit(visitor: Interpreter) {
+    override suspend fun visit(visitor: Interpreter) {
         val mat = visitor.environment.stack.popValue().castToString()
         val loc = visitor.environment.stack.popValue().castToPos()
 
@@ -45,7 +45,7 @@ object LoadAnvilWorld : Visitable {
     override val description: String
         get() = "Make a world load based on region files."
 
-    override fun visit(visitor: Interpreter) {
+    override suspend fun visit(visitor: Interpreter) {
         val dir = visitor.environment.stack.popValue().castToString()
         val ic = visitor.environment.instance as InstanceContainer
         ic.chunkLoader = AnvilLoader(dir)

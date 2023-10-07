@@ -18,6 +18,7 @@ dependencies {
     implementation("com.github.hollow-cube:minestom-ce:010fe985bb")
     implementation("net.kyori:adventure-text-minimessage:4.14.0")
     implementation("de.articdive:jnoise-pipeline:4.0.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
 }
 
 tasks.test {

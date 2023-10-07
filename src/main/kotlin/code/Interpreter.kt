@@ -4,11 +4,14 @@ import blockMap
 import code.instructions.Visitable
 import code.instructions.visitables
 import constants
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.runBlocking
 import net.minestom.server.entity.Entity
 import net.minestom.server.event.Event
 import net.minestom.server.instance.Instance
 import java.nio.ByteBuffer
 import parser.Value
+import kotlin.concurrent.thread
 
 val shortcodes: Map<Int, Visitable> = visitables.filter { obj -> obj.isExtension }.associateBy { obj -> obj.code }
 val opcodes: Map<Int, Visitable> = visitables.filter { obj -> !obj.isExtension }.associateBy { obj -> obj.code }
@@ -20,26 +23,29 @@ fun peek(buf: ByteBuffer): Byte {
 }
 
 fun runEvent(eventIdChk: Int, targets: MutableList<Entity> = mutableListOf(), instance: Instance? = null, event: Event? = null) {
-    for(pair in blockMap) {
-        val block = pair.value.duplicate().position(0)
-        val zero = block.get()
-        val id = block.getInt()
-        val eventId = block.get()
-        if(eventId.toInt() == eventIdChk) {
-            val interpreter = Interpreter(constants, blockMap)
-            interpreter.environment.targets = targets
-            interpreter.environment.instance = instance
-            interpreter.environment.event = event
-            interpreter.runBlock(pair.key)
+    runBlocking {
+        for(pair in blockMap) {
+            val block = pair.value.duplicate().position(0)
+            val zero = block.get()
+            val id = block.getInt()
+            val eventId = block.get()
+            if(eventId.toInt() == eventIdChk) {
+                val interpreter = Interpreter(constants, blockMap, this)
+                interpreter.environment.targets = targets
+                interpreter.environment.instance = instance
+                interpreter.environment.event = event
+                interpreter.runBlock(pair.key)
+            }
         }
     }
+
 }
 
-class Interpreter(val constants: Map<Int, Value>, val blockMap: Map<Int, ByteBuffer>) {
+class Interpreter(val constants: Map<Int, Value>, val blockMap: Map<Int, ByteBuffer>, val coroutineScope: CoroutineScope) {
     val environment: Environment = Environment()
 
 
-    fun runBlock(blockId: Int): Value {
+    suspend fun runBlock(blockId: Int): Value {
         val block = blockMap[blockId]!!.asReadOnlyBuffer().position(0)
         val zero = block.get()
         val id = block.getInt()
@@ -59,7 +65,7 @@ class Interpreter(val constants: Map<Int, Value>, val blockMap: Map<Int, ByteBuf
         return Value.Null
     }
 
-    fun runFunction(functionName: String): Value {
+    suspend fun runFunction(functionName: String): Value {
         for(block in blockMap) {
             val buf = block.value.asReadOnlyBuffer().position(0)
             buf.get()
@@ -79,7 +85,7 @@ class Interpreter(val constants: Map<Int, Value>, val blockMap: Map<Int, ByteBuf
         return Value.Null
     }
 
-    private fun runInstruction(buf: ByteBuffer) {
+    private suspend fun runInstruction(buf: ByteBuffer) {
         val opcode = buf.get()
         if(opcode.toInt() == 1) {
             val id = buf.getInt()

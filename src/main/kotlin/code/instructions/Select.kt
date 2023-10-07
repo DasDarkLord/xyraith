@@ -21,7 +21,7 @@ object Select : Visitable {
     override val description: String
         get() = "Set targets based on selector."
 
-    override fun visit(visitor: Interpreter) {
+    override suspend fun visit(visitor: Interpreter) {
         val requirements = mutableListOf<String>()
         for(index in 2..visitor.environment.argumentCount) {
             requirements.add(visitor.environment.stack.popValue().castToString())
@@ -63,7 +63,7 @@ object ResetSelection : Visitable {
     override val description: String
         get() = "Set targets based on selector."
 
-    override fun visit(visitor: Interpreter) {
+    override suspend fun visit(visitor: Interpreter) {
        TODO()
     }
 }

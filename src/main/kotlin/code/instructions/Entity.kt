@@ -23,7 +23,7 @@ object SpawnEntity : Visitable {
     override val description: String
         get() = "Spawn an entity in the world. Returns it's UUID."
 
-    override fun visit(visitor: Interpreter) {
+    override suspend fun visit(visitor: Interpreter) {
         val pos = visitor.environment.stack.popValue().castToPos()
         val id = visitor.environment.stack.popValue().castToString()
 

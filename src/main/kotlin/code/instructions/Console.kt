@@ -18,7 +18,7 @@ object Log : Visitable {
     override val description: String
         get() = "Log a message to the console."
 
-    override fun visit(visitor: Interpreter) {
+    override suspend fun visit(visitor: Interpreter) {
         println(visitor.environment.stack.popValue().toDisplay())
     }
 }

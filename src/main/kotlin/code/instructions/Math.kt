@@ -21,7 +21,7 @@ object Random : Visitable {
     override val description: String
         get() = "Generate a random number."
 
-    override fun visit(visitor: Interpreter) {
+    override suspend fun visit(visitor: Interpreter) {
         var max = visitor.environment.stack.popValue().castToNumber()
         var min = visitor.environment.stack.popValue().castToNumber()
         if(min > max) {
@@ -48,7 +48,7 @@ object Range : Visitable {
     override val description: String
         get() = "Generate a series of numbers."
 
-    override fun visit(visitor: Interpreter) {
+    override suspend fun visit(visitor: Interpreter) {
         val max = visitor.environment.stack.popValue().castToNumber()
         val min = visitor.environment.stack.popValue().castToNumber()
         val list = (min.toInt()..max.toInt()).toList().map { Value.Number(it.toDouble()) }
@@ -69,7 +69,7 @@ object Add : Visitable {
     override val description: String
         get() = "Sum a series of numbers."
 
-    override fun visit(visitor: Interpreter) {
+    override suspend fun visit(visitor: Interpreter) {
         var md = 1.0
         for(x in 1..visitor.environment.argumentCount) {
             md += visitor.environment.stack.popValue().castToNumber()
@@ -92,7 +92,7 @@ object Sub : Visitable {
     override val description: String
         get() = "Subtract two numbers from eachother."
 
-    override fun visit(visitor: Interpreter) {
+    override suspend fun visit(visitor: Interpreter) {
         val lhs = visitor.environment.stack.popValue()
         val rhs = visitor.environment.stack.popValue()
         if(lhs is Value.Number && rhs is Value.Number) {
@@ -116,7 +116,7 @@ object Mul : Visitable {
     override val description: String
         get() = "Multiply a series of numbers"
 
-    override fun visit(visitor: Interpreter) {
+    override suspend fun visit(visitor: Interpreter) {
         var md = 1.0
         for(x in 1..visitor.environment.argumentCount) {
             md *= visitor.environment.stack.popValue().castToNumber()
@@ -139,7 +139,7 @@ object Div : Visitable {
     override val description: String
         get() = "Divide two numbers"
 
-    override fun visit(visitor: Interpreter) {
+    override suspend fun visit(visitor: Interpreter) {
         val rhs = visitor.environment.stack.popValue()
         val lhs = visitor.environment.stack.popValue()
 
@@ -165,7 +165,7 @@ object Mod : Visitable {
     override val description: String
         get() = "Get the modulo of two numbers."
 
-    override fun visit(visitor: Interpreter) {
+    override suspend fun visit(visitor: Interpreter) {
         val lhs = visitor.environment.stack.popValue()
         val rhs = visitor.environment.stack.popValue()
         if(lhs is Value.Number && rhs is Value.Number) {
@@ -191,7 +191,7 @@ object Perlin : Visitable {
     override val description: String
         get() = "Generate a random number 0.0-1.0 based on location and seed."
 
-    override fun visit(visitor: Interpreter) {
+    override suspend fun visit(visitor: Interpreter) {
         val pos = visitor.environment.stack.popValue().castToPos()
         val seed = visitor.environment.stack.popValue().castToNumber()
         visitor.environment.stack.pushValue(Value.Number(0.0))
@@ -212,7 +212,7 @@ object GreaterThan : Visitable {
     override val description: String
         get() = "Check if a number is greater than another"
 
-    override fun visit(visitor: Interpreter) {
+    override suspend fun visit(visitor: Interpreter) {
         val rhs = visitor.environment.stack.popValue().castToNumber()
         val lhs = visitor.environment.stack.popValue().castToNumber()
         visitor.environment.stack.pushValue(Value.Bool(lhs > rhs))
@@ -233,7 +233,7 @@ object GreaterThanOrEqual : Visitable {
     override val description: String
         get() = "Check if a number is greater than or equal to another"
 
-    override fun visit(visitor: Interpreter) {
+    override suspend fun visit(visitor: Interpreter) {
         val rhs = visitor.environment.stack.popValue().castToNumber()
         val lhs = visitor.environment.stack.popValue().castToNumber()
         visitor.environment.stack.pushValue(Value.Bool(lhs >= rhs))
@@ -254,7 +254,7 @@ object LessThan : Visitable {
     override val description: String
         get() = "Check if a number is less than another"
 
-    override fun visit(visitor: Interpreter) {
+    override suspend fun visit(visitor: Interpreter) {
         val rhs = visitor.environment.stack.popValue().castToNumber()
         val lhs = visitor.environment.stack.popValue().castToNumber()
         visitor.environment.stack.pushValue(Value.Bool(lhs < rhs))
@@ -275,7 +275,7 @@ object LessThanOrEqual : Visitable {
     override val description: String
         get() = "Check if a number is less than or equal to another"
 
-    override fun visit(visitor: Interpreter) {
+    override suspend fun visit(visitor: Interpreter) {
         val rhs = visitor.environment.stack.popValue().castToNumber()
         val lhs = visitor.environment.stack.popValue().castToNumber()
         visitor.environment.stack.pushValue(Value.Bool(lhs <= rhs))
