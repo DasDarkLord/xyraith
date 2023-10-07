@@ -1,11 +1,13 @@
 package parser
 
+import error.InvalidEvent
+import error.UnexpectedEOF
+import error.UnexpectedToken
+import error.Unreachable
 import events
 import lexer.SpanData
 import lexer.Token
 import lexer.TokenType
-import java.lang.Exception
-import kotlin.math.exp
 
 class Parser(private val input: MutableList<Token>) {
 
@@ -90,7 +92,7 @@ class Parser(private val input: MutableList<Token>) {
                 val block = parseBlock(nameToken.value, false)
 
                 if(eventParenthesis) standardMatch(next(), TokenType.RightParen)
-                return Ast.Event(nameToken.value, block, EventType.EVENT)
+                return Ast.Event(nameToken.value, block, EventType.EVENT, nameToken.span)
             }
             "function", "entity", "structure" -> {
                 standardMatch(nameToken, TokenType.Symbol)
@@ -99,7 +101,7 @@ class Parser(private val input: MutableList<Token>) {
                 val block = parseBlock(nameToken.value, true)
 
                 if(eventParenthesis) standardMatch(next(), TokenType.RightParen)
-                return Ast.Event(nameToken.value, block, EventType.FUNCTION)
+                return Ast.Event(nameToken.value, block, EventType.FUNCTION, nameToken.span)
             }
             else -> {
                 println("WARNING: unknown value ${eventToken.value}")
@@ -123,9 +125,9 @@ class Parser(private val input: MutableList<Token>) {
         val closeParen = next()
         standardMatch(closeParen, TokenType.RightParen)
         if(isFunction) {
-            return Ast.Block(commands, "function")
+            return Ast.Block(commands, "function", openParen.span)
         }
-        return Ast.Block(commands, eventName)
+        return Ast.Block(commands, eventName, openParen.span)
     }
 
     private fun parseCommand(): Ast.Command {
@@ -145,8 +147,8 @@ class Parser(private val input: MutableList<Token>) {
         }
         if(hasParens)
             standardMatch(next(), TokenType.RightParen)
-        verifyBuiltinCommand(nameToken, args, spans)
-        return Ast.Command(nameToken.value, args)
+        // verifyBuiltinCommand(nameToken, args, spans)
+        return Ast.Command(nameToken.value, args, nameToken.span)
     }
 
     private fun parseArgument(): Value {

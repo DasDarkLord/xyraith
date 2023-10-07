@@ -1,8 +1,8 @@
-package code
+package code.instructions
 
-import code.instructions.*
-import parser.ArgumentList
-import parser.ArgumentType
+import code.Interpreter
+import typechecker.ArgumentList
+import typechecker.ArgumentType
 
 val visitables: List<Visitable> = listOf(
     // Console.kt
@@ -19,7 +19,7 @@ val visitables: List<Visitable> = listOf(
 
     // World.kt
     SetBlock,
-    SetChatFormat,
+    EventChatSetFormat,
     LoadAnvilWorld,
 
     // Player.kt
@@ -29,7 +29,8 @@ val visitables: List<Visitable> = listOf(
     SetGamemode,
 
     // Variables.kt
-    FLocalStore, FLocalLoad,
+    FLocalStore, FLocalLoad, GlobalStore, GlobalLoad,
+    EntityStore, EntityLoad,
 
     // ControlFlow.kt
     ForEach, If, Call, GetParam, Return,

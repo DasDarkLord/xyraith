@@ -1,6 +1,6 @@
 package docs
 
-import parser.ArgumentType
+import typechecker.ArgumentType
 
 data class CommandDocument(
     val commandName: String,

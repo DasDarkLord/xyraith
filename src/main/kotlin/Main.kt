@@ -7,12 +7,10 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
 import net.minestom.server.entity.Player
 import parser.Parser
-import parser.ParserError
-import registry.commandRegistry
+import error.ParserError
 import registry.validateRegistry
-import java.awt.Desktop
+import typechecker.Typechecker
 import java.io.File
-import java.net.URI
 import java.nio.ByteBuffer
 import java.time.LocalDate
 
@@ -24,6 +22,8 @@ val miniMessage = MiniMessage.miniMessage()
 fun mm(str: String): Component = miniMessage.deserialize(str)
 
 var playerList = mutableListOf<Player>()
+
+val globalVariables: MutableMap<String, parser.Value> = mutableMapOf()
 
 fun main(args: Array<String>) {
     validateRegistry()
@@ -86,14 +86,18 @@ fun generateCommandDump() {
 }
 
 fun runServer(withServer: Boolean) {
-    val text = File("src/main/xyraith/main.xr").readText()
-    val lexer = Lexer(text, "src/main/xyraith/main.xr")
+    val text = File("src/main.xr").readText()
+    val lexer = Lexer(text, "src/main.xr")
     val tokens = lexer.transform()
     val parser = Parser(tokens)
     try {
         val time1 = LocalDate.now()
         val ast = parser.parseAll()
         Logger.trace(ast)
+        val typeChecker = Typechecker()
+        for(event in ast) {
+            typeChecker.typecheckEvent(event)
+        }
         val emitter = Emitter(ast)
         emitter.emit()
         Logger.trace(emitter)
@@ -101,6 +105,8 @@ fun runServer(withServer: Boolean) {
         constants = emitter.constants.map { pair -> pair.value to pair.key }.toMap()
         blockMap = emitter.blockMap
         Disassembler.dissasemble(emitter)
+        saveBinary(emitter)
+        println("Executing...")
         if(!withServer) {
             runEvent(1)
             return
@@ -108,5 +114,35 @@ fun runServer(withServer: Boolean) {
         startServer()
     } catch(e: ParserError) {
         println(e.emit())
+        e.printStackTrace()
     }
+}
+
+fun saveBinary(emitter: Emitter) {
+    val file = File("cached.xrv")
+    val listOfBytes = mutableListOf<Byte>()
+    var index = 0
+    println(emitter.constantsBytes.position())
+    listOfBytes.add(1)
+    for(byte in emitter.constantsBytes.array()) {
+        index++
+        if(index > emitter.constantsBytes.position()) {
+            continue
+        }
+        listOfBytes.add(byte)
+    }
+    listOfBytes.add(2)
+    for(entry in blockMap) {
+        var index2 = 0
+        for(byte in entry.value.array()) {
+            index2++
+            if(index2 > entry.value.position()) {
+                continue
+            }
+            listOfBytes.add(byte)
+        }
+    }
+
+    println("lob: ${listOfBytes.joinToString(",") }")
+    file.writeBytes(listOfBytes.toByteArray())
 }

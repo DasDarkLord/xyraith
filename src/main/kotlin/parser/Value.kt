@@ -1,6 +1,7 @@
 package parser
 
 import net.minestom.server.coordinate.Pos
+import typechecker.ArgumentType
 
 sealed class Value {
     /*
@@ -46,9 +47,15 @@ sealed class Value {
         }
     }
 
-    data class Array(val value: List<Value>) : Value() {
+    data class NumberList(val value: List<Number>) : Value() {
         override fun toString(): kotlin.String {
-            return """{"type":"list","value":$value}"""
+            return """{"type":"string_list","value":$value}"""
+        }
+    }
+
+    data class StringList(val value: List<String>) : Value() {
+        override fun toString(): kotlin.String {
+            return """{"type":"string_list","value":$value}"""
         }
     }
 
@@ -87,7 +94,8 @@ sealed class Value {
             is Selector -> value
             is String -> value
             is Symbol -> value
-            is Array -> value.toString()
+            is NumberList -> value.toString()
+            is StringList -> value.toString()
             is Bool -> value.toString()
         }
     }
@@ -110,16 +118,17 @@ sealed class Value {
 
     fun castToArgumentType(): ArgumentType {
         return when(this) {
-            is BasicBlockRef -> TODO("not available at compile-tiem")
+            is BasicBlockRef -> ArgumentType.BLOCK_REFERENCE
             is Block -> ArgumentType.BLOCK
             is Command -> ArgumentType.COMMAND
-            Null -> TODO("not available at compile-tiem")
+            Null -> ArgumentType.NULL
             is Number -> ArgumentType.NUMBER
             is Position -> ArgumentType.COMMAND
             is Selector -> ArgumentType.SELECTOR
             is String -> ArgumentType.STRING
             is Symbol -> ArgumentType.SYMBOL
-            is Array -> ArgumentType.LIST
+            is NumberList -> ArgumentType.NUMBER_LIST
+            is StringList -> ArgumentType.STRING_LIST
             is Bool -> ArgumentType.BOOL
         }
     }

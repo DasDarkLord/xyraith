@@ -1,10 +1,9 @@
 package code.instructions
 
 import code.Interpreter
-import code.Visitable
-import parser.ArgumentList
-import parser.ArgumentType
-import parser.NodeBuilder
+import typechecker.ArgumentList
+import typechecker.ArgumentType
+import typechecker.NodeBuilder
 import parser.Value
 
 object ForEach : Visitable {
@@ -14,7 +13,7 @@ object ForEach : Visitable {
     override val arguments: ArgumentList
         get() = NodeBuilder()
             .addSingleArgument(ArgumentType.SYMBOL, "Variable to store value in")
-            .addSingleArgument(ArgumentType.LIST, "List to loop through")
+            .addSingleArgument(ArgumentType.GENERIC_LIST, "List to loop through")
             .addSingleArgument(ArgumentType.BLOCK, "Code to run on each iteration")
             .build()
     override val returnType: ArgumentType
@@ -27,7 +26,7 @@ object ForEach : Visitable {
         val list = visitor.environment.stack.popValue()
         val symbol = visitor.environment.stack.popValue()
 
-        if(block is Value.BasicBlockRef && list is Value.Array && symbol is Value.Symbol) {
+        if(block is Value.BasicBlockRef && list is Value.NumberList && symbol is Value.Symbol) {
             for(subValue in list.value) {
                 visitor.environment.localVariables[symbol.value] = subValue
                 visitor.runBlock(block.value)

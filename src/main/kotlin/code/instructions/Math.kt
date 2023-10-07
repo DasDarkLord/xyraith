@@ -1,10 +1,9 @@
 package code.instructions
 
 import code.Interpreter
-import code.Visitable
-import parser.ArgumentList
-import parser.ArgumentType
-import parser.NodeBuilder
+import typechecker.ArgumentList
+import typechecker.ArgumentType
+import typechecker.NodeBuilder
 import parser.Value
 import kotlin.random.Random
 
@@ -45,7 +44,7 @@ object Range : Visitable {
             .addSingleArgument(ArgumentType.NUMBER, "Maximum number")
             .build()
     override val returnType: ArgumentType
-        get() = ArgumentType.LIST
+        get() = ArgumentType.NUMBER_LIST
     override val description: String
         get() = "Generate a series of numbers."
 
@@ -53,7 +52,7 @@ object Range : Visitable {
         val max = visitor.environment.stack.popValue().castToNumber()
         val min = visitor.environment.stack.popValue().castToNumber()
         val list = (min.toInt()..max.toInt()).toList().map { Value.Number(it.toDouble()) }
-        visitor.environment.stack.pushValue(Value.Array(list))
+        visitor.environment.stack.pushValue(Value.NumberList(list))
     }
 }
 

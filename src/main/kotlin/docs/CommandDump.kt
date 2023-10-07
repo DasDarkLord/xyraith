@@ -1,6 +1,6 @@
 package docs
 
-import code.visitables
+import code.instructions.visitables
 
 fun dumpCommands(): String {
     var output = "["

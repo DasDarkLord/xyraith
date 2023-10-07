@@ -8,7 +8,7 @@ object Disassembler {
     fun dissasemble(emitter: Emitter) {
         println("CONSTANTS")
         for(constant in constants) {
-            println("${constant.key} => ${constant.value.toDisplay()}")
+            println("${constant.key} => ${constant.value.toDisplay()} (${constant.value.castToArgumentType()})")
         }
         println()
         for(block in emitter.blockMap) {
@@ -24,6 +24,7 @@ object Disassembler {
                 }
                 while(true) {
                     val opcode = iter.get()
+                    if(opcode.toInt() == 0) return
                     if(opcode.toInt() == 1) {
                         val constant = iter.getInt()
                         val value = constants[constant]

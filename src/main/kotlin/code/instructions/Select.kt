@@ -1,10 +1,9 @@
 package code.instructions
 
 import code.Interpreter
-import code.Visitable
-import parser.ArgumentList
-import parser.ArgumentType
-import parser.NodeBuilder
+import typechecker.ArgumentList
+import typechecker.ArgumentType
+import typechecker.NodeBuilder
 
 // TODO: finish command and make it stable by supporting usernames
 object Select : Visitable {

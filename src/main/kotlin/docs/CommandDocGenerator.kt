@@ -1,7 +1,7 @@
 package docs
 
-import code.visitables
-import parser.*
+import code.instructions.visitables
+import typechecker.*
 
 fun generateDocumentation(): String {
     var output = ""
@@ -21,9 +21,9 @@ fun decomposeList(list: ArgumentList): List<Pair<String, String>> {
     val output = mutableListOf<Pair<String, String>>()
     for(arg in list.list) {
         output.add(when(arg) {
-            is SingleArgumentNode -> Pair(arg.type.toString(), arg.desc)
-            is OptionalArgumentNode -> Pair("*${arg.type.toString()}", arg.desc)
-            is PluralArgumentNode -> Pair("${arg.type.toString()}(s)", arg.desc)
+            is ArgumentNode.SingleArgumentNode -> Pair(arg.type.toString(), arg.desc)
+            is ArgumentNode.OptionalArgumentNode -> Pair("*${arg.type}", arg.desc)
+            is ArgumentNode.PluralArgumentNode -> Pair("${arg.type}(s)", arg.desc)
             else -> Pair("Unknown", "If you see this, please report this as an issue!")
         })
     }

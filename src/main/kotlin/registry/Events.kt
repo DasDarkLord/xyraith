@@ -9,4 +9,8 @@ val events = mapOf(
     "leftClick" to 7,
     "rightClick" to 8,
     "sneak" to 9,
+    "chat" to 10,
+    "swapHands" to 11,
+    "gamemodeChange" to 12,
+    "respawn" to 13,
 )

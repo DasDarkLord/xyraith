@@ -1,0 +1,6 @@
+event startup {
+    store :maximum "10"
+    foreach :index (range 1 (load :maximum)) {
+        console.log (load :index)
+    }
+}

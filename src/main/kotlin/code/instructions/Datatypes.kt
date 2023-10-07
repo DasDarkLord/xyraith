@@ -1,10 +1,9 @@
 package code.instructions
 
 import code.Interpreter
-import code.Visitable
-import parser.ArgumentList
-import parser.ArgumentType
-import parser.NodeBuilder
+import typechecker.ArgumentList
+import typechecker.ArgumentType
+import typechecker.NodeBuilder
 import parser.Value
 
 object Loc : Visitable {
@@ -54,21 +53,10 @@ object Item : Visitable {
             .build()
 
     override val description: String
-        get() = "Generate a location from coordinates."
+        get() = "Generate an item from an ID and an amount"
 
     override fun visit(visitor: Interpreter) {
-        var pitch = 0.0
-        var yaw = 0.0
-        if(visitor.environment.argumentCount >= 5) {
-            yaw = visitor.environment.stack.popValue().castToNumber()
-        }
-        if(visitor.environment.argumentCount >= 4) {
-            pitch = visitor.environment.stack.popValue().castToNumber()
-        }
-        val z = visitor.environment.stack.popValue().castToNumber()
-        val y = visitor.environment.stack.popValue().castToNumber()
-        val x = visitor.environment.stack.popValue().castToNumber()
-        visitor.environment.stack.pushValue(Value.Position(x, y, z, pitch, yaw))
+        TODO()
     }
 }
 

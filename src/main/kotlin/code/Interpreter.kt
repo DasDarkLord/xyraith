@@ -1,6 +1,8 @@
 package code
 
 import blockMap
+import code.instructions.Visitable
+import code.instructions.visitables
 import constants
 import net.minestom.server.entity.Entity
 import net.minestom.server.event.Event

@@ -1,10 +1,9 @@
 package code.instructions
 
 import code.Interpreter
-import code.Visitable
-import parser.ArgumentList
-import parser.ArgumentType
-import parser.NodeBuilder
+import typechecker.ArgumentList
+import typechecker.ArgumentType
+import typechecker.NodeBuilder
 
 object Log : Visitable {
     override val code: Int get() = 126

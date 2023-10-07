@@ -39,6 +39,7 @@ When all constants are done, put `0x00` to indicate the end of the constant tabl
 ## Basic Blocks
 Xyraith's code is split into "basic blocks". This is the format for them:
 ```
+[Int - Block Size]
 /* block header */
 0x00
 /* id of the constant with the name of the basic block */

@@ -1,16 +1,15 @@
 package code.instructions
 
 import code.Interpreter
-import code.Visitable
 import mm
 import net.kyori.adventure.title.Title
 import net.kyori.adventure.title.TitlePart
 import net.minestom.server.entity.GameMode
 import net.minestom.server.entity.Player
 import net.minestom.server.entity.damage.DamageType
-import parser.ArgumentList
-import parser.ArgumentType
-import parser.NodeBuilder
+import typechecker.ArgumentList
+import typechecker.ArgumentType
+import typechecker.NodeBuilder
 import parser.Value
 import java.time.Duration
 

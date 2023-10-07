@@ -57,9 +57,27 @@ fun addEvents(globalEventHandler: GlobalEventHandler) {
         }
     }
     globalEventHandler.addListener(PlayerBlockInteractEvent::class.java) { event ->
-        val player = event.player
         if(event.hand == Player.Hand.MAIN) {
-            runEvent(events["rightClick"]!!, mutableListOf(player), player.instance, event)
+            runEvent(events["rightClick"]!!, mutableListOf(event.player), event.player.instance, event)
         }
+    }
+    globalEventHandler.addListener(PlayerChatEvent::class.java) { event ->
+        val player = event.player
+        runEvent(events["chat"]!!, mutableListOf(player), player.instance, event)
+    }
+    globalEventHandler.addListener(PlayerStartSneakingEvent::class.java) { event ->
+        runEvent(events["sneak"]!!, mutableListOf(event.player), event.player.instance, event)
+    }
+    globalEventHandler.addListener(PlayerSwapItemEvent::class.java) { event ->
+        runEvent(events["swapHands"]!!, mutableListOf(event.player), event.player.instance, event)
+    }
+    globalEventHandler.addListener(PlayerStartDiggingEvent::class.java) { event ->
+        runEvent(events["leftClick"]!!, mutableListOf(event.player), event.player.instance, event)
+    }
+    globalEventHandler.addListener(PlayerGameModeChangeEvent::class.java) { event ->
+        runEvent(events["gamemodeChange"]!!, mutableListOf(event.player), event.player.instance, event)
+    }
+    globalEventHandler.addListener(PlayerRespawnEvent::class.java) { event ->
+        runEvent(events["respawn"]!!, mutableListOf(event.player), event.player.instance, event)
     }
 }

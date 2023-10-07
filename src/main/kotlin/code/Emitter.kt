@@ -7,7 +7,7 @@ import parser.Value
 import registry.commandRegistry
 import java.nio.ByteBuffer
 
-const val BUFFER_SIZE = 1000
+const val BUFFER_SIZE = 10000
 
 fun prettyPrint(buf: ByteBuffer): String {
     var output = "["
@@ -33,7 +33,7 @@ class Emitter(private val ast: List<Ast.Event>) {
     private var blockIdRecord: Int = 1
     private var constantIdRecord: Int = 1
     var constants: MutableMap<Value, Int> = mutableMapOf()
-    private var constantsBytes: ByteBuffer = ByteBuffer.allocate(BUFFER_SIZE)
+    var constantsBytes: ByteBuffer = ByteBuffer.allocate(BUFFER_SIZE)
     override fun toString(): String {
         var output = """
 Emitter {
@@ -72,6 +72,7 @@ Emitter {
                 emitCommand(command, blockId)
             }
         }
+        blockMap[blockId]?.put(0)
         return blockId
     }
 
@@ -148,9 +149,17 @@ Emitter {
                 }
                 constantsBytes.putShort(0.toShort())
             }
-            is Value.Array -> TODO()
+            is Value.NumberList -> TODO()
+            is Value.StringList -> TODO()
             is Value.Bool -> TODO()
         }
-
     }
+}
+
+fun prependIntToByteBuffer(value: Int, buffer: ByteBuffer): ByteBuffer {
+    val newBuffer = ByteBuffer.allocate(4 + buffer.remaining())
+    newBuffer.putInt(value)
+    newBuffer.put(buffer)
+    newBuffer.flip()
+    return newBuffer
 }

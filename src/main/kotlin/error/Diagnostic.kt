@@ -1,9 +1,9 @@
-package parser
+package error
 
 import lexer.SpanData
 import java.io.File
 
-class Diagnostic(val errorCode: Int, val problem: String, val span: SpanData) {
+class Diagnostic(val errorCode: Int, val problem: String, val span: SpanData, val help: String? = null) {
     override fun toString(): String {
         val content = File(span.file).readText()
         var line = ""
@@ -35,6 +35,7 @@ ${" ".repeat(lineCount.toString().length+1)}|
 $lineCount | $line
 ${" ".repeat(lineCount.toString().length+1)}| ${" ".repeat(span.spanStart-lineStart-1)} ${"^".repeat(span.spanEnd-span.spanStart)}
 ${" ".repeat(lineCount.toString().length+1)}|
+${if(help == null) "" else "= help: $help"}
         """.trimIndent()
     }
 }
