@@ -9,7 +9,7 @@ designed for creating Minecraft servers. Written using
 [Minestom](https://minestom.net/) and [Kotlin](https://kotlinlang.org/).
 
 ## Usage
-To install Xyraith for now, you must build from source.
+To install Xyraith, [download Xyraith.jar](https://raw.githubusercontent.com/realmofuz/xyraith/main/Xyraith.jar).
 
 Once you have Xyraith installed, run the jar using `java -jar <jar file>`. Java 17 or above is recommended.
 

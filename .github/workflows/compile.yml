@@ -1,0 +1,23 @@
+name: compile
+run-name: Auto-compiled JAR
+on: 
+    schedule:
+        - cron: "0 0 * * *"
+    workflow_dispatch:
+jobs:
+    compile:
+        permissions: write-all
+        runs-on: windows-latest
+        steps: 
+            - uses: actions/checkout@v4
+            - name: Remove existing Xyraith.jar
+              run: del Xyraith.jar
+            - name: Compile with gradle
+              run: gradlew shadowJar
+            - name: Commit files
+              run: |
+                git config --local user.name  ${{ github.actor }}        
+                git config --local user.email "${{ github.actor }}@users.noreply.github.com"
+                git add Xyraith.jar
+                git commit -m "Auto-compiled JAR"
+                git push
