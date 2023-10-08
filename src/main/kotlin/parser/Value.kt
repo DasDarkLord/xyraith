@@ -83,12 +83,31 @@ sealed class Value {
         }
     }
 
+    data class Struct(
+        val type: ArgumentType,
+        val fields: Map<kotlin.String, Value>
+    ) : Value() {
+        override fun toString(): kotlin.String {
+            return """{"type":"user_defined","type":"$type","fields":"$fields"}"""
+        }
+    }
+
+    data class StructField(
+        val type: ArgumentType,
+        val name: kotlin.String,
+        val value: Value
+    ) : Value() {
+        override fun toString(): kotlin.String {
+            return """{"type":"user_defined","type":"$type","name":"$name","value":"$value"}"""
+        }
+    }
+
     fun toDisplay(): kotlin.String {
         return when(this) {
             is Number -> "$value"
             is Position -> "<$x, $y, $z, $pitch, $yaw>"
             is BasicBlockRef -> "bb{${this.value}}"
-            is Null -> "NUL"
+            is Null -> "null"
             is Block -> "UNAVAILABLE_DURING_RUNTIME_BLOCK"
             is Command -> "UNAVAILABLE_DURING_RUNTIME_COMMAND"
             is Selector -> value
@@ -97,6 +116,8 @@ sealed class Value {
             is NumberList -> value.toString()
             is StringList -> value.toString()
             is Bool -> value.toString()
+            is Struct -> "${type}{${fields}}"
+            is StructField -> "structField{$name,$type,$value}"
         }
     }
 
@@ -110,6 +131,7 @@ sealed class Value {
             value
         else
             toDisplay()
+
     fun castToPos(): Pos =
         if(this is Position)
             Pos(this.x, this.y, this.z, this.pitch.toFloat(), this.yaw.toFloat())
@@ -130,13 +152,8 @@ sealed class Value {
             is NumberList -> ArgumentType.NUMBER_LIST
             is StringList -> ArgumentType.STRING_LIST
             is Bool -> ArgumentType.BOOL
+            is Struct -> type
+            is StructField -> ArgumentType("structField")
         }
-    }
-
-    fun castToCommandName(): kotlin.String {
-        if(this is Value.Command) {
-            return this.value.name
-        }
-        return ""
     }
 }

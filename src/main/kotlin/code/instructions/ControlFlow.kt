@@ -191,3 +191,26 @@ object Sleep : Visitable {
         delay(number.toLong())
     }
 }
+
+object Loop : Visitable {
+    override val code: Int get() = 27
+    override val isExtension: Boolean get() = false
+    override val command: String get() = "loop"
+    override val arguments: ArgumentList
+        get() = NodeBuilder()
+            .addSingleArgument(ArgumentType.BLOCK, "Code to loop")
+            .build()
+    override val returnType: ArgumentType
+        get() = ArgumentType.NONE
+    override val description: String
+        get() = "Run a block infinitely"
+
+    override suspend fun visit(visitor: Interpreter) {
+        val block = visitor.environment.stack.popValue()
+        if(block is Value.BasicBlockRef) {
+            while(true) {
+                visitor.runBlock(block.value)
+            }
+        }
+    }
+}

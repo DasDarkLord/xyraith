@@ -94,7 +94,7 @@ class Parser(private val input: MutableList<Token>) {
                 if(eventParenthesis) standardMatch(next(), TokenType.RightParen)
                 return Ast.Event(nameToken.value, block, EventType.EVENT, nameToken.span)
             }
-            "function", "entity", "structure" -> {
+            "function", "entity", "struct" -> {
                 standardMatch(nameToken, TokenType.Symbol)
                 if(nameToken !is Token.Symbol) throw Unreachable()
 

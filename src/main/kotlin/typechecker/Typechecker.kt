@@ -130,7 +130,10 @@ class Typechecker {
                 println("type is ${globalVariables[symbol.value]}")
                 globalVariables[symbol.value]!!
             }
-
+            "struct.init" -> {
+                val symbol = command.arguments[0] as Value.Symbol
+                return ArgumentType(symbol.value)
+            }
             else -> {
                 (commandRegistry[command.name]!!["object"] as Visitable).returnType
             }

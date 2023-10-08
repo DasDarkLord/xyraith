@@ -1,11 +1,3 @@
 event join {
-    target.store :health 100
-    target.store :maxHealth 100
-    asyncCall :playerLoop 0
-}
 
-function :playerLoop {
-    player.setHunger 20
-    player.sendActionBar (string "<red>" (target.load :health) "/" (target.load :maxHealth) " HP")
-    sleep 50
 }

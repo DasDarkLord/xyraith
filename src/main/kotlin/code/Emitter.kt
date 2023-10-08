@@ -109,7 +109,6 @@ Emitter {
             constants[value] = id
         }
         when(value) {
-            is Value.BasicBlockRef -> TODO("this isnt compilable")
             is Value.Block -> {
                 val newId = emitBlock(value.value, EventType.EVENT, "callable")
                 println("Emitting block: ${value.value} to $newId with constant $id")
@@ -125,14 +124,11 @@ Emitter {
             is Value.Command -> {
                 emitCommand(value.value, blockId)
             }
-            is Value.Null -> TODO()
             is Value.Number -> {
                 constantsBytes.putInt(constantIdRecord)
                 constantsBytes.put(1)
                 constantsBytes.putDouble(value.value)
             }
-            is Value.Position -> TODO()
-            is Value.Selector -> TODO()
             is Value.String -> {
                 constantsBytes.putInt(constantIdRecord)
                 constantsBytes.put(2)
@@ -149,9 +145,7 @@ Emitter {
                 }
                 constantsBytes.putShort(0.toShort())
             }
-            is Value.NumberList -> TODO()
-            is Value.StringList -> TODO()
-            is Value.Bool -> TODO()
+            else -> TODO()
         }
     }
 }

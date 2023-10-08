@@ -26,4 +26,8 @@ class ListFrames<T> {
     operator fun get(index: Int): T? {
         return inner.last()[index]
     }
+
+    fun frameSize(): Int {
+        return inner.last().size
+    }
 }

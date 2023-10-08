@@ -10,58 +10,49 @@ sealed interface ArgumentNode {
     data class PluralArgumentNode(val type: ArgumentType, val desc: String) : ArgumentNode
 }
 
-enum class ArgumentType {
-    NUMBER,
-    STRING,
-    COMMAND,
-    LOCATION,
-    SYMBOL,
-    ANY,
-    BLOCK,
-    GENERIC_LIST,
-    NUMBER_LIST,
-    STRING_LIST,
-    SELECTOR,
-    NONE,
-    ITEM,
-    BOOL,
-
-    BLOCK_REFERENCE,
-    NULL,
-    ;
+class ArgumentType(private val typeName: String) {
+    companion object {
+        val NUMBER = ArgumentType("number")
+        val STRING = ArgumentType("string")
+        val COMMAND = ArgumentType("command")
+        val LOCATION = ArgumentType("location")
+        val SYMBOL = ArgumentType("symbol")
+        val ANY = ArgumentType("any")
+        val BLOCK = ArgumentType("block")
+        val GENERIC_LIST = ArgumentType("list[any]")
+        val NUMBER_LIST = ArgumentType("list[number]")
+        val STRING_LIST = ArgumentType("list[string]")
+        val SELECTOR = ArgumentType("selector")
+        val NONE = ArgumentType("null")
+        val ITEM = ArgumentType("itemStack")
+        val BOOL = ArgumentType("boolean")
+        val BLOCK_REFERENCE = ArgumentType("block_reference")
+        val NULL = ArgumentType("null")
+    }
 
     override fun toString(): String {
-        return when(this) {
-            NUMBER -> "Number"
-            STRING -> "String"
-            COMMAND -> "Command"
-            LOCATION -> "Location"
-            SYMBOL -> "Symbol"
-            ANY -> "Any Value"
-            BLOCK -> "Block"
-            BLOCK_REFERENCE -> "Basic Block Reference"
-            NULL -> "Null"
-            GENERIC_LIST -> "Any List"
-            NUMBER_LIST -> "Number List"
-            STRING_LIST -> "String List"
-            SELECTOR -> "Selector"
-            NONE -> "Null"
-            ITEM -> "Item Stack"
-            BOOL -> "Boolean"
-        }
+        return this.typeName
     }
 
     fun isEqualTypeTo(other: ArgumentType): Boolean {
         val out = when(true) {
-            (this == GENERIC_LIST && (other == NUMBER_LIST || other == STRING_LIST)) -> true
-            (other == GENERIC_LIST && (this == NUMBER_LIST || this == STRING_LIST)) -> true
+            (this == GENERIC_LIST && other.typeName.startsWith("list")) -> true
+            (other == GENERIC_LIST && this.typeName.startsWith("list")) -> true
             (other == ANY) -> true
             (this == ANY) -> true
             (this == other) -> true
             else -> false
         }
         return out
+    }
 
+    override fun equals(other: Any?): Boolean {
+        if(other !is ArgumentType) return false
+        return this.typeName == other.typeName
+    }
+
+    override fun hashCode(): Int {
+        return typeName.hashCode()
     }
 }
 

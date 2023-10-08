@@ -56,7 +56,7 @@ object Item : Visitable {
         get() = "Generate an item from an ID and an amount"
 
     override suspend fun visit(visitor: Interpreter) {
-        TODO()
+
     }
 }
 

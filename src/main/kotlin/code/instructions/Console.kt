@@ -11,7 +11,7 @@ object Log : Visitable {
     override val command: String get() = "console.log"
     override val arguments: ArgumentList
         get() = NodeBuilder()
-            .addSingleArgument(ArgumentType.STRING, "String to print")
+            .addSingleArgument(ArgumentType.ANY, "Value to print")
             .build()
     override val returnType: ArgumentType
         get() = ArgumentType.NONE

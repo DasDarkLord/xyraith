@@ -40,9 +40,13 @@ val visitables: List<Visitable> = listOf(
 
     // ControlFlow.kt
     ForEach, If, Call, AsyncCall, GetParam, Return, Sleep,
+    Loop,
 
     // Select.kr
     Select, ResetSelection,
+
+    // Struct.kt
+    StructInit, StructField
 )
 
 interface Visitable {
