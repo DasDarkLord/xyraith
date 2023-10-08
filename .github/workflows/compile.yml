@@ -11,7 +11,7 @@ jobs:
         steps: 
             - uses: actions/checkout@v4
             - name: Remove existing Xyraith.jar
-              run: del Xyraith.jar
+              run: rm Xyraith.jar
             - name: Compile with gradle
               run: ./gradlew shadowJar
             - name: Commit files
