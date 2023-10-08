@@ -87,7 +87,6 @@ class Interpreter(val constants: Map<Int, Value>, val blockMap: Map<Int, ByteBuf
 
     private suspend fun runInstruction(buf: ByteBuffer) {
         val opcode = buf.get()
-        println("opcode: $opcode")
         if(opcode.toInt() == 1) {
             val id = buf.getInt()
             environment.stack.pushValue(constants[id]!!)

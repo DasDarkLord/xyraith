@@ -1,6 +1,8 @@
 package code.instructions
 
 import code.Interpreter
+import net.minestom.server.item.ItemStack
+import net.minestom.server.item.Material
 import typechecker.ArgumentList
 import typechecker.ArgumentType
 import typechecker.NodeBuilder
@@ -56,7 +58,13 @@ object Item : Visitable {
         get() = "Generate an item from an ID and an amount"
 
     override suspend fun visit(visitor: Interpreter) {
-
+        var amount = 1.0
+        if(visitor.environment.argumentCount >= 2) {
+            amount = visitor.environment.stack.popValue().castToNumber()
+        }
+        val id = visitor.environment.stack.popValue().castToString()
+        visitor.environment.stack.pushValue(Value.Item(
+            ItemStack.of(Material.fromNamespaceId(id) ?: Material.AIR, amount.toInt())))
     }
 }
 
@@ -118,5 +126,55 @@ object StringCmd : Visitable {
             output = addon.toDisplay() + output
         }
         visitor.environment.stack.pushValue(Value.String(output))
+    }
+}
+
+object StringList : Visitable {
+    override val code: Int get() = 15
+    override val isExtension: Boolean get() = false
+    override val command: String get() = "listOf<string>"
+    override val returnType: ArgumentType
+        get() = ArgumentType.STRING_LIST
+    override val arguments: ArgumentList
+        get() = NodeBuilder()
+            .addPluralArgument(ArgumentType.STRING, "Strings to put in list")
+            .build()
+
+    override val description: String
+        get() = "Generate a list of strings."
+
+    override suspend fun visit(visitor: Interpreter) {
+        val size = visitor.environment.argumentCount
+        val output = mutableListOf<Value.String>()
+        for(x in 1..size) {
+            val addon = visitor.environment.stack.popValue() as Value.String
+            output.add(addon)
+        }
+        visitor.environment.stack.pushValue(Value.StringList(output.reversed()))
+    }
+}
+
+object NumberList : Visitable {
+    override val code: Int get() = 16
+    override val isExtension: Boolean get() = false
+    override val command: String get() = "listOf<number>"
+    override val returnType: ArgumentType
+        get() = ArgumentType.NUMBER_LIST
+    override val arguments: ArgumentList
+        get() = NodeBuilder()
+            .addPluralArgument(ArgumentType.NUMBER, "Numbers to put in list")
+            .build()
+
+    override val description: String
+        get() = "Generate a list of numbers."
+
+    override suspend fun visit(visitor: Interpreter) {
+        val size = visitor.environment.argumentCount
+        val output = mutableListOf<Value.Number>()
+        for(x in 1..size) {
+            val addon = visitor.environment.stack.popValue() as Value.Number
+            output.add(addon)
+        }
+        visitor.environment.stack.pushValue(Value.NumberList(output.reversed()))
     }
 }

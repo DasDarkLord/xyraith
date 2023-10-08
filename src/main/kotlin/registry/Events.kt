@@ -13,4 +13,6 @@ val events = mapOf(
     "swapHands" to 11,
     "gamemodeChange" to 12,
     "respawn" to 13,
+    "placeBlock" to 14,
+    "breakBlock" to 15,
 )

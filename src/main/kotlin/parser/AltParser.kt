@@ -41,7 +41,7 @@ class Parser(private val input: MutableList<Token>) {
             return p
         } else {
             val startTok = input[b]
-            if(b+1 > input.size) throw UnexpectedEOF(startTok.span)
+            if(b+1 >= input.size) throw UnexpectedEOF(startTok.span)
             return input[++b]
         }
 
@@ -152,7 +152,7 @@ class Parser(private val input: MutableList<Token>) {
     }
 
     private fun parseArgument(): Value {
-        when(val next = next(false)) {
+        when(val next = next(true)) {
             is Token.At -> {
                 val next2 = next()
                 if(next2 !is Token.Identifier) {

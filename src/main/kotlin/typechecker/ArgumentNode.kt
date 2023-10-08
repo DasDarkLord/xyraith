@@ -34,6 +34,16 @@ class ArgumentType(private val typeName: String) {
         return this.typeName
     }
 
+    fun getGenericType(): ArgumentType {
+        println(this.typeName)
+        val regex = Regex("\\w+\\[(\\w+|\\?)]")
+        if(regex.matches(this.typeName)) {
+            val captures = regex.matchEntire(this.typeName)!!.groups[1]!!.value
+            return ArgumentType(captures)
+        }
+        return ArgumentType("null")
+    }
+
     fun isEqualTypeTo(other: ArgumentType): Boolean {
         val out = when(true) {
             (this == GENERIC_LIST && other.typeName.startsWith("list")) -> true

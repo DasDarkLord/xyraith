@@ -4,6 +4,7 @@ import code.instructions.Visitable
 import error.*
 import events
 import lexer.SpanData
+import net.minestom.server.command.CommandParser.Result.KnownCommand.Invalid
 import parser.*
 import registry.commandRegistry
 import kotlin.math.exp
@@ -135,6 +136,8 @@ class Typechecker {
                 return ArgumentType(symbol.value)
             }
             else -> {
+                if(!commandRegistry.containsKey(command.name))
+                        throw InvalidCommand(command.name, command.span)
                 (commandRegistry[command.name]!!["object"] as Visitable).returnType
             }
         }
@@ -213,12 +216,15 @@ class Typechecker {
                         getCommandReturnType((command.arguments[1] as Value.Command).value)
                     else
                         command.arguments[1].castToArgumentType()
+
+                val finalExpected = expectedType.getGenericType()
+
                 if(!localVariables.containsKey(variableName)) {
-                    localVariables[variableName] = expectedType
+                    localVariables[variableName] = finalExpected
                 }
 
-                if(!localVariables[variableName]!!.isEqualTypeTo(expectedType)) {
-                    throw VariableWrongType(variableName, expectedType, localVariables[variableName]!!, command.span)
+                if(!localVariables[variableName]!!.isEqualTypeTo(finalExpected)) {
+                    throw VariableWrongType(variableName, finalExpected, localVariables[variableName]!!, command.span)
                 }
             }
         }

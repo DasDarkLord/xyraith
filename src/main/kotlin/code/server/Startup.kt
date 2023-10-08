@@ -19,13 +19,12 @@ fun startServer() {
     MojangAuth.init()
     val instanceManager = MinecraftServer.getInstanceManager()
     val instanceContainer = instanceManager.createInstanceContainer()
-    instanceContainer.setGenerator { unit -> unit.modifier().fillHeight(0, 40, Block.SANDSTONE) }
     val globalEventHandler = MinecraftServer.getGlobalEventHandler()
     runEvent(1, mutableListOf(), instanceContainer, null)
     globalEventHandler.addListener(PlayerLoginEvent::class.java) { event ->
         val player = event.player
         event.setSpawningInstance(instanceContainer)
-        player.respawnPoint = Pos(0.0, 42.0, 0.0)
+        player.respawnPoint = Pos(0.0, 65.0, 0.0)
     }
     addEvents(globalEventHandler)
     server.start("0.0.0.0", 25565)
@@ -79,5 +78,11 @@ fun addEvents(globalEventHandler: GlobalEventHandler) {
     }
     globalEventHandler.addListener(PlayerRespawnEvent::class.java) { event ->
         runEvent(events["respawn"]!!, mutableListOf(event.player), event.player.instance, event)
+    }
+    globalEventHandler.addListener(PlayerBlockBreakEvent::class.java) { event ->
+        runEvent(events["breakBlock"]!!, mutableListOf(event.player), event.player.instance, event)
+    }
+    globalEventHandler.addListener(PlayerBlockPlaceEvent::class.java) { event ->
+        runEvent(events["placeBlock"]!!, mutableListOf(event.player), event.player.instance, event)
     }
 }

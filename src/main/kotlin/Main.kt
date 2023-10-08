@@ -54,6 +54,7 @@ fun main(args: Array<String>) {
 fun helpCommand() {
     println("""
 Xyraith's official compiler & tooling
+Build version v0.1-RC1 (10/08/23)
 
 Example of using a subcommand:
 java -jar Xyraith.jar run

@@ -12,14 +12,14 @@ val visitables: List<Visitable> = listOf(
     Add, Sub, Mul, Div, Mod,
     Random, Range,
     Perlin,
-    GreaterThan, LessThan, GreaterThanOrEqual, LessThanOrEqual,
+    GreaterThan, LessThan, GreaterThanOrEqual, LessThanOrEqual, EqualTo,
 
     // Datatypes.kt
     Loc, Item, True, False, StringCmd,
+    StringList, NumberList,
 
     // World.kt
     SetBlock,
-    EventChatSetFormat,
     LoadAnvilWorld,
 
     // Entity.kt
@@ -29,6 +29,7 @@ val visitables: List<Visitable> = listOf(
     SendMessage, SendActionBar, SendTitle,
     SetHunger, GetHunger, SetSaturation, GetSaturation,
     SetGamemode, PlayerUsername,
+    GiveItems, HasItems,
 
     // Target.kt
     Teleport, TargetUUID,
@@ -46,7 +47,15 @@ val visitables: List<Visitable> = listOf(
     Select, ResetSelection,
 
     // Struct.kt
-    StructInit, StructField
+    StructInit, StructField,
+
+    // Item.kt
+    SetItemName, SetItemLore,
+
+    // Event.kt
+    EventChatSetFormat, EventChatGetMessage,
+    EventSetCancelled,
+    EventBlockGetBlock, EventGetLocation,
 )
 
 interface Visitable {

@@ -1,6 +1,7 @@
 package parser
 
 import net.minestom.server.coordinate.Pos
+import net.minestom.server.item.ItemStack
 import typechecker.ArgumentType
 
 sealed class Value {
@@ -83,6 +84,14 @@ sealed class Value {
         }
     }
 
+    data class Item(
+        val itemStack: ItemStack,
+    ) : Value() {
+        override fun toString(): kotlin.String {
+            return """{"type":"item","itemStack":"$itemStack"}"""
+        }
+    }
+
     data class Struct(
         val type: ArgumentType,
         val fields: Map<kotlin.String, Value>
@@ -118,6 +127,7 @@ sealed class Value {
             is Bool -> value.toString()
             is Struct -> "${type}{${fields}}"
             is StructField -> "structField{$name,$type,$value}"
+            is Item -> "item{$itemStack}"
         }
     }
 
@@ -154,6 +164,7 @@ sealed class Value {
             is Bool -> ArgumentType.BOOL
             is Struct -> type
             is StructField -> ArgumentType("structField")
+            is Item -> ArgumentType.ITEM
         }
     }
 }

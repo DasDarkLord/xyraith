@@ -281,3 +281,24 @@ object LessThanOrEqual : Visitable {
         visitor.environment.stack.pushValue(Value.Bool(lhs <= rhs))
     }
 }
+
+object EqualTo : Visitable {
+    override val code: Int get() = 44
+    override val isExtension: Boolean get() = false
+    override val command: String get() = "eq"
+    override val arguments: ArgumentList
+        get() = NodeBuilder()
+            .addSingleArgument(ArgumentType.ANY, "Left hand side")
+            .addSingleArgument(ArgumentType.ANY, "Right hand side")
+            .build()
+    override val returnType: ArgumentType
+        get() = ArgumentType.BOOL
+    override val description: String
+        get() = "Check if a value is equal to another"
+
+    override suspend fun visit(visitor: Interpreter) {
+        val rhs = visitor.environment.stack.popValue()
+        val lhs = visitor.environment.stack.popValue()
+        visitor.environment.stack.pushValue(Value.Bool(lhs == rhs))
+    }
+}

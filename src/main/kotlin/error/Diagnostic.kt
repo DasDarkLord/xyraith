@@ -28,13 +28,15 @@ class Diagnostic(val errorCode: Int, val problem: String, val span: SpanData, va
             }
         }
         val (spanStart, spanEnd, file) = span
+        var len = lineCount.toString().length+1
+        if(len < 0) len = 1
         return """
 [E$errorCode] $problem
-${" ".repeat(lineCount.toString().length+1)}| In file `$file.xyr`
-${" ".repeat(lineCount.toString().length+1)}|
+${" ".repeat(len)}| In file `$file.xyr`
+${" ".repeat(len)}|
 $lineCount | $line
-${" ".repeat(lineCount.toString().length+1)}| ${" ".repeat(span.spanStart-lineStart-1)} ${"^".repeat(span.spanEnd-span.spanStart)}
-${" ".repeat(lineCount.toString().length+1)}|
+${" ".repeat(len)}| ${" ".repeat(span.spanStart-lineStart)} ${"^".repeat(span.spanEnd-span.spanStart)}
+${" ".repeat(len)}|
 ${if(help == null) "" else "= help: $help"}
         """.trimIndent()
     }

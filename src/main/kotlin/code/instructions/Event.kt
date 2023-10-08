@@ -2,7 +2,11 @@ package code.instructions
 
 import code.Interpreter
 import mm
+import net.minestom.server.event.player.PlayerBlockBreakEvent
+import net.minestom.server.event.player.PlayerBlockInteractEvent
+import net.minestom.server.event.player.PlayerBlockPlaceEvent
 import net.minestom.server.event.player.PlayerChatEvent
+import net.minestom.server.event.trait.BlockEvent
 import net.minestom.server.event.trait.CancellableEvent
 import typechecker.ArgumentList
 import typechecker.ArgumentType
@@ -52,7 +56,7 @@ object EventChatGetMessage : Visitable {
     }
 }
 
-object SetCancelled : Visitable {
+object EventSetCancelled : Visitable {
     override val code: Int get() = 3002
     override val isExtension: Boolean get() = true
     override val command: String get() = "event.setCancelled"
@@ -69,6 +73,62 @@ object SetCancelled : Visitable {
         val event = visitor.environment.event
         if(event is CancellableEvent) {
             event.isCancelled = true
+        }
+    }
+}
+
+
+
+object EventBlockGetBlock : Visitable {
+    override val code: Int get() = 3003
+    override val isExtension: Boolean get() = true
+    override val command: String get() = "event.block.getBlock"
+    override val arguments: ArgumentList
+        get() = NodeBuilder()
+            .build()
+    override val returnType: ArgumentType
+        get() = ArgumentType.STRING
+    override val description: String
+        get() = "Requires a block event.\nGets the block material affected."
+
+    override suspend fun visit(visitor: Interpreter) {
+        val event = visitor.environment.event
+        if(event is BlockEvent) {
+            visitor.environment.stack.pushValue(Value.String(
+                event.block.namespace().toString()
+            ))
+        }
+    }
+}
+
+object EventGetLocation : Visitable {
+    override val code: Int get() = 3004
+    override val isExtension: Boolean get() = true
+    override val command: String get() = "event.getLocation"
+    override val arguments: ArgumentList
+        get() = NodeBuilder()
+            .build()
+    override val returnType: ArgumentType
+        get() = ArgumentType.LOCATION
+    override val description: String
+        get() = "Requires an event involving a location.\nGets the location of the event."
+
+    override suspend fun visit(visitor: Interpreter) {
+        val event = visitor.environment.event
+        if(event is PlayerBlockBreakEvent) {
+            visitor.environment.stack.pushValue(Value.Position(
+                event.blockPosition.x(), event.blockPosition.y(), event.blockPosition.z(), 0.0, 0.0
+            ))
+        }
+        if(event is PlayerBlockPlaceEvent) {
+            visitor.environment.stack.pushValue(Value.Position(
+                event.blockPosition.x(), event.blockPosition.y(), event.blockPosition.z(), 0.0, 0.0
+            ))
+        }
+        if(event is PlayerBlockInteractEvent) {
+            visitor.environment.stack.pushValue(Value.Position(
+                event.blockPosition.x(), event.blockPosition.y(), event.blockPosition.z(), 0.0, 0.0
+            ))
         }
     }
 }

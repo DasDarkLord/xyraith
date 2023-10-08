@@ -42,6 +42,13 @@ class Lexer(val source: String, val file: String) {
                     output.add(Token.StringText(string, SpanData(spanStart, position, file)))
                     position++
                 }
+                source[position] == ';' -> {
+                    position++
+                    while(position < source.length && source[position] != '\n') {
+                        position++
+                    }
+                    position++
+                }
                 else -> {
                     val spanStart = position
                     var symbol = ""
