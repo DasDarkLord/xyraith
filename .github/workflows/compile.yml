@@ -34,5 +34,5 @@ jobs:
             # Upload results as artifact
             - uses: actions/upload-artifact@v3
               with:
-                name: Package
-                path: ./build/libs/XyrGr*.jar
+                name: Latest Nightly Build
+                path: ./build/libs/XyrGr-1.0-SNAPSHOT-all.jar
