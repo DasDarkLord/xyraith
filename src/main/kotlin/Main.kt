@@ -61,12 +61,9 @@ fun main(args: Array<String>) {
 fun helpCommand() {
     println("""
 Xyraith's official compiler & tooling
-Version v0.1-RC2 (10/09/23)
+Version v0.1 (10/09/23)
 
-Example of using a subcommand:
-java -jar Xyraith.jar run
-java -jar Xyraith.jar docs
-etc. etc.
+Usage: java -jar Xyraith.jar [subcommand]
 
 Subcommands:
 init - Initialize a Xyraith project in the current directory.
