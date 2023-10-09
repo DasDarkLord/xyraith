@@ -1,5 +1,6 @@
 import code.*
 import code.server.startServer
+import config.parseToml
 import docs.dumpCommands
 import docs.generateDocumentation
 import lexer.Lexer
@@ -24,6 +25,8 @@ fun mm(str: String): Component = miniMessage.deserialize(str)
 var playerList = mutableListOf<Player>()
 
 val globalVariables: MutableMap<String, parser.Value> = mutableMapOf()
+
+val configInstance = parseToml()
 
 fun main(args: Array<String>) {
     validateRegistry()
@@ -54,7 +57,7 @@ fun main(args: Array<String>) {
 fun helpCommand() {
     println("""
 Xyraith's official compiler & tooling
-Build version v0.1-RC1 (10/08/23)
+Version v0.1-RC2 (10/09/23)
 
 Example of using a subcommand:
 java -jar Xyraith.jar run

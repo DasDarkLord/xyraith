@@ -1,6 +1,7 @@
 package code.server
 
 import code.runEvent
+import configInstance
 import events
 import net.minestom.server.MinecraftServer
 import net.minestom.server.coordinate.Pos
@@ -27,7 +28,7 @@ fun startServer() {
         player.respawnPoint = Pos(0.0, 65.0, 0.0)
     }
     addEvents(globalEventHandler)
-    server.start("0.0.0.0", 25565)
+    server.start(configInstance.server.host, configInstance.server.port)
 }
 
 fun addEvents(globalEventHandler: GlobalEventHandler) {

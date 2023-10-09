@@ -1,3 +1,8 @@
+val majorVersion = 0
+val minorVersion = 1
+val patchVersion = 0
+
+
 plugins {
     kotlin("jvm") version "1.9.0"
     application
@@ -19,6 +24,7 @@ dependencies {
     implementation("net.kyori:adventure-text-minimessage:4.14.0")
     implementation("de.articdive:jnoise-pipeline:4.0.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+    implementation("cc.ekblad:4koma:1.2.0")
 }
 
 tasks.test {
