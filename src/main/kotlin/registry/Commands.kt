@@ -23,15 +23,12 @@ val commandRegistry = (
 fun validateRegistry() {
     val opcodes = mutableListOf<Byte>()
     val shortcodes = mutableListOf<Short>()
-    println("got here a")
     for(code in commandRegistry) {
-        println("got here b")
         val extension = code.value["opcodeExtension"] as? Short
         val opcode = code.value["opcode"] as? Byte
         if(!shortcodes.contains(extension)) {
             if(extension != null) {
                 shortcodes.add(extension)
-                println("Testing shortcode $extension")
             }
         } else {
             println("WARNING: Duplicate shortcode $extension")
@@ -40,7 +37,6 @@ fun validateRegistry() {
         if(!opcodes.contains(opcode)) {
             if(opcode != null) {
                 opcodes.add(opcode)
-                println("Testing opcode $opcode")
             }
         } else {
             println("WARNING: Duplicate shortcode $opcode")

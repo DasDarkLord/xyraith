@@ -1,9 +1,0 @@
-[server]
-# 0.0.0.0 for local machine, your IP address for public access
-host = "0.0.0.0"
-# Port to host the server on.
-# 25565 recommended & default.
-port = 25565
-# MOTD to display in serverlist.
-# Supports MiniMessage format.
-motd = ""

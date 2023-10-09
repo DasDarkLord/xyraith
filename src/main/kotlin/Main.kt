@@ -47,6 +47,10 @@ fun main(args: Array<String>) {
             println("Starting serverlessly...")
             runServer(false)
         }
+        "init" -> {
+            println("Initializing project..")
+            initProject()
+        }
         else -> {
             println("Unknown subcommand.\n")
             helpCommand()
@@ -65,6 +69,7 @@ java -jar Xyraith.jar docs
 etc. etc.
 
 Subcommands:
+init - Initialize a Xyraith project in the current directory.
 run - Run the server. Currently grabs code from file at: ./src/main/xyraith/main.xr
 docs - Generate documentation. This will open your web browser.
 serverless - Run the Xyraith directory without a server.
@@ -149,4 +154,28 @@ fun saveBinary(emitter: Emitter) {
 
     println("lob: ${listOfBytes.joinToString(",") }")
     file.writeBytes(listOfBytes.toByteArray())
+}
+
+fun initProject() {
+    File("./src").mkdirs()
+    File("./src/main.xyr").createNewFile()
+    File("./src/main.xyr").writeText("""
+;; This is a simple server that sends "Hello world!" when you join the server.
+;; Use the `run` subcommand to run it.
+event join {
+    player.sendMessage "Hello world!"    
+}
+    """)
+    File("./xyraith.toml").createNewFile()
+    File("./xyraith.toml").writeText("""
+[server]
+# 0.0.0.0 for local machine, your IP address for public access
+host = "0.0.0.0"
+# Port to host the server on.
+# 25565 recommended & default.
+port = 25565
+# MOTD to display in serverlist.
+# Supports MiniMessage format.
+motd = ""
+    """.trimIndent())
 }

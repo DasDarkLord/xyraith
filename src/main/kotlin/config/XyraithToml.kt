@@ -16,6 +16,17 @@ data class Config(
 
 fun parseToml(): Config {
     val mapper = tomlMapper { }
-    val tomlFile = Path("./xyraith.toml")
-    return mapper.decode<Config>(tomlFile)
+    return try {
+        val tomlFile = Path("./xyraith.toml")
+        mapper.decode<Config>(tomlFile)
+    } catch(e: java.nio.file.NoSuchFileException) {
+        println("NOTE: No `xyraith.toml` found. Defaulting to default config settings for server running.")
+        Config(
+            Config.Settings(
+                25565,
+                "",
+                "0.0.0.0"
+            )
+        )
+    }
 }
