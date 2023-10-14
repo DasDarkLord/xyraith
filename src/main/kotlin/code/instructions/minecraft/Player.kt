@@ -7,6 +7,9 @@ import net.kyori.adventure.title.Title
 import net.kyori.adventure.title.TitlePart
 import net.minestom.server.entity.GameMode
 import net.minestom.server.entity.Player
+import net.minestom.server.particle.Particle
+import net.minestom.server.particle.ParticleCreator
+import org.jglrxavpok.hephaistos.mca.pack
 import typechecker.ArgumentList
 import typechecker.ArgumentType
 import typechecker.NodeBuilder
@@ -315,5 +318,41 @@ object HasItems : Visitable {
             }
         }
         visitor.environment.stack.pushValue(Value.Bool(false))
+    }
+}
+
+object PlayParticle : Visitable {
+    override val code: Int get() = 1500
+    override val isExtension: Boolean get() = true
+    override val command: String get() = "player.playParticle"
+    override val arguments: ArgumentList
+        get() = NodeBuilder()
+            .addSingleArgument(ArgumentType(":particle", listOf()), "Particle to display.")
+            .addSingleArgument(ArgumentType.LOCATION, "Location to render")
+            .build()
+    override val returnType: ArgumentType
+        get() = ArgumentType.NONE
+    override val description: String
+        get() = "Display a particle to a player."
+
+    override suspend fun visit(visitor: Interpreter) {
+        val loc = visitor.environment.stack.popValue() as Value.Position
+        val particle = visitor.environment.stack.popValue() as Value.Struct
+
+        val packet = ParticleCreator.createParticlePacket(
+            Particle.fromNamespaceId((particle.fields[":id"] as Value.String).value)!!,
+            loc.x,
+            loc.y,
+            loc.z,
+            0.0f,
+            0.0f,
+            0.0f,
+            0
+        )
+        for(target in visitor.environment.targets) {
+            if(target is Player) {
+                target.sendPacket(packet)
+            }
+        }
     }
 }

@@ -32,7 +32,7 @@ val visitables: kotlin.collections.List<Visitable> = listOf(
     SendMessage, SendActionBar, SendTitle,
     SetHunger, GetHunger, SetSaturation, GetSaturation,
     SetGamemode, PlayerUsername,
-    GiveItems, HasItems,
+    GiveItems, HasItems, PlayParticle,
 
     // Target.kt
     Teleport, TargetUUID,

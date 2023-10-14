@@ -1,0 +1,9 @@
+struct :mc.particle {
+    struct.field :id string ""
+}
+
+function :particle {
+    store :s (struct.init :particle)
+    store :s (struct.set (load :s) :id (parameter 0))
+    return (load :s)
+}

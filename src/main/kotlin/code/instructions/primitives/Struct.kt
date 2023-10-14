@@ -113,7 +113,7 @@ object StructSet : Visitable {
         val value = visitor.environment.stack.popValue()
         val field = visitor.environment.stack.popValue() as Value.Symbol
         val struct = visitor.environment.stack.popValue() as Value.Struct
-        struct.fields[field.toString()] = value
+        struct.fields[field.value] = value
         visitor.environment.stack.pushValue(struct)
     }
 }
