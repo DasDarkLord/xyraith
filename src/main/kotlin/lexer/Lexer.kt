@@ -68,6 +68,6 @@ class Lexer(val source: String, val file: String) {
                 }
             }
         }
-        return output
+        return preprocessMain(output, "src/")
     }
 }

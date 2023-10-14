@@ -71,7 +71,7 @@ object Add : Visitable {
         get() = "Sum a series of numbers."
 
     override suspend fun visit(visitor: Interpreter) {
-        var md = 1.0
+        var md = 0.0
         for(x in 1..visitor.environment.argumentCount) {
             md += visitor.environment.stack.popValue().castToNumber()
         }

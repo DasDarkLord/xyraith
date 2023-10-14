@@ -7,6 +7,7 @@ data class ArgumentList(val list: List<ArgumentNode>) : ArgumentNode
 sealed interface ArgumentNode {
     data class SingleArgumentNode(val type: ArgumentType, val desc: String) : ArgumentNode
     data class OptionalArgumentNode(val type: ArgumentType, val defaultValue: Value, val desc: String) : ArgumentNode
+    data class OptionalPluralArgumentNode(val type: ArgumentType, val desc: String) : ArgumentNode
     data class PluralArgumentNode(val type: ArgumentType, val desc: String) : ArgumentNode
 }
 
@@ -71,6 +72,11 @@ class NodeBuilder {
 
     fun addOptionalArgument(type: ArgumentType, defaultValue: Value, description: String): NodeBuilder {
         this.nodes.add(ArgumentNode.OptionalArgumentNode(type, defaultValue, description))
+        return this
+    }
+
+    fun addOptionalPluralArgument(type: ArgumentType, description: String): NodeBuilder {
+        this.nodes.add(ArgumentNode.OptionalPluralArgumentNode(type, description))
         return this
     }
 

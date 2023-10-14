@@ -82,13 +82,19 @@ class NotAType(private val givenType: String, private val validTypes: List<Strin
         }
         val sorted = distances.toSortedMap()
         val correction = distances[sorted.firstKey()]
-        return Diagnostic(9, "type `$givenType` does not exist", span, "did you mean `$correction`?")
+        return Diagnostic(10, "type `$givenType` does not exist", span, "did you mean `$correction`?")
     }
 }
 
 class AlreadyDefinedType(private val givenType: String, override val span: SpanData) : ParserError(span) {
     override fun emit(): Diagnostic {
-        return Diagnostic(9, "type `$givenType` was already defined in this scope", span, "remove the extra definition")
+        return Diagnostic(11, "type `$givenType` was already defined in this scope", span, "remove the extra definition")
+    }
+}
+
+class UnfinishedCommand(val expectedType: String, override val span: SpanData) : ParserError(span) {
+    override fun emit(): Diagnostic {
+        return Diagnostic(12, "missing argument - expected `$expectedType`", span)
     }
 }
 

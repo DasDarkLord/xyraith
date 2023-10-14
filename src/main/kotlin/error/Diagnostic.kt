@@ -30,14 +30,15 @@ class Diagnostic(val errorCode: Int, val problem: String, val span: SpanData, va
         val (spanStart, spanEnd, file) = span
         var len = lineCount.toString().length+1
         if(len < 0) len = 1
+        val escape = "\u001B"
         return """
-[E$errorCode] $problem
-${" ".repeat(len)}| In file `$file.xyr`
-${" ".repeat(len)}|
-$lineCount | $line
-${" ".repeat(len)}| ${" ".repeat(span.spanStart-lineStart)} ${"^".repeat(span.spanEnd-span.spanStart)}
-${" ".repeat(len)}|
-${if(help == null) "" else "= help: $help"}
+$escape[31m[E$errorCode] $problem
+${" ".repeat(len)}$escape[32m| $escape[0mIn file `$file.xyr`
+${" ".repeat(len)}$escape[32m|
+$escape[1;36m$lineCount $escape[0m$escape[32m| $escape[0m$line
+${" ".repeat(len)}$escape[32m| $escape[31m${" ".repeat(span.spanStart-lineStart)} ${"^".repeat(span.spanEnd-span.spanStart)}
+${" ".repeat(len)}$escape[32m|
+${if(help == null) "" else "$escape[1;39m= help: $escape[0m$help"}
         """.trimIndent()
     }
 }

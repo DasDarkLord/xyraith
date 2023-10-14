@@ -1,9 +1,19 @@
-struct :myStruct {
-    struct.field :x number 10
+event join {
+    player.sendMessage "Hello world!"
+
+    global.store :item (item minecraft:diamond)
+    global.store :item (item.setName (global.load :item) "<red>Click this !! <aqua>:3")
+
+    global.store :count 0
+
+    player.giveItems (global.load :item)
+
+    player.gamemode "creative"
+
+    world.setBlock (loc 0 20 0) minecraft:stone
 }
 
-event startup {
-    store :s (struct.init :myStruct)
-    store :s (struct.set (load :s) :x 20)
-    console.log (struct.get (load :s) :x)
+event rightClick {
+    global.store :count (add (global.load :count) 1)
+    player.sendMessage (string "<red>You clicked <yellow>" (global.load :count) "<red> times")
 }

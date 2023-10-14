@@ -108,6 +108,7 @@ fun runServer(withServer: Boolean) {
     val text = File("src/main.xr").readText()
     val lexer = Lexer(text, "src/main.xr")
     val tokens = lexer.transform()
+    println("tokens:\n$tokens")
     val parser = Parser(tokens)
     try {
         val time1 = LocalDate.now()
@@ -161,8 +162,6 @@ fun saveBinary(emitter: Emitter) {
             listOfBytes.add(byte)
         }
     }
-
-    println("lob: ${listOfBytes.joinToString(",") }")
     file.writeBytes(listOfBytes.toByteArray())
 }
 

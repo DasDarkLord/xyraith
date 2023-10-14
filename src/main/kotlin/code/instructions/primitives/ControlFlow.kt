@@ -71,7 +71,7 @@ object Call : Visitable {
     override val arguments: ArgumentList
         get() = NodeBuilder()
             .addSingleArgument(ArgumentType.SYMBOL, "Function to call")
-            .addPluralArgument(ArgumentType.ANY, "Arguments to pass")
+            .addOptionalPluralArgument(ArgumentType.ANY, "Arguments to pass")
             .build()
     override val returnType: ArgumentType
         get() = ArgumentType.ANY
@@ -144,7 +144,7 @@ object AsyncCall : Visitable {
     override val arguments: ArgumentList
         get() = NodeBuilder()
             .addSingleArgument(ArgumentType.SYMBOL, "Function to call")
-            .addPluralArgument(ArgumentType.ANY, "Arguments to pass")
+            .addOptionalPluralArgument(ArgumentType.ANY, "Arguments to pass")
             .build()
     override val returnType: ArgumentType
         get() = ArgumentType.NONE
