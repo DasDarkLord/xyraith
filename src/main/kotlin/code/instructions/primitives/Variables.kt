@@ -1,6 +1,7 @@
-package code.instructions
+package code.instructions.primitives
 
 import code.Interpreter
+import code.instructions.Visitable
 import globalVariables
 import net.minestom.server.tag.Tag
 import typechecker.ArgumentList

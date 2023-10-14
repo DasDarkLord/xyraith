@@ -57,7 +57,7 @@ Emitter {
         blockMap[blockId] = ByteBuffer.allocate(BUFFER_SIZE)
         blockMap[blockId]?.put(0)
         blockMap[blockId]?.putInt(blockId)
-        if(eventType == EventType.FUNCTION) {
+        if(eventType == EventType.FUNCTION || eventType == EventType.STRUCT) {
             blockMap[blockId]?.put(6)
             emitValue(Value.Symbol(eventName), blockId)
             for(command in block.nodes) {

@@ -1,6 +1,7 @@
-package code.instructions
+package code.instructions.minecraft
 
 import code.Interpreter
+import code.instructions.Visitable
 import net.minestom.server.entity.LivingEntity
 import net.minestom.server.entity.Player
 import parser.Value

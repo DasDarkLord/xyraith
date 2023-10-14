@@ -1,6 +1,7 @@
-package code.instructions
+package code.instructions.primitives
 
 import code.Interpreter
+import code.instructions.Visitable
 import net.minestom.server.item.ItemStack
 import net.minestom.server.item.Material
 import typechecker.ArgumentList
@@ -129,52 +130,45 @@ object StringCmd : Visitable {
     }
 }
 
-object StringList : Visitable {
-    override val code: Int get() = 15
+object IsNull : Visitable {
+    override val code: Int get() = 17
     override val isExtension: Boolean get() = false
-    override val command: String get() = "listOf<string>"
+    override val command: String get() = "isNull"
     override val returnType: ArgumentType
-        get() = ArgumentType.STRING_LIST
+        get() = ArgumentType.BOOL
     override val arguments: ArgumentList
         get() = NodeBuilder()
-            .addPluralArgument(ArgumentType.STRING, "Strings to put in list")
+            .addSingleArgument(ArgumentType.ANY, "Value to compare to null")
             .build()
 
     override val description: String
-        get() = "Generate a list of strings."
+        get() = "Returns true if the value is null."
 
     override suspend fun visit(visitor: Interpreter) {
-        val size = visitor.environment.argumentCount
-        val output = mutableListOf<Value.String>()
-        for(x in 1..size) {
-            val addon = visitor.environment.stack.popValue() as Value.String
-            output.add(addon)
-        }
-        visitor.environment.stack.pushValue(Value.StringList(output.reversed()))
+        val value = visitor.environment.stack.popValue()
+        visitor.environment.stack.pushValue(Value.Bool(value == Value.Null))
     }
 }
 
-object NumberList : Visitable {
-    override val code: Int get() = 16
+object ListCmd : Visitable {
+    override val code: Int get() = 18
     override val isExtension: Boolean get() = false
-    override val command: String get() = "listOf<number>"
+    override val command: String get() = "list"
     override val returnType: ArgumentType
-        get() = ArgumentType.NUMBER_LIST
+        get() = ArgumentType.GENERIC_LIST
     override val arguments: ArgumentList
         get() = NodeBuilder()
-            .addPluralArgument(ArgumentType.NUMBER, "Numbers to put in list")
+            .addPluralArgument(ArgumentType.ANY, "Values of the list")
             .build()
 
     override val description: String
-        get() = "Generate a list of numbers."
+        get() = "Makes a list with the given values.\nIf the values are not of the same type, an error will be thrown\nat compile-time."
 
     override suspend fun visit(visitor: Interpreter) {
-        val size = visitor.environment.argumentCount
-        val output = mutableListOf<Value.Number>()
-        for(x in 1..size) {
-            val addon = visitor.environment.stack.popValue() as Value.Number
-            output.add(addon)
+        val list = mutableListOf<Value>()
+        for(x in 2..visitor.environment.argumentCount) {
+            list.add(visitor.environment.stack.popValue())
         }
-        visitor.environment.stack.pushValue(Value.NumberList(output.reversed()))
+        visitor.environment.stack.pushValue(Value.GenericList(list))
     }
 }

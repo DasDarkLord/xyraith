@@ -1,6 +1,7 @@
-package code.instructions
+package code.instructions.io
 
 import code.Interpreter
+import code.instructions.Visitable
 import typechecker.ArgumentList
 import typechecker.ArgumentType
 import typechecker.NodeBuilder

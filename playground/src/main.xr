@@ -1,0 +1,9 @@
+struct :myStruct {
+    struct.field :x number 10
+}
+
+event startup {
+    store :s (struct.init :myStruct)
+    store :s (struct.set (load :s) :x 20)
+    console.log (struct.get (load :s) :x)
+}

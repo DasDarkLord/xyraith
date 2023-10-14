@@ -1,13 +1,12 @@
-package code.instructions
+package code.instructions.minecraft
 
 import code.Interpreter
+import code.instructions.Visitable
 import mm
 import net.kyori.adventure.title.Title
 import net.kyori.adventure.title.TitlePart
 import net.minestom.server.entity.GameMode
 import net.minestom.server.entity.Player
-import net.minestom.server.entity.damage.DamageType
-import net.minestom.server.inventory.condition.InventoryCondition
 import typechecker.ArgumentList
 import typechecker.ArgumentType
 import typechecker.NodeBuilder
@@ -29,9 +28,10 @@ object SendMessage : Visitable {
 
     override suspend fun visit(visitor: Interpreter) {
         val display = visitor.environment.stack.popValue().toDisplay()
+        val component = mm(display)
         for(target in visitor.environment.targets) {
             if(target as? Player != null) {
-                target.sendMessage(mm(display))
+                target.sendMessage(component)
             }
         }
     }

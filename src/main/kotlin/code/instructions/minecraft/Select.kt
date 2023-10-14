@@ -1,6 +1,7 @@
-package code.instructions
+package code.instructions.minecraft
 
 import code.Interpreter
+import code.instructions.Visitable
 import net.minestom.server.entity.Player
 import typechecker.ArgumentList
 import typechecker.ArgumentType

@@ -1,7 +1,0 @@
-
-;; This is a simple server that sends "Hello world!" when you join the server.
-;; Use the `run` subcommand to run it.
-event join {
-    player.sendMessage "Hello world!"    
-}
-    

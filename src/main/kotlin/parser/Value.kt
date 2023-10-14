@@ -1,8 +1,11 @@
 package parser
 
+import code.instructions.Visitable
 import net.minestom.server.coordinate.Pos
 import net.minestom.server.item.ItemStack
+import registry.commandRegistry
 import typechecker.ArgumentType
+import typechecker.Typechecker
 
 sealed class Value {
     /*
@@ -45,6 +48,12 @@ sealed class Value {
     data class BasicBlockRef(val value: Int) : Value() {
         override fun toString(): kotlin.String {
             return """{"type":"basicBlockRef","value":$value}"""
+        }
+    }
+
+    data class GenericList(val value: List<Value>) : Value() {
+        override fun toString(): kotlin.String {
+            return """{"type":"generic_list","value":$value}"""
         }
     }
 
@@ -94,7 +103,7 @@ sealed class Value {
 
     data class Struct(
         val type: ArgumentType,
-        val fields: Map<kotlin.String, Value>
+        val fields: MutableMap<kotlin.String, Value>
     ) : Value() {
         override fun toString(): kotlin.String {
             return """{"type":"user_defined","type":"$type","fields":"$fields"}"""
@@ -128,6 +137,7 @@ sealed class Value {
             is Struct -> "${type}{${fields}}"
             is StructField -> "structField{$name,$type,$value}"
             is Item -> "item{$itemStack}"
+            is GenericList -> value.toString()
         }
     }
 
@@ -163,8 +173,22 @@ sealed class Value {
             is StringList -> ArgumentType.STRING_LIST
             is Bool -> ArgumentType.BOOL
             is Struct -> type
-            is StructField -> ArgumentType("structField")
+            is StructField -> ArgumentType("structField", listOf())
             is Item -> ArgumentType.ITEM
+            is GenericList -> ArgumentType.GENERIC_LIST
+        }
+    }
+
+    fun getFixedType(tc: Typechecker): ArgumentType {
+        return when(this) {
+            is Command -> {
+                if(this.value.name == "list") {
+                    val generic = this.value.arguments[0].getFixedType(tc)
+                    return ArgumentType("list", listOf(generic))
+                }
+                tc.getCommandReturnType(this.value)
+            }
+            else -> this.castToArgumentType()
         }
     }
 }

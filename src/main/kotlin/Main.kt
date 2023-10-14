@@ -10,6 +10,7 @@ import net.minestom.server.entity.Player
 import parser.Parser
 import error.ParserError
 import registry.validateRegistry
+import typechecker.ArgumentType
 import typechecker.Typechecker
 import java.io.File
 import java.nio.ByteBuffer
@@ -27,6 +28,18 @@ var playerList = mutableListOf<Player>()
 val globalVariables: MutableMap<String, parser.Value> = mutableMapOf()
 
 val configInstance = parseToml()
+
+val structs: MutableMap<String, MutableMap<String, ArgumentType>> = mutableMapOf()
+val types: MutableList<String> = mutableListOf(
+    "number",
+    "string",
+    "bool",
+    "symbol",
+    "location",
+    "list",
+    "any",
+    "itemStack"
+)
 
 fun main(args: Array<String>) {
     validateRegistry()
@@ -155,8 +168,8 @@ fun saveBinary(emitter: Emitter) {
 
 fun initProject() {
     File("./src").mkdirs()
-    File("./src/main.xyr").createNewFile()
-    File("./src/main.xyr").writeText("""
+    File("./src/main.xr").createNewFile()
+    File("./src/main.xr").writeText("""
 ;; This is a simple server that sends "Hello world!" when you join the server.
 ;; Use the `run` subcommand to run it.
 event join {

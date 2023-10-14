@@ -9,10 +9,15 @@ import parser.*
 import registry.commandRegistry
 import kotlin.math.exp
 
+import types
+import structs
+
 class Typechecker {
-    var localVariables: MutableMap<String, ArgumentType> = mutableMapOf()
-    val globalVariables: MutableMap<String, ArgumentType> = mutableMapOf()
-    val entityVariables: MutableMap<String, ArgumentType> = mutableMapOf()
+    private var localVariables: MutableMap<String, ArgumentType> = mutableMapOf()
+    private val globalVariables: MutableMap<String, ArgumentType> = mutableMapOf()
+    private val entityVariables: MutableMap<String, ArgumentType> = mutableMapOf()
+
+
 
     fun typecheckEvent(event: Ast.Event) {
         localVariables = mutableMapOf()
@@ -21,8 +26,29 @@ class Typechecker {
             if(!events.containsKey(event.name))
                 throw InvalidEvent(event.name, event.span)
         }
-
+        println("types at event time: $types")
         typecheckBlock(event.code)
+        if(event.eventType == EventType.STRUCT) {
+            typecheckStruct(event.code, event.name.removePrefix(":__struct_init_"))
+        }
+    }
+
+    private fun typecheckStruct(block: Ast.Block, structName: String) {
+        if(types.contains(structName)) throw AlreadyDefinedType(structName, block.span)
+
+        types.add(structName)
+        println("types: $types {we need to add $structName}")
+        for(node in block.nodes) {
+            if(node.name != "struct.field") {
+                throw NotAStructField(node.span)
+            }
+            val fieldName = node.arguments[0] as Value.Symbol
+            val typeName = node.arguments[1] as Value.String
+            if(!types.contains(typeName.value)) throw NotAType(typeName.value, types, node.span)
+            if(!structs.containsKey(structName)) structs[structName] = mutableMapOf()
+            println("made struct $structName")
+            structs[structName]!![fieldName.value] = ArgumentType(typeName.value, listOf())
+        }
     }
 
     private fun typecheckBlock(block: Ast.Block) {
@@ -33,6 +59,7 @@ class Typechecker {
 
 
     private fun typecheckCommand(command: Ast.Command) {
+        println("types at command ${command.name} time: $types")
         val valueIter = command.arguments.iterator()
         if(!commandRegistry.containsKey(command.name))
             throw InvalidCommand(command.name, command.span)
@@ -59,8 +86,6 @@ class Typechecker {
             }
             typecheckValue(valueIter, nextArgumentType, nextNode, visitable.command, command.span)
         }
-
-
     }
 
     private fun typecheckValue(
@@ -70,6 +95,7 @@ class Typechecker {
         name: String,
         span: SpanData
     ) {
+        println("types at value ${name} time: $types")
         if(node == null)
             throw IncorrectArgument(expected.toString(), "NO ARGUMENT", name, span)
         if(!valueIter.hasNext() && node !is ArgumentNode.OptionalArgumentNode)
@@ -111,7 +137,8 @@ class Typechecker {
         }
     }
 
-    private fun getCommandReturnType(command: Ast.Command, expectedType: ArgumentType? = null): ArgumentType {
+    fun getCommandReturnType(command: Ast.Command, expectedType: ArgumentType? = null): ArgumentType {
+        println("types when pre err: $types")
         return when(command.name) {
             "load" -> {
                 val symbol = command.arguments[0] as Value.Symbol
@@ -133,7 +160,18 @@ class Typechecker {
             }
             "struct.init" -> {
                 val symbol = command.arguments[0] as Value.Symbol
-                return ArgumentType(symbol.value)
+                println("types when err: $types {${symbol.value}}")
+                if(!types.contains(symbol.value)) throw NotAType(symbol.value, types, command.span)
+                return ArgumentType(symbol.value, listOf())
+            }
+            "struct.get" -> {
+                val type = command.arguments[0].getFixedType(this)
+                val symbol = command.arguments[1] as Value.Symbol
+                if(!structs[type.toTypeName()]!!.contains(symbol.value)) throw NotAStructField(command.span)
+                return structs[type.toTypeName()]!![symbol.value]!!
+            }
+            "list" -> {
+                return command.arguments[0].getFixedType(this)
             }
             else -> {
                 if(!commandRegistry.containsKey(command.name))
@@ -145,14 +183,25 @@ class Typechecker {
 
     private fun typecheckSpecialBehavior(command: Ast.Command) {
         when(command.name) {
+            "list" -> {
+                val type = command.arguments[0].getFixedType(this)
+
+                for(argument in command.arguments) {
+                    val argumentType = argument.getFixedType(this)
+                    if(!argumentType.isEqualTypeTo(type)) {
+                        throw IncorrectArgument(
+                            type.toString(),
+                            argument.getFixedType(this).toString(),
+                            command.name,
+                            command.span
+                        )
+                    }
+                }
+            }
             "store" -> {
                 if(command.arguments[0] !is Value.Symbol) return
                 val variableName = (command.arguments[0] as Value.Symbol).value
-                val value =
-                    if(command.arguments[1] is Value.Command)
-                        getCommandReturnType((command.arguments[1] as Value.Command).value)
-                    else
-                        command.arguments[1].castToArgumentType()
+                val value = command.arguments[1].getFixedType(this)
 
                 if(!localVariables.containsKey(variableName)) {
                     localVariables[variableName] = value
@@ -217,15 +266,39 @@ class Typechecker {
                     else
                         command.arguments[1].castToArgumentType()
 
-                val finalExpected = expectedType.getGenericType()
+                if(!expectedType.isEqualTypeTo(ArgumentType.GENERIC_LIST)) {
+                    throw IncorrectArgument(
+                        ArgumentType.GENERIC_LIST.toString(),
+                        expectedType.toString(),
+                        command.name,
+                        command.span,
+                    )
+                }
+                val finalExpected = expectedType.genericTypes
 
                 if(!localVariables.containsKey(variableName)) {
-                    localVariables[variableName] = finalExpected
+                    localVariables[variableName] = finalExpected[0]
                 }
 
-                if(!localVariables[variableName]!!.isEqualTypeTo(finalExpected)) {
-                    throw VariableWrongType(variableName, finalExpected, localVariables[variableName]!!, command.span)
+                if(!localVariables[variableName]!!.isEqualTypeTo(finalExpected[0])) {
+                    throw VariableWrongType(variableName, finalExpected[0], localVariables[variableName]!!, command.span)
                 }
+            }
+            "struct.init" -> {
+                val symbol = command.arguments[0] as Value.Symbol
+                if(!types.contains(symbol.value)) throw NotAType(symbol.value, types, command.span)
+            }
+            "struct.get" -> {
+                val type = command.arguments[0].getFixedType(this)
+                val symbol = command.arguments[1] as Value.Symbol
+                if(!types.contains(type.toTypeName())) throw NotAType(type.toTypeName(), types, command.span)
+                if(!structs[type.toTypeName()]!!.contains(symbol.value)) throw NotAStructField(command.span)
+            }
+            "struct.set" -> {
+                val type = command.arguments[0].getFixedType(this)
+                val symbol = command.arguments[1] as Value.Symbol
+                if(!types.contains(type.toTypeName())) throw NotAType(type.toTypeName(), types, command.span)
+                if(!structs[type.toTypeName()]!!.contains(symbol.value)) throw NotAStructField(command.span)
             }
         }
     }

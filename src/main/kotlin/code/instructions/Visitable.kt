@@ -1,10 +1,13 @@
 package code.instructions
 
 import code.Interpreter
+import code.instructions.io.Log
+import code.instructions.minecraft.*
+import code.instructions.primitives.*
 import typechecker.ArgumentList
 import typechecker.ArgumentType
 
-val visitables: List<Visitable> = listOf(
+val visitables: kotlin.collections.List<Visitable> = listOf(
     // Console.kt
     Log,
 
@@ -16,7 +19,7 @@ val visitables: List<Visitable> = listOf(
 
     // Datatypes.kt
     Loc, Item, True, False, StringCmd,
-    StringList, NumberList,
+    IsNull, ListCmd,
 
     // World.kt
     SetBlock,
@@ -47,7 +50,7 @@ val visitables: List<Visitable> = listOf(
     Select, ResetSelection,
 
     // Struct.kt
-    StructInit, StructField,
+    StructInit, StructField, StructGet, StructSet,
 
     // Item.kt
     SetItemName, SetItemLore,

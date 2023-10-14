@@ -94,7 +94,7 @@ class Parser(private val input: MutableList<Token>) {
                 if(eventParenthesis) standardMatch(next(), TokenType.RightParen)
                 return Ast.Event(nameToken.value, block, EventType.EVENT, nameToken.span)
             }
-            "function", "entity", "struct" -> {
+            "function", "entity" -> {
                 standardMatch(nameToken, TokenType.Symbol)
                 if(nameToken !is Token.Symbol) throw Unreachable()
 
@@ -102,6 +102,15 @@ class Parser(private val input: MutableList<Token>) {
 
                 if(eventParenthesis) standardMatch(next(), TokenType.RightParen)
                 return Ast.Event(nameToken.value, block, EventType.FUNCTION, nameToken.span)
+            }
+            "struct" -> {
+                standardMatch(nameToken, TokenType.Symbol)
+                if(nameToken !is Token.Symbol) throw Unreachable()
+
+                val block = parseBlock(nameToken.value, true)
+
+                if(eventParenthesis) standardMatch(next(), TokenType.RightParen)
+                return Ast.Event(":__struct_init_" + nameToken.value, block, EventType.STRUCT, nameToken.span)
             }
             else -> {
                 println("WARNING: unknown value ${eventToken.value}")

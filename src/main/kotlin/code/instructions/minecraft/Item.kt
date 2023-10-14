@@ -1,6 +1,7 @@
-package code.instructions
+package code.instructions.minecraft
 
 import code.Interpreter
+import code.instructions.Visitable
 import mm
 import net.kyori.adventure.text.Component
 import parser.Value

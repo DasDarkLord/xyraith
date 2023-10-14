@@ -10,44 +10,39 @@ sealed interface ArgumentNode {
     data class PluralArgumentNode(val type: ArgumentType, val desc: String) : ArgumentNode
 }
 
-class ArgumentType(private val typeName: String) {
+class ArgumentType(private val typeName: String, val genericTypes: List<ArgumentType>) {
     companion object {
-        val NUMBER = ArgumentType("number")
-        val STRING = ArgumentType("string")
-        val COMMAND = ArgumentType("command")
-        val LOCATION = ArgumentType("location")
-        val SYMBOL = ArgumentType("symbol")
-        val ANY = ArgumentType("any")
-        val BLOCK = ArgumentType("block")
-        val GENERIC_LIST = ArgumentType("list[any]")
-        val NUMBER_LIST = ArgumentType("list[number]")
-        val STRING_LIST = ArgumentType("list[string]")
-        val SELECTOR = ArgumentType("selector")
-        val NONE = ArgumentType("null")
-        val ITEM = ArgumentType("itemStack")
-        val BOOL = ArgumentType("boolean")
-        val BLOCK_REFERENCE = ArgumentType("block_reference")
-        val NULL = ArgumentType("null")
+        val NUMBER = ArgumentType("number", listOf())
+        val STRING = ArgumentType("string", listOf())
+        val COMMAND = ArgumentType("command", listOf())
+        val LOCATION = ArgumentType("location", listOf())
+        val SYMBOL = ArgumentType("symbol", listOf())
+        val ANY = ArgumentType("any", listOf())
+        val BLOCK = ArgumentType("block", listOf())
+        val GENERIC_LIST = ArgumentType("list", listOf(ANY))
+        val NUMBER_LIST = ArgumentType("list", listOf(NUMBER))
+        val STRING_LIST = ArgumentType("list", listOf(STRING))
+        val SELECTOR = ArgumentType("selector", listOf())
+        val NONE = ArgumentType("nothing", listOf())
+        val ITEM = ArgumentType("itemStack", listOf())
+        val BOOL = ArgumentType("boolean", listOf())
+        val BLOCK_REFERENCE = ArgumentType("block_reference", listOf())
+        val NULL = ArgumentType("null", listOf())
     }
 
     override fun toString(): String {
-        return this.typeName
+        if(this.genericTypes.isEmpty()) return this.typeName
+        return this.typeName + this.genericTypes
     }
 
-    fun getGenericType(): ArgumentType {
-        println(this.typeName)
-        val regex = Regex("\\w+\\[(\\w+|\\?)]")
-        if(regex.matches(this.typeName)) {
-            val captures = regex.matchEntire(this.typeName)!!.groups[1]!!.value
-            return ArgumentType(captures)
-        }
-        return ArgumentType("null")
+    fun toTypeName(): String {
+        return this.typeName
     }
 
     fun isEqualTypeTo(other: ArgumentType): Boolean {
         val out = when(true) {
-            (this == GENERIC_LIST && other.typeName.startsWith("list")) -> true
-            (other == GENERIC_LIST && this.typeName.startsWith("list")) -> true
+            (this == GENERIC_LIST && other.typeName == "list") -> true
+            (other == GENERIC_LIST && this.typeName == "list") -> true
             (other == ANY) -> true
             (this == ANY) -> true
             (this == other) -> true
@@ -58,7 +53,7 @@ class ArgumentType(private val typeName: String) {
 
     override fun equals(other: Any?): Boolean {
         if(other !is ArgumentType) return false
-        return this.typeName == other.typeName
+        return this.typeName == other.typeName && this.genericTypes == other.genericTypes
     }
 
     override fun hashCode(): Int {

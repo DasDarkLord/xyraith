@@ -64,9 +64,34 @@ class VariableWasntDeclared(val variable: String, override val span: SpanData) :
 
 class InvalidTargetStore(val variable: String, val type: ArgumentType, override val span: SpanData) : ParserError(span) {
     override fun emit(): Diagnostic {
-        return Diagnostic(7, "can not store type $type to variable $variable in target scope", span, "only `Number`, `String`, and `Boolean` are valid types to store in target scope")
+        return Diagnostic(8, "can not store type $type to variable $variable in target scope", span, "only `Number`, `String`, and `Boolean` are valid types to store in target scope")
     }
 }
+
+class NotAStructField(override val span: SpanData) : ParserError(span) {
+    override fun emit(): Diagnostic {
+        return Diagnostic(9, "structs can only hold struct fields", span, "remove the excess command")
+    }
+}
+
+class NotAType(private val givenType: String, private val validTypes: List<String>, override val span: SpanData) : ParserError(span) {
+    override fun emit(): Diagnostic {
+        val distances = mutableMapOf<Int, String>()
+        for(key in validTypes) {
+            distances[calculateLevenshteinDistance(givenType, key)] = key
+        }
+        val sorted = distances.toSortedMap()
+        val correction = distances[sorted.firstKey()]
+        return Diagnostic(9, "type `$givenType` does not exist", span, "did you mean `$correction`?")
+    }
+}
+
+class AlreadyDefinedType(private val givenType: String, override val span: SpanData) : ParserError(span) {
+    override fun emit(): Diagnostic {
+        return Diagnostic(9, "type `$givenType` was already defined in this scope", span, "remove the extra definition")
+    }
+}
+
 class Unreachable : Exception()
 
 // thanks chatgpt

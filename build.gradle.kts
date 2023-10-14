@@ -25,6 +25,7 @@ dependencies {
     implementation("de.articdive:jnoise-pipeline:4.0.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
     implementation("cc.ekblad:4koma:1.2.0")
+    implementation("com.google.code.gson:gson:2.10.1")
 }
 
 tasks.test {

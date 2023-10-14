@@ -22,6 +22,7 @@ sealed class Ast {
 
 enum class EventType {
     EVENT,
-    FUNCTION;
+    FUNCTION,
+    STRUCT;
 }
 
