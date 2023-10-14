@@ -18,7 +18,7 @@ val visitables: kotlin.collections.List<Visitable> = listOf(
     GreaterThan, LessThan, GreaterThanOrEqual, LessThanOrEqual, EqualTo,
 
     // Datatypes.kt
-    Loc, Item, True, False, StringCmd,
+    Item, True, False, StringCmd,
     IsNull, ListCmd,
 
     // World.kt
@@ -29,10 +29,13 @@ val visitables: kotlin.collections.List<Visitable> = listOf(
     SpawnEntity,
 
     // Player.kt
-    SendMessage, SendActionBar, SendTitle,
+    SendMessage, SendActionBar,
     SetHunger, GetHunger, SetSaturation, GetSaturation,
     SetGamemode, PlayerUsername,
-    GiveItems, HasItems, PlayParticle,
+    GiveItems, HasItems,
+
+    // Player.kt unsafe functions
+    UnsafePlayParticle, UnsafeSendTitleText, UnsafeSendSubtitleText, UnsafeSendTitleTimes,
 
     // Target.kt
     Teleport, TargetUUID,

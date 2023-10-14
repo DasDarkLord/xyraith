@@ -81,18 +81,6 @@ sealed class Value {
         }
     }
 
-    data class Position(
-        val x: Double,
-        val y: Double,
-        val z: Double,
-        val pitch: Double = 0.0,
-        val yaw: Double = 0.0
-    ) : Value() {
-        override fun toString(): kotlin.String {
-            return """{"type":"position","value":{"x":$x,"y":$y,"z":$z,"pitch":$pitch,"yaw":$yaw}}"""
-        }
-    }
-
     data class Item(
         val itemStack: ItemStack,
     ) : Value() {
@@ -123,7 +111,6 @@ sealed class Value {
     fun toDisplay(): kotlin.String {
         return when(this) {
             is Number -> "$value"
-            is Position -> "<$x, $y, $z, $pitch, $yaw>"
             is BasicBlockRef -> "bb{${this.value}}"
             is Null -> "null"
             is Block -> "UNAVAILABLE_DURING_RUNTIME_BLOCK"
@@ -146,17 +133,12 @@ sealed class Value {
             value
         else
             0.0
+
     fun castToString(): kotlin.String =
         if(this is String)
             value
         else
             toDisplay()
-
-    fun castToPos(): Pos =
-        if(this is Position)
-            Pos(this.x, this.y, this.z, this.pitch.toFloat(), this.yaw.toFloat())
-        else
-            Pos(0.0, 0.0, 0.0, 0.0f, 0.0f)
 
     fun castToArgumentType(): ArgumentType {
         return when(this) {
@@ -165,7 +147,6 @@ sealed class Value {
             is Command -> ArgumentType.COMMAND
             Null -> ArgumentType.NULL
             is Number -> ArgumentType.NUMBER
-            is Position -> ArgumentType.COMMAND
             is Selector -> ArgumentType.SELECTOR
             is String -> ArgumentType.STRING
             is Symbol -> ArgumentType.SYMBOL
@@ -186,7 +167,7 @@ sealed class Value {
                     val generic = this.value.arguments[0].getFixedType(tc)
                     return ArgumentType("list", listOf(generic))
                 }
-                tc.getCommandReturnType(this.value)
+                return tc.getCommandReturnType(this.value)
             }
             else -> this.castToArgumentType()
         }

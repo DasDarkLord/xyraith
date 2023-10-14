@@ -1,5 +1,7 @@
 package lexer
 
+import java.lang.NumberFormatException
+
 class Lexer(val source: String, val file: String) {
     fun transform(): MutableList<Token> {
         val output: MutableList<Token> = mutableListOf()
@@ -25,11 +27,21 @@ class Lexer(val source: String, val file: String) {
                 source[position].isDigit() || source[position] == '-' -> {
                     val spanStart = position
                     var number = ""
-                    while(position < source.length && (source[position].isDigit() || source[position] == '-')) {
+                    while(position < source.length &&
+                        (source[position].isDigit()
+                                || source[position] == '-'
+                                || source[position] == '.'
+                                // hacky fix to make -> writable
+                                || source[position] == '>')) {
                         number = "$number${source[position]}"
                         position++
                     }
-                    output.add(Token.Number(number.toDouble(), SpanData(spanStart, position, file)))
+                    try {
+                        output.add(Token.Number(number.toDouble(), SpanData(spanStart, position, file)))
+                    } catch(e: NumberFormatException) {
+                        output.add(Token.StringText(number, SpanData(spanStart, position, file)))
+                    }
+
                 }
                 source[position] == '"' -> {
                     val spanStart = position

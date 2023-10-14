@@ -2,6 +2,7 @@ package code.instructions.minecraft
 
 import code.Interpreter
 import code.instructions.Visitable
+import net.minestom.server.coordinate.Pos
 import net.minestom.server.entity.LivingEntity
 import net.minestom.server.entity.Player
 import parser.Value
@@ -45,9 +46,18 @@ object Teleport : Visitable {
         get() = "Teleport the targets to a location."
 
     override suspend fun visit(visitor: Interpreter) {
-        val loc = visitor.environment.stack.popValue().castToPos()
+        val pos = visitor.environment.stack.popValue() as Value.Struct
         for(entity in visitor.environment.targets) {
-            entity.teleport(loc)
+            entity.teleport(
+                Pos(
+                    pos.fields[":x"]!!.castToNumber(),
+                    pos.fields[":y"]!!.castToNumber(),
+                    pos.fields[":z"]!!.castToNumber(),
+                    pos.fields[":pitch"]!!.castToNumber().toFloat(),
+                    pos.fields[":yaw"]!!.castToNumber().toFloat(),
+                )
+            )
+
         }
     }
 }

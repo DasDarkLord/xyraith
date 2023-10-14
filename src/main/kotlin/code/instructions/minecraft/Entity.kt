@@ -2,6 +2,7 @@ package code.instructions.minecraft
 
 import code.Interpreter
 import code.instructions.Visitable
+import net.minestom.server.coordinate.Pos
 import net.minestom.server.entity.Entity
 import net.minestom.server.entity.EntityType
 import parser.Value
@@ -22,15 +23,20 @@ object SpawnEntity : Visitable {
         get() = ArgumentType.STRING
     override val description: String
         get() = "Spawn an entity in the world. Returns it's UUID."
-
     override suspend fun visit(visitor: Interpreter) {
-        val pos = visitor.environment.stack.popValue().castToPos()
+        val pos = visitor.environment.stack.popValue() as Value.Struct
         val id = visitor.environment.stack.popValue().castToString()
 
         println("id: $id, pos: $pos")
         val entity = Entity(EntityType.fromNamespaceId(id))
         entity.setInstance(visitor.environment.instance!!)
-        entity.teleport(pos)
+        entity.teleport(Pos(
+            pos.fields[":x"]!!.castToNumber(),
+            pos.fields[":y"]!!.castToNumber(),
+            pos.fields[":z"]!!.castToNumber(),
+            pos.fields[":pitch"]!!.castToNumber().toFloat(),
+            pos.fields[":yaw"]!!.castToNumber().toFloat(),
+        ))
         visitor.environment.stack.pushValue(Value.String(entity.uuid.toString()))
     }
 }

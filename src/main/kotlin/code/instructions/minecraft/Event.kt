@@ -117,18 +117,39 @@ object EventGetLocation : Visitable {
     override suspend fun visit(visitor: Interpreter) {
         val event = visitor.environment.event
         if(event is PlayerBlockBreakEvent) {
-            visitor.environment.stack.pushValue(Value.Position(
-                event.blockPosition.x(), event.blockPosition.y(), event.blockPosition.z(), 0.0, 0.0
+            visitor.environment.stack.pushValue(Value.Struct(
+                ArgumentType.LOCATION,
+                mutableMapOf(
+                    ":x" to Value.Number(event.blockPosition.x()),
+                    ":y" to Value.Number(event.blockPosition.y()),
+                    ":z" to Value.Number(event.blockPosition.z()),
+                    ":pitch" to Value.Number(0.0),
+                    ":yaw" to Value.Number(0.0),
+                )
             ))
         }
         if(event is PlayerBlockPlaceEvent) {
-            visitor.environment.stack.pushValue(Value.Position(
-                event.blockPosition.x(), event.blockPosition.y(), event.blockPosition.z(), 0.0, 0.0
+            visitor.environment.stack.pushValue(Value.Struct(
+                ArgumentType.LOCATION,
+                mutableMapOf(
+                    ":x" to Value.Number(event.blockPosition.x()),
+                    ":y" to Value.Number(event.blockPosition.y()),
+                    ":z" to Value.Number(event.blockPosition.z()),
+                    ":pitch" to Value.Number(0.0),
+                    ":yaw" to Value.Number(0.0),
+                )
             ))
         }
         if(event is PlayerBlockInteractEvent) {
-            visitor.environment.stack.pushValue(Value.Position(
-                event.blockPosition.x(), event.blockPosition.y(), event.blockPosition.z(), 0.0, 0.0
+            visitor.environment.stack.pushValue(Value.Struct(
+                ArgumentType.LOCATION,
+                mutableMapOf(
+                    ":x" to Value.Number(event.blockPosition.x()),
+                    ":y" to Value.Number(event.blockPosition.y()),
+                    ":z" to Value.Number(event.blockPosition.z()),
+                    ":pitch" to Value.Number(0.0),
+                    ":yaw" to Value.Number(0.0),
+                )
             ))
         }
     }

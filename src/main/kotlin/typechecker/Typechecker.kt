@@ -3,12 +3,14 @@ package typechecker
 import code.instructions.Visitable
 import error.*
 import events
+import functions
 import lexer.SpanData
 import parser.*
 import registry.commandRegistry
 
 import types
 import structs
+import kotlin.math.exp
 
 /**
  * The Typechecker validates your program at compile time to ensure
@@ -26,12 +28,12 @@ class Typechecker {
     fun typecheckEvent(event: Ast.Event) {
         localVariables = mutableMapOf()
 
-        if(event.eventType == EventType.EVENT) {
+        if(event.eventType == EventType.Event) {
             if(!events.containsKey(event.name))
                 throw InvalidEvent(event.name, event.eventNameSpan)
         }
         typecheckBlock(event.code)
-        if(event.eventType == EventType.STRUCT) {
+        if(event.eventType == EventType.Struct) {
             typecheckStruct(event.code, event.name.removePrefix(":__struct_init_"))
         }
     }
@@ -201,6 +203,9 @@ class Typechecker {
                 if(!types.contains(symbol.value)) throw NotAType(symbol.value, types, command.nameSpan)
                 return ArgumentType(symbol.value, listOf())
             }
+            "struct.set" -> {
+                return command.arguments[0].getFixedType(this)
+            }
             "struct.get" -> {
                 val type = command.arguments[0].getFixedType(this)
                 val symbol = command.arguments[1] as Value.Symbol
@@ -209,6 +214,10 @@ class Typechecker {
             }
             "list" -> {
                 return command.arguments[0].getFixedType(this)
+            }
+            "call" -> {
+                println("GETTING CALL RET!!!")
+                return functions[(command.arguments[0] as Value.Symbol).value]!!.second
             }
             else -> {
                 if(!commandRegistry.containsKey(command.name))
@@ -340,7 +349,22 @@ class Typechecker {
                 val type = command.arguments[0].getFixedType(this)
                 val symbol = command.arguments[1] as Value.Symbol
                 if(!types.contains(type.toTypeName())) throw NotAType(type.toTypeName(), types, command.nameSpan)
+                println("Structs: $structs\n${type.toTypeName()}")
+                println("orig: ${command}")
                 if(!structs[type.toTypeName()]!!.contains(symbol.value)) throw NotAStructField(command.nameSpan)
+            }
+            "call" -> {
+                val name = (command.arguments[0] as Value.Symbol).value
+                val arguments = functions[name]!!.first.iterator()
+                println("functions: $functions")
+                for(x in 2..command.arguments.size) {
+                    if(!arguments.hasNext()) throw TooManyArguments(command.nodeSpans.last())
+                    val expected = arguments.next()
+                    val found = command.arguments[x-1].getFixedType(this)
+                    if(!expected.isEqualTypeTo(found))
+                        throw IncorrectArgument(expected.toString(), found.toString(), command.name, command.nodeSpans[x-1])
+                }
+                if(arguments.hasNext()) throw UnfinishedCommand(arguments.next().toString(), command.nodeSpans.last())
             }
         }
     }

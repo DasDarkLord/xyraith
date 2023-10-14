@@ -5,9 +5,13 @@ import error.UnexpectedEOF
 import error.UnexpectedToken
 import error.Unreachable
 import events
+import functions
 import lexer.SpanData
 import lexer.Token
 import lexer.TokenType
+import typechecker.ArgumentType
+import java.sql.SQLClientInfoException
+import java.sql.SQLIntegrityConstraintViolationException
 
 class Parser(private val input: MutableList<Token>) {
 
@@ -92,16 +96,48 @@ class Parser(private val input: MutableList<Token>) {
                 val block = parseBlock(nameToken.value, false)
 
                 if(eventParenthesis) standardMatch(next(), TokenType.RightParen)
-                return Ast.Event(nameToken.value, block, EventType.EVENT, nameToken.span)
+                return Ast.Event(nameToken.value, block, EventType.Event, nameToken.span)
             }
             "function", "entity" -> {
                 standardMatch(nameToken, TokenType.Symbol)
                 if(nameToken !is Token.Symbol) throw Unreachable()
 
+                standardMatch(next(), TokenType.LeftParen)
+                val accepts = mutableListOf<ArgumentType>()
+                var returns: ArgumentType? = null
+                var doingReturns = false
+                while(true) {
+                    val next = next()
+                    if(next is Token.RightParen) {
+                        if(doingReturns && returns != null) {
+                            break
+                        }
+                    }
+                    val txt = when (next) {
+                        is Token.StringText -> next.value
+                        is Token.Symbol -> next.value
+                        is Token.Identifier -> next.value
+                        is Token.RightParen -> ")"
+                        else -> throw SQLClientInfoException()
+                    }
+                    if(txt == "->") doingReturns = true
+                    else {
+                        if(!doingReturns)
+                            accepts.add(ArgumentType(txt, listOf()))
+                        if(doingReturns)
+                            if(returns == null)
+                                returns = ArgumentType(txt, listOf())
+                            else
+                                throw SQLIntegrityConstraintViolationException()
+                    }
+                    println("accepts: $accepts | returns: $returns")
+                }
+
                 val block = parseBlock(nameToken.value, true)
 
                 if(eventParenthesis) standardMatch(next(), TokenType.RightParen)
-                return Ast.Event(nameToken.value, block, EventType.FUNCTION, nameToken.span)
+                functions[nameToken.value] = Pair(accepts, returns!!)
+                return Ast.Event(nameToken.value, block, EventType.Function(nameToken.value, accepts, returns), nameToken.span)
             }
             "struct" -> {
                 standardMatch(nameToken, TokenType.Symbol)
@@ -110,7 +146,7 @@ class Parser(private val input: MutableList<Token>) {
                 val block = parseBlock(nameToken.value, true)
 
                 if(eventParenthesis) standardMatch(next(), TokenType.RightParen)
-                return Ast.Event(":__struct_init_" + nameToken.value, block, EventType.STRUCT, nameToken.span)
+                return Ast.Event(":__struct_init_" + nameToken.value, block, EventType.Struct, nameToken.span)
             }
             else -> {
                 println("WARNING: unknown value ${eventToken.value}")

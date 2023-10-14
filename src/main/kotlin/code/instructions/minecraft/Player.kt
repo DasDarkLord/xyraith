@@ -3,18 +3,17 @@ package code.instructions.minecraft
 import code.Interpreter
 import code.instructions.Visitable
 import mm
-import net.kyori.adventure.title.Title
-import net.kyori.adventure.title.TitlePart
 import net.minestom.server.entity.GameMode
 import net.minestom.server.entity.Player
+import net.minestom.server.network.packet.server.play.SetTitleSubTitlePacket
+import net.minestom.server.network.packet.server.play.SetTitleTextPacket
+import net.minestom.server.network.packet.server.play.SetTitleTimePacket
 import net.minestom.server.particle.Particle
 import net.minestom.server.particle.ParticleCreator
-import org.jglrxavpok.hephaistos.mca.pack
 import typechecker.ArgumentList
 import typechecker.ArgumentType
 import typechecker.NodeBuilder
 import parser.Value
-import java.time.Duration
 
 object SendMessage : Visitable {
     override val code: Int get() = 1000
@@ -63,51 +62,66 @@ object SendActionBar : Visitable {
     }
 }
 
-object SendTitle : Visitable {
+object UnsafeSendTitleText : Visitable {
     override val code: Int get() = 1002
     override val isExtension: Boolean get() = true
-    override val command: String get() = "player.sendTitle"
+    override val command: String get() = "unsafe.player.sendTitleText"
     override val arguments: ArgumentList
         get() = NodeBuilder()
             .addSingleArgument(ArgumentType.STRING, "Title to send")
-            .addSingleArgument(ArgumentType.STRING, "Subtitle to send")
-            .addOptionalArgument(ArgumentType.NUMBER, Value.Number(3000.0), "Duration")
-            .addOptionalArgument(ArgumentType.NUMBER, Value.Number(500.0),"Fade in time")
-            .addOptionalArgument(ArgumentType.NUMBER, Value.Number(500.0),"Fade out time")
             .build()
     override val returnType: ArgumentType
         get() = ArgumentType.NONE
     override val description: String
-        get() = "Send a player a message through a title."
+        get() = "Send a player a message through a title. Sends the main title"
 
     override suspend fun visit(visitor: Interpreter) {
-        var fadeOut = 500.0
-        var fadeIn = 500.0
-        var duration = 3000.0
-
-        if(visitor.environment.argumentCount >= 3.toByte()) {
-            if(visitor.environment.argumentCount >= 4.toByte()) {
-                if(visitor.environment.argumentCount >= 5.toByte()) {
-                    fadeOut = visitor.environment.stack.popValue().castToNumber()
-                }
-                fadeIn = visitor.environment.stack.popValue().castToNumber()
-            }
-            duration = visitor.environment.stack.popValue().castToNumber()
-        }
-
-        val subtitle = visitor.environment.stack.popValue().toDisplay()
         val title = visitor.environment.stack.popValue().toDisplay()
+        val comp = mm(title)
+        visitor.environment.targets.forEach { if(it is Player) it.sendPacket(SetTitleTextPacket(comp)) }
+    }
+}
 
-        for(target in visitor.environment.targets) {
-            if(target as? Player != null) {
-                target.sendTitlePart(TitlePart.TIMES, Title.Times.times(
-                    Duration.ofMillis(fadeIn.toLong()),
-                    Duration.ofMillis(duration.toLong()),
-                    Duration.ofMillis(fadeOut.toLong())))
-                target.sendTitlePart(TitlePart.TITLE, mm(title))
-                target.sendTitlePart(TitlePart.SUBTITLE, mm(subtitle))
-            }
-        }
+object UnsafeSendSubtitleText : Visitable {
+    override val code: Int get() = 1003
+    override val isExtension: Boolean get() = true
+    override val command: String get() = "unsafe.player.sendSubtitleText"
+    override val arguments: ArgumentList
+        get() = NodeBuilder()
+            .addSingleArgument(ArgumentType.STRING, "Subtitle to send")
+            .build()
+    override val returnType: ArgumentType
+        get() = ArgumentType.NONE
+    override val description: String
+        get() = "Send a player a message through a title. Sends the main subtitle."
+
+    override suspend fun visit(visitor: Interpreter) {
+        val title = visitor.environment.stack.popValue().toDisplay()
+        val comp = mm(title)
+        visitor.environment.targets.forEach { if(it is Player) it.sendPacket(SetTitleSubTitlePacket(comp)) }
+    }
+}
+
+object UnsafeSendTitleTimes : Visitable {
+    override val code: Int get() = 1003
+    override val isExtension: Boolean get() = true
+    override val command: String get() = "unsafe.player.sendTitleTimes"
+    override val arguments: ArgumentList
+        get() = NodeBuilder()
+            .addSingleArgument(ArgumentType.NUMBER, "Fade in (in ticks)")
+            .addSingleArgument(ArgumentType.NUMBER, "Stay time (in ticks)")
+            .addSingleArgument(ArgumentType.NUMBER, "Fade out (in ticks)")
+            .build()
+    override val returnType: ArgumentType
+        get() = ArgumentType.NONE
+    override val description: String
+        get() = "Sets a players' title times."
+
+    override suspend fun visit(visitor: Interpreter) {
+        val fadeStay = visitor.environment.stack.popValue().castToNumber()
+        val fadeIn = visitor.environment.stack.popValue().castToNumber()
+        val fadeOut = visitor.environment.stack.popValue().castToNumber()
+        visitor.environment.targets.forEach { if(it is Player) it.sendPacket(SetTitleTimePacket(fadeIn.toInt(), fadeStay.toInt(), fadeOut.toInt())) }
     }
 }
 
@@ -321,7 +335,7 @@ object HasItems : Visitable {
     }
 }
 
-object PlayParticle : Visitable {
+object UnsafePlayParticle : Visitable {
     override val code: Int get() = 1500
     override val isExtension: Boolean get() = true
     override val command: String get() = "player.playParticle"
@@ -336,14 +350,14 @@ object PlayParticle : Visitable {
         get() = "Display a particle to a player."
 
     override suspend fun visit(visitor: Interpreter) {
-        val loc = visitor.environment.stack.popValue() as Value.Position
+        val loc = visitor.environment.stack.popValue() as Value.Struct
         val particle = visitor.environment.stack.popValue() as Value.Struct
 
         val packet = ParticleCreator.createParticlePacket(
             Particle.fromNamespaceId((particle.fields[":id"] as Value.String).value)!!,
-            loc.x,
-            loc.y,
-            loc.z,
+            loc.fields[":x"]!!.castToNumber(),
+            loc.fields[":y"]!!.castToNumber(),
+            loc.fields[":z"]!!.castToNumber(),
             0.0f,
             0.0f,
             0.0f,

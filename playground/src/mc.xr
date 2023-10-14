@@ -1,9 +1,37 @@
-struct :mc.particle {
+struct :particle {
     struct.field :id string ""
 }
 
-function :particle {
+function :particle (string -> :particle) {
     store :s (struct.init :particle)
     store :s (struct.set (load :s) :id (parameter 0))
     return (load :s)
+}
+
+function :player.playParticle (:particle -> nothing) {
+    native.player.playParticle (parameter 0)
+}
+
+struct :loc {
+    struct.field :x number 0
+    struct.field :y number 0
+    struct.field :z number 0
+    struct.field :pitch number 0
+    struct.field :yaw number 0
+}
+
+function :loc (number number number number number -> :loc) {
+    return (struct.set (struct.set (struct.set (struct.set (struct.set
+        (struct.init :loc) :x (parameter 0)) :y (parameter 1)) :z (parameter 2)) :pitch (parameter 3)) :yaw (parameter 4))
+}
+
+struct :vec {
+    struct.field :x number 0
+    struct.field :y number 0
+    struct.field :z number 0
+}
+
+function :vec (number number number -> :vec) {
+    return (struct.set (struct.set (struct.set
+        (struct.init :loc) :x 0) :y 0) :z 0)
 }

@@ -1,6 +1,7 @@
 package parser
 
 import lexer.SpanData
+import typechecker.ArgumentType
 
 sealed class Ast {
     class Event(val name: String, val code: Block, val eventType: EventType, val eventNameSpan: SpanData) : Ast() {
@@ -20,9 +21,9 @@ sealed class Ast {
     }
 }
 
-enum class EventType {
-    EVENT,
-    FUNCTION,
-    STRUCT;
+sealed class EventType {
+    data object Event : EventType()
+    data class Function(val name: String, val parameters: List<ArgumentType>, val returns: ArgumentType) : EventType()
+    data object Struct : EventType()
 }
 

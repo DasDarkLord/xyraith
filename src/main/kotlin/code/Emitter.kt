@@ -57,7 +57,7 @@ Emitter {
         blockMap[blockId] = ByteBuffer.allocate(BUFFER_SIZE)
         blockMap[blockId]?.put(0)
         blockMap[blockId]?.putInt(blockId)
-        if(eventType == EventType.FUNCTION || eventType == EventType.STRUCT) {
+        if(eventType is EventType.Function || eventType == EventType.Struct) {
             blockMap[blockId]?.put(6)
             emitValue(Value.Symbol(eventName), blockId)
             for(command in block.nodes) {
@@ -110,7 +110,7 @@ Emitter {
         }
         when(value) {
             is Value.Block -> {
-                val newId = emitBlock(value.value, EventType.EVENT, "callable")
+                val newId = emitBlock(value.value, EventType.Event, "callable")
                 println("Emitting block: ${value.value} to $newId with constant $id")
                 constants[Value.BasicBlockRef(newId)] = id
                 println("constant ${constants[Value.BasicBlockRef(newId)]} == $id")

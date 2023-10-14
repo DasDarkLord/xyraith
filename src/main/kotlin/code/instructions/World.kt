@@ -1,6 +1,7 @@
 package code.instructions
 
 import code.Interpreter
+import net.minestom.server.coordinate.Pos
 import net.minestom.server.instance.AnvilLoader
 import net.minestom.server.instance.InstanceContainer
 import net.minestom.server.instance.block.Block
@@ -24,10 +25,16 @@ object SetBlock : Visitable {
 
     override suspend fun visit(visitor: Interpreter) {
         val mat = visitor.environment.stack.popValue().castToString()
-        val loc = visitor.environment.stack.popValue().castToPos()
-
+        val loc = visitor.environment.stack.popValue() as parser.Value.Struct
+        val pos = Pos(
+            loc.fields[":x"]!!.castToNumber(),
+            loc.fields[":y"]!!.castToNumber(),
+            loc.fields[":z"]!!.castToNumber(),
+            loc.fields[":pitch"]!!.castToNumber().toFloat(),
+            loc.fields[":yaw"]!!.castToNumber().toFloat(),
+        )
         Block.fromNamespaceId(mat)?.let {
-            visitor.environment.instance?.setBlock(loc, it)
+            visitor.environment.instance?.setBlock(pos, it)
         }
     }
 }

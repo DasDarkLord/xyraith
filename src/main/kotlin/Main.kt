@@ -35,11 +35,12 @@ val types: MutableList<String> = mutableListOf(
     "string",
     "bool",
     "symbol",
-    "location",
     "list",
     "any",
     "itemStack"
 )
+
+val functions: MutableMap<String, Pair<MutableList<ArgumentType>, ArgumentType>> = mutableMapOf()
 
 fun main(args: Array<String>) {
     validateRegistry()

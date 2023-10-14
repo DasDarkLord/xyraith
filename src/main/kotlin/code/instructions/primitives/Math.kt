@@ -193,9 +193,9 @@ object Perlin : Visitable {
         get() = "Generate a random number 0.0-1.0 based on location and seed."
 
     override suspend fun visit(visitor: Interpreter) {
-        val pos = visitor.environment.stack.popValue().castToPos()
+        val pos = visitor.environment.stack.popValue() as Value.Struct
         val seed = visitor.environment.stack.popValue().castToNumber()
-        visitor.environment.stack.pushValue(Value.Number(0.0))
+        TODO()
     }
 }
 

@@ -7,7 +7,7 @@ import typechecker.ArgumentType
 import typechecker.NodeBuilder
 
 object Log : Visitable {
-    override val code: Int get() = 126
+    override val code: Int get() = -1
     override val isExtension: Boolean get() = false
     override val command: String get() = "console.log"
     override val arguments: ArgumentList

@@ -98,6 +98,12 @@ class UnfinishedCommand(val expectedType: String, override val span: SpanData) :
     }
 }
 
+class TooManyArguments(override val span: SpanData) : ParserError(span) {
+    override fun emit(): Diagnostic {
+        return Diagnostic(12, "too many arguments provided", span, "try removing one")
+    }
+}
+
 class Unreachable : Exception()
 
 // thanks chatgpt

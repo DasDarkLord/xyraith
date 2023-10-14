@@ -3,11 +3,11 @@ import "mc"
 event join {
     player.sendMessage "Hello world!"
 
-    world.setBlock (loc 0 60 0) "minecraft:stone"
+    world.setBlock (call :loc 0 60 0 0 0) "minecraft:stone"
 }
 
 event sneak {
     store :p (call :particle "minecraft:dragon_breath")
-    player.sendMessage (load :p)
-    player.playParticle (load :p) (loc 0 64 0)
+    player.sendMessage (string (load :p))
+    player.playParticle (load :p) (call :loc 0 64 0 0 0)
 }
