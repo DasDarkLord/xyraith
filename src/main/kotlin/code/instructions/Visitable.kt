@@ -29,13 +29,14 @@ val visitables: kotlin.collections.List<Visitable> = listOf(
     SpawnEntity,
 
     // Player.kt
-    SendMessage, SendActionBar,
+    SendMessage, UnsafeSendActionBar,
     SetHunger, GetHunger, SetSaturation, GetSaturation,
-    SetGamemode, PlayerUsername,
+    PlayerUsername,
     GiveItems, HasItems,
 
     // Player.kt unsafe functions
-    UnsafePlayParticle, UnsafeSendTitleText, UnsafeSendSubtitleText, UnsafeSendTitleTimes,
+    UnsafeSetGamemode, UnsafePlayParticle,
+    UnsafeSendTitleText, UnsafeSendSubtitleText, UnsafeSendTitleTimes,
 
     // Target.kt
     Teleport, TargetUUID,

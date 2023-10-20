@@ -1,9 +1,6 @@
 package parser
 
-import error.InvalidEvent
-import error.UnexpectedEOF
-import error.UnexpectedToken
-import error.Unreachable
+import error.*
 import events
 import functions
 import lexer.SpanData
@@ -180,10 +177,19 @@ class Parser(private val input: MutableList<Token>) {
         if(hasParens)
             standardMatch(next(), TokenType.LeftParen)
         val nameToken = next()
-        standardMatch(nameToken, TokenType.Identifier)
-        if(nameToken !is Token.Identifier) throw Unreachable()
+        val commandName =
+            when(nameToken) {
+                is Token.Identifier -> nameToken.value
+                is Token.Symbol -> "call"
+                else -> throw UnexpectedToken(TokenType.Identifier, nameToken.toType(), nameToken.span)
+            }
         val args = mutableListOf<Value>()
         val spans = mutableListOf<SpanData>()
+        if(nameToken is Token.Symbol) {
+            args.add(Value.Symbol(nameToken.value))
+            spans.add(nameToken.span)
+        }
+
         while(true) {
             if(!hasParens) if(peek(false) is Token.NewLine) break
             if(hasParens) if(peek() is Token.RightParen) break
@@ -192,8 +198,7 @@ class Parser(private val input: MutableList<Token>) {
         }
         if(hasParens)
             standardMatch(next(), TokenType.RightParen)
-        // verifyBuiltinCommand(nameToken, args, spans)
-        return Ast.Command(nameToken.value, args, nameToken.span, spans)
+        return Ast.Command(commandName, args, nameToken.span, spans)
     }
 
     private fun parseArgument(): Value {
@@ -210,7 +215,7 @@ class Parser(private val input: MutableList<Token>) {
                 return if(next2 is Token.LeftParen || next2 is Token.NewLine) {
                     pointer--
                     Value.Block(parseBlock("callable", false))
-                } else if(next2 is Token.Identifier) {
+                } else if(next2 is Token.Identifier || next2 is Token.Symbol) {
                     pointer--
                     Value.Command(parseCommand())
                 } else {

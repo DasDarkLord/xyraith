@@ -3,8 +3,11 @@ package code.instructions.minecraft
 import code.Interpreter
 import code.instructions.Visitable
 import mm
+import net.minestom.server.MinecraftServer
 import net.minestom.server.entity.GameMode
 import net.minestom.server.entity.Player
+import net.minestom.server.network.packet.server.play.ActionBarPacket
+import net.minestom.server.network.packet.server.play.ChangeGameStatePacket
 import net.minestom.server.network.packet.server.play.SetTitleSubTitlePacket
 import net.minestom.server.network.packet.server.play.SetTitleTextPacket
 import net.minestom.server.network.packet.server.play.SetTitleTimePacket
@@ -39,10 +42,10 @@ object SendMessage : Visitable {
     }
 }
 
-object SendActionBar : Visitable {
+object UnsafeSendActionBar : Visitable {
     override val code: Int get() = 1001
     override val isExtension: Boolean get() = true
-    override val command: String get() = "player.sendActionBar"
+    override val command: String get() = "unsafe.player.sendActionBar"
     override val arguments: ArgumentList
         get() = NodeBuilder()
             .addSingleArgument(ArgumentType.STRING, "Actionbar to send")
@@ -54,9 +57,10 @@ object SendActionBar : Visitable {
 
     override suspend fun visit(visitor: Interpreter) {
         val display = visitor.environment.stack.popValue().toDisplay()
+        val comp = mm(display)
         for(target in visitor.environment.targets) {
             if(target as? Player != null) {
-                target.sendActionBar(mm(display))
+                target.sendPacket(ActionBarPacket(comp))
             }
         }
     }
@@ -121,7 +125,8 @@ object UnsafeSendTitleTimes : Visitable {
         val fadeStay = visitor.environment.stack.popValue().castToNumber()
         val fadeIn = visitor.environment.stack.popValue().castToNumber()
         val fadeOut = visitor.environment.stack.popValue().castToNumber()
-        visitor.environment.targets.forEach { if(it is Player) it.sendPacket(SetTitleTimePacket(fadeIn.toInt(), fadeStay.toInt(), fadeOut.toInt())) }
+        visitor.environment.targets.forEach { if(it is Player) it.sendPacket(
+            SetTitleTimePacket(fadeIn.toInt(), fadeStay.toInt(), fadeOut.toInt())) }
     }
 }
 
@@ -235,13 +240,13 @@ object PlayerUsername : Visitable {
     }
 }
 
-object SetGamemode : Visitable {
+object UnsafeSetGamemode : Visitable {
     override val code: Int get() = 1300
     override val isExtension: Boolean get() = true
-    override val command: String get() = "player.gamemode"
+    override val command: String get() = "unsafe.player.gamemode"
     override val arguments: ArgumentList
         get() = NodeBuilder()
-            .addSingleArgument(ArgumentType.STRING, "Game mode to change to.")
+            .addSingleArgument(ArgumentType.NUMBER, "Game mode to change to.")
             .build()
     override val returnType: ArgumentType
         get() = ArgumentType.NONE
@@ -249,33 +254,10 @@ object SetGamemode : Visitable {
         get() = "Change a player's game mode."
 
     override suspend fun visit(visitor: Interpreter) {
-        val mode = visitor.environment.stack.popValue().castToString()
-        if(mode == "gmc" || mode == "c" || mode == "creative") {
-            for(target in visitor.environment.targets) {
-                if(target is Player) {
-                    target.gameMode = GameMode.CREATIVE
-                }
-            }
-        }
-        if(mode == "gms" || mode == "s" || mode == "survival") {
-            for(target in visitor.environment.targets) {
-                if(target is Player) {
-                    target.gameMode = GameMode.SURVIVAL
-                }
-            }
-        }
-        if(mode == "gma" || mode == "a" || mode == "adventure") {
-            for(target in visitor.environment.targets) {
-                if(target is Player) {
-                    target.gameMode = GameMode.ADVENTURE
-                }
-            }
-        }
-        if(mode == "gmsp" || mode == "sp" || mode == "spectator") {
-            for(target in visitor.environment.targets) {
-                if(target is Player) {
-                    target.gameMode = GameMode.SPECTATOR
-                }
+        val mode = visitor.environment.stack.popValue().castToNumber().toFloat()
+        for(target in visitor.environment.targets) {
+            if(target is Player) {
+                target.sendPacket(ChangeGameStatePacket(ChangeGameStatePacket.Reason.CHANGE_GAMEMODE, mode))
             }
         }
     }
@@ -338,29 +320,43 @@ object HasItems : Visitable {
 object UnsafePlayParticle : Visitable {
     override val code: Int get() = 1500
     override val isExtension: Boolean get() = true
-    override val command: String get() = "player.playParticle"
+    override val command: String get() = "unsafe.player.playParticle"
     override val arguments: ArgumentList
         get() = NodeBuilder()
-            .addSingleArgument(ArgumentType(":particle", listOf()), "Particle to display.")
-            .addSingleArgument(ArgumentType.LOCATION, "Location to render")
+            .addSingleArgument(ArgumentType.STRING, "Particle to display.")
+            .addSingleArgument(ArgumentType.NUMBER, "X of Particle")
+            .addSingleArgument(ArgumentType.NUMBER, "Y of Particle")
+            .addSingleArgument(ArgumentType.NUMBER, "Z of Particle")
+            .addSingleArgument(ArgumentType.NUMBER, "Offset X of Particle")
+            .addSingleArgument(ArgumentType.NUMBER, "Offset Y of Particle")
+            .addSingleArgument(ArgumentType.NUMBER, "Offset Z of Particle")
             .build()
     override val returnType: ArgumentType
         get() = ArgumentType.NONE
     override val description: String
-        get() = "Display a particle to a player."
+        get() = "Display a particle to a player through packets."
 
     override suspend fun visit(visitor: Interpreter) {
         val loc = visitor.environment.stack.popValue() as Value.Struct
         val particle = visitor.environment.stack.popValue() as Value.Struct
+        val fields = listOf(
+            visitor.environment.stack.popValue().castToNumber(),
+            visitor.environment.stack.popValue().castToNumber(),
+            visitor.environment.stack.popValue().castToNumber(),
+            visitor.environment.stack.popValue().castToNumber(),
+            visitor.environment.stack.popValue().castToNumber(),
+            visitor.environment.stack.popValue().castToNumber(),
+        ).reversed()
+        val particleName = visitor.environment.stack.popValue().castToString()
 
         val packet = ParticleCreator.createParticlePacket(
-            Particle.fromNamespaceId((particle.fields[":id"] as Value.String).value)!!,
-            loc.fields[":x"]!!.castToNumber(),
-            loc.fields[":y"]!!.castToNumber(),
-            loc.fields[":z"]!!.castToNumber(),
-            0.0f,
-            0.0f,
-            0.0f,
+            Particle.fromNamespaceId(particleName)!!,
+            fields[0],
+            fields[1],
+            fields[2],
+            fields[3].toFloat(),
+            fields[4].toFloat(),
+            fields[5].toFloat(),
             0
         )
         for(target in visitor.environment.targets) {

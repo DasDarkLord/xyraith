@@ -160,14 +160,14 @@ sealed class Value {
         }
     }
 
-    fun getFixedType(tc: Typechecker): ArgumentType {
+    fun getFixedType(tc: Typechecker, functionName: kotlin.String?): ArgumentType {
         return when(this) {
             is Command -> {
                 if(this.value.name == "list") {
-                    val generic = this.value.arguments[0].getFixedType(tc)
+                    val generic = this.value.arguments[0].getFixedType(tc, functionName)
                     return ArgumentType("list", listOf(generic))
                 }
-                return tc.getCommandReturnType(this.value)
+                return tc.getCommandReturnType(this.value, null, functionName)
             }
             else -> this.castToArgumentType()
         }

@@ -100,7 +100,13 @@ class UnfinishedCommand(val expectedType: String, override val span: SpanData) :
 
 class TooManyArguments(override val span: SpanData) : ParserError(span) {
     override fun emit(): Diagnostic {
-        return Diagnostic(12, "too many arguments provided", span, "try removing one")
+        return Diagnostic(13, "too many arguments provided", span, "try removing one")
+    }
+}
+
+class NotAFieldOnStruct(override val span: SpanData) : ParserError(span) {
+    override fun emit(): Diagnostic {
+        return Diagnostic(14, "this is not a field for this structure", span)
     }
 }
 
