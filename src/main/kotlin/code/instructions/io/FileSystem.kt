@@ -8,10 +8,10 @@ import typechecker.NodeBuilder
 import parser.Value
 import java.io.File
 
-object UnsafeReadFile : Visitable {
+object ReadFileText : Visitable {
     override val code: Int get() = -2
     override val isExtension: Boolean get() = false
-    override val command: String get() = "unsafe.io.readFile"
+    override val command: String get() = "io.readFile"
     override val arguments: ArgumentList
         get() = NodeBuilder()
             .addSingleArgument(ArgumentType.STRING, "File path to read from")
@@ -28,10 +28,10 @@ object UnsafeReadFile : Visitable {
     }
 }
 
-object UnsafeReadFileBytes : Visitable {
+object ReadFileBytes : Visitable {
     override val code: Int get() = -3
     override val isExtension: Boolean get() = false
-    override val command: String get() = "unsafe.io.readFileBytes"
+    override val command: String get() = "io.readFileBytes"
     override val arguments: ArgumentList
         get() = NodeBuilder()
             .addSingleArgument(ArgumentType.STRING, "File path to read from")

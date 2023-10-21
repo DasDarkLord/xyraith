@@ -24,11 +24,12 @@ class UnexpectedEOF(override val span: SpanData) : ParserError(span) {
 class InvalidCommand(val command: String, override val span: SpanData) : ParserError(span) {
     override fun emit(): Diagnostic {
         val distances = mutableMapOf<Int, String>()
-        for(key in commandRegistry.keys) {
-            distances[calculateLevenshteinDistance(command, key)] = key
-        }
-        val sorted = distances.toSortedMap()
-        val correction = distances[sorted.firstKey()]
+//        for(key in commandRegistry.keys) {
+//            distances[calculateLevenshteinDistance(command, key)] = key
+//        }
+//        val sorted = distances.toSortedMap()
+//        val correction = distances[sorted.firstKey()]
+        val correction = "ur mom"
         return Diagnostic(3, "`$command` is not a valid command", span, "did you mean `$correction`?")
     }
 }

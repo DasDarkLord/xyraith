@@ -1,8 +1,19 @@
-function :player.setGamemode (string -> nothing) {
-    if (eq (parameter 0) "survival") {
-        unsafe.player.setGamemode 0
-    }
-    if (eq (parameter 0) "creative") {
-        unsafe.player.setGamemode 1
-    }
+struct :gamemode {
+    struct.field :id number 0
+}
+
+function :gamemode.survival (-> :gamemode) {
+    return (struct.init :gamemode)
+}
+
+function :gamemode.creative (-> :gamemode) {
+    return (struct.set (struct.init :gamemode) :id 1)
+}
+
+function :gamemode.adventure (-> :gamemode) {
+    return (struct.set (struct.init :gamemode) :id 2)
+}
+
+function :gamemode.spectator (-> :gamemode) {
+    return (struct.set (struct.init :gamemode) :id 3)
 }

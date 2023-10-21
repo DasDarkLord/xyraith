@@ -1,6 +1,7 @@
 struct :particle {
     struct.field :id string ""
     struct.field :offset ":vector" (:vec 0 0 0)
+    struct.field :motion ":vector" (:vec 0 0 0)
 }
 
 function :particle (string -> :particle) {
@@ -13,8 +14,8 @@ function :particle.setOffset (:particle number number number -> :particle) {
     return (struct.set (parameter 0) :motion (:vec (parameter 1) (parameter 2) (parameter 3)))
 }
 
-function :player.playParticle (:particle :location :vec -> nothing) {
-    (unsafe.player.playParticle
+function :player.playParticle (:particle :loc :vector -> nothing) {
+    (player.playRawParticle
         (struct.get (parameter 0) :id)
         (struct.get (parameter 1) :x)
         (struct.get (parameter 1) :y)

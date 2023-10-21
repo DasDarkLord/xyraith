@@ -1,4 +1,5 @@
-struct :location {
+;; TODO: location
+struct :loc {
     struct.field :x number 0
     struct.field :y number 0
     struct.field :z number 0
@@ -8,7 +9,47 @@ struct :location {
 
 function :loc (number number number number number -> :loc) {
     return (struct.set (struct.set (struct.set (struct.set (struct.set
-        (struct.init :location) :x (parameter 0)) :y (parameter 1)) :z (parameter 2)) :pitch (parameter 3)) :yaw (parameter 4))
+        (struct.init :loc) :x (parameter 0)) :y (parameter 1)) :z (parameter 2)) :pitch (parameter 3)) :yaw (parameter 4))
+}
+
+function :loc.setX (:loc number -> :loc) {
+    return (struct.set (parameter 0) :x (parameter 1))
+}
+
+function :loc.setY (:loc number -> :loc) {
+    return (struct.set (parameter 0) :y (parameter 1))
+}
+
+function :loc.setZ (:loc number -> :loc) {
+    return (struct.set (parameter 0) :z (parameter 1))
+}
+
+function :loc.setPitch (:loc number -> :loc) {
+    return (struct.set (parameter 0) :pitch (parameter 1))
+}
+
+function :loc.setYaw (:loc number -> :loc) {
+    return (struct.set (parameter 0) :yaw (parameter 1))
+}
+
+function :loc.addX (:loc number -> :loc) {
+    return (struct.set (parameter 0) :x (add (struct.get (parameter 0) :x) (parameter 1)))
+}
+
+function :loc.addY (:loc number -> :loc) {
+    return (struct.set (parameter 0) :y (add (struct.get (parameter 0) :y) (parameter 1)))
+}
+
+function :loc.addZ (:loc number -> :loc) {
+    return (struct.set (parameter 0) :z (add (struct.get (parameter 0) :z) (parameter 1)))
+}
+
+function :loc.addPitch (:loc number -> :loc) {
+    return (struct.set (parameter 0) :pitch (add (struct.get (parameter 0) :pitch) (parameter 1)))
+}
+
+function :loc.addYaw (:loc number -> :loc) {
+    return (struct.set (parameter 0) :yaw (add (struct.get (parameter 0) :yaw) (parameter 1)))
 }
 
 struct :vector {

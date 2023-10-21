@@ -10,6 +10,7 @@ sealed class Token {
     class StringText(val value: String, override val span: SpanData) : Token()
     class Number(val value: Double, override val span: SpanData) : Token()
     class Symbol(val value: String, override val span: SpanData) : Token()
+    class Code(val value: String, override val span: SpanData) : Token()
     class EOF(override val span: SpanData) : Token()
     class At(override val span: SpanData) : Token()
     class NewLine(override val span: SpanData) : Token()
@@ -22,6 +23,7 @@ sealed class Token {
             is StringText -> """{"type":"string","value":"${this.value}","span":$span}"""
             is Number -> """{"type":"number","value":${this.value},"span":$span}"""
             is Symbol -> """{"type":"symbol","value":"${this.value}","span":$span}"""
+            is Code -> """{"type":"code","value":"${this.value}","span":$span}"""
             is EOF -> """"""
             is At -> """{"type":"at","span":$span}"""
             is NewLine -> """{"type":"newLine","span":$span}"""
@@ -39,6 +41,7 @@ sealed class Token {
             is EOF -> TokenType.EOF
             is At -> TokenType.At
             is NewLine -> TokenType.NewLine
+            is Code -> TokenType.Code
         }
     }
 }

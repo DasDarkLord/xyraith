@@ -16,13 +16,14 @@ data class CommandDocument(
         if(arguments.isEmpty()) {
             preproc = "None"
         }
+        preproc = preproc.removeSuffix("\n")
         return """
 ## $commandName
 $commandDescription
 ### Command Parameters
 $preproc
 ### Return Type
-Returns $returnType.%%spec_nl%%
+Returns $returnType.%%spec_nl%%%%spec_nl%%
         """.trimIndent().replace("%%spec_nl%%", "\n")
     }
 

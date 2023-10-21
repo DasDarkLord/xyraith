@@ -7,6 +7,7 @@ import typechecker.ArgumentList
 import typechecker.ArgumentType
 import typechecker.NodeBuilder
 
+
 object StructField : Visitable {
     override val code: Int get() = 60
     override val isExtension: Boolean get() = false

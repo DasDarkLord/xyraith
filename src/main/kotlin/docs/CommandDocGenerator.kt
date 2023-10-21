@@ -3,16 +3,21 @@ package docs
 import code.instructions.visitables
 import typechecker.*
 
-fun generateDocumentation(): String {
-    var output = ""
-    for(obj in visitables) {
+fun generateDocumentation(): Map<String, String> {
+    val output = mutableMapOf<String, String>()
+    for(obj in visitables.sortedBy { it.command }) {
+        val command = obj.command
+        val split = command.split(".").toMutableList()
+        val finalName = split.removeLast()
+        val startingName = split.joinToString("/")
+        println("split: $split | finalName: $finalName | startingName: $startingName")
         val documentation = CommandDocument(
             obj.command,
             decomposeList(obj.arguments),
             obj.description,
             obj.returnType
         )
-        output += documentation.toHtml()
+        output[startingName] = (output[startingName] ?: "") + documentation.toHtml()
     }
     return output
 }

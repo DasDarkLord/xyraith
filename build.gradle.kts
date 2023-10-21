@@ -10,7 +10,7 @@ plugins {
     id("java")
 }
 
-group = "me.endistic"
+group = "net.realmofuz"
 version = "1.0-SNAPSHOT"
 
 repositories {
@@ -26,6 +26,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
     implementation("cc.ekblad:4koma:1.2.0")
     implementation("com.google.code.gson:gson:2.10.1")
+    implementation("org.reflections:reflections:0.10.2")
 }
 
 tasks.test {

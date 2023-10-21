@@ -74,6 +74,8 @@ class Lexer(val source: String, val file: String) {
                     }
                     if(symbol.startsWith(":")) {
                         output.add(Token.Symbol(symbol, SpanData(spanStart, position, file)))
+                    } else if(symbol.startsWith("$")) {
+                        output.add(Token.Code(symbol, SpanData(spanStart, position, file)))
                     } else {
                         output.add(Token.Identifier(symbol, SpanData(spanStart, position, file)))
                     }

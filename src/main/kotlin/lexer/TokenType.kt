@@ -10,4 +10,5 @@ sealed class TokenType {
     data object EOF : TokenType()
     data object At : TokenType()
     data object NewLine : TokenType()
+    data object Code : TokenType()
 }

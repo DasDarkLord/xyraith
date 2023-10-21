@@ -203,6 +203,9 @@ class Parser(private val input: MutableList<Token>) {
 
     private fun parseArgument(): Value {
         when(val next = next(true)) {
+            is Token.Code -> {
+                TODO()
+            }
             is Token.At -> {
                 val next2 = next()
                 if(next2 !is Token.Identifier) {
@@ -235,7 +238,7 @@ class Parser(private val input: MutableList<Token>) {
                 return Value.String(next.value)
             }
             else -> {
-                throw Unreachable()
+                throw UnexpectedToken(TokenType.Identifier, next.toType(), next.span)
             }
         }
     }

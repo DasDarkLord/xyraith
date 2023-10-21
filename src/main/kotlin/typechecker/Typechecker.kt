@@ -369,6 +369,9 @@ class Typechecker {
             }
             "call" -> {
                 val name = (command.arguments[0] as Value.Symbol).value
+                if(!functions.containsKey(name)) {
+                    throw IncorrectArgument("function", "function", "call", command.nodeSpans[0])
+                }
                 val arguments = functions[name]!!.first.iterator()
                 println("functions: $functions")
                 for(x in 2..command.arguments.size) {

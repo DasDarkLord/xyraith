@@ -53,7 +53,7 @@ object Select : Visitable {
 }
 
 object ResetSelection : Visitable {
-    override val code: Int get() = 4001
+    override val code: Int get() = 4999
     override val isExtension: Boolean get() = true
     override val command: String get() = "resetSelection"
     override val arguments: ArgumentList

@@ -3,67 +3,23 @@ package code.instructions
 import code.Interpreter
 import code.instructions.io.Log
 import code.instructions.minecraft.*
+import code.instructions.minecraft.player.*
 import code.instructions.primitives.*
+import org.reflections.Reflections
+import org.reflections.util.ConfigurationBuilder
 import typechecker.ArgumentList
 import typechecker.ArgumentType
+import java.lang.reflect.Field
 
-val visitables: kotlin.collections.List<Visitable> = listOf(
-    // Console.kt
-    Log,
-
-    // Math.kt
-    Add, Sub, Mul, Div, Mod,
-    Random, Range,
-    Perlin,
-    GreaterThan, LessThan, GreaterThanOrEqual, LessThanOrEqual, EqualTo,
-
-    // Datatypes.kt
-    Item, True, False, StringCmd,
-    IsNull, ListCmd,
-
-    // World.kt
-    SetBlock,
-    LoadAnvilWorld,
-
-    // Entity.kt
-    SpawnEntity,
-
-    // Player.kt
-    SendMessage, UnsafeSendActionBar,
-    SetHunger, GetHunger, SetSaturation, GetSaturation,
-    PlayerUsername,
-    GiveItems, HasItems,
-
-    // Player.kt unsafe functions
-    UnsafeSetGamemode, UnsafePlayParticle,
-    UnsafeSendTitleText, UnsafeSendSubtitleText, UnsafeSendTitleTimes,
-
-    // Target.kt
-    Teleport, TargetUUID,
-    SetHealth, GetHealth, Heal, Damage,
-
-    // Variables.kt
-    FLocalStore, FLocalLoad, GlobalStore, GlobalLoad,
-    TargetStore, Targetload,
-
-    // ControlFlow.kt
-    ForEach, If, Call, AsyncCall, GetParam, Return, Sleep,
-    Loop,
-
-    // Select.kr
-    Select, ResetSelection,
-
-    // Struct.kt
-    StructInit, StructField, StructGet, StructSet,
-
-    // Item.kt
-    SetItemName, SetItemLore,
-
-    // Event.kt
-    EventChatSetFormat, EventChatGetMessage,
-    EventSetCancelled,
-    EventBlockGetBlock, EventGetLocation,
-)
+var visitables: List<Visitable> = Reflections(ConfigurationBuilder().forPackage("")).getSubTypesOf(Visitable::class.java).map { type ->
+    val instanceField: Field?
+    try {
+        instanceField = type.getDeclaredField("INSTANCE")
+    } catch(nsfe: NoSuchFieldException) {
+        return@map null
+    }
+    return@map instanceField.get(null) as Visitable
+}.filterNotNull()
 
 /**
  * Visitable is an interface that allows you to create a Xyraith command.

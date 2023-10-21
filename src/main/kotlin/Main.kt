@@ -1,4 +1,6 @@
 import code.*
+import code.instructions.Visitable
+import code.instructions.visitables
 import code.server.startServer
 import config.parseToml
 import docs.dumpCommands
@@ -9,10 +11,13 @@ import net.kyori.adventure.text.minimessage.MiniMessage
 import net.minestom.server.entity.Player
 import parser.Parser
 import error.ParserError
+import org.reflections.Reflections
+import org.reflections.util.ConfigurationBuilder
 import registry.validateRegistry
 import typechecker.ArgumentType
 import typechecker.Typechecker
 import java.io.File
+import java.lang.reflect.Field
 import java.nio.ByteBuffer
 import java.time.LocalDate
 
@@ -44,6 +49,7 @@ val functions: MutableMap<String, Pair<MutableList<ArgumentType>, ArgumentType>>
 
 fun main(args: Array<String>) {
     validateRegistry()
+
     when(args.getOrNull(0)) {
         "run" -> {
             println("Running server.. you may see some debug output.")
@@ -93,9 +99,22 @@ dumpcommandinfo - Dump a JSON of command info to the file at `docs/commanddump.j
 
 fun generateDocs() {
     val docgen = generateDocumentation()
-    val file = File("./docs/commandDocs.md")
-    file.createNewFile()
-    file.writeText(docgen)
+
+    for(key in docgen.keys) {
+        val value = docgen[key]
+        val key2 = if(key == "") "" else "$key/"
+        val cmds = File(".\\docs\\commands")
+        cmds.mkdir()
+        val file = File(".\\docs\\commands\\${key2}commands.md")
+        println("path: " + file.path)
+        if(!file.path.contains("docs\\commands\\commands.md")) {
+            file.mkdirs()
+            file.delete()
+        }
+        file.createNewFile()
+        file.writeText(value!!)
+    }
+
 }
 
 fun generateCommandDump() {
@@ -112,7 +131,7 @@ fun runServer(withServer: Boolean) {
     println("tokens:\n$tokens")
     val parser = Parser(tokens)
     try {
-        val time1 = LocalDate.now()
+        // val time1 = LocalDate.now()
         val ast = parser.parseAll()
         Logger.trace(ast)
         val typeChecker = Typechecker()
