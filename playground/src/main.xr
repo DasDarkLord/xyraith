@@ -1,16 +1,10 @@
-import "mc/lib"
+import "std/mc"
 
 event join {
     player.sendMessage "Hello world!"
-    world.setBlock (call :loc 0 60 0 0 0) "minecraft:stone"
-    player.setGamemode (:gamemode.survival)
+    world.setBlock (call :loc 0 62 0 0 0) "minecraft:stone"
 }
 
 event sneak {
-    store :p (call :particle "minecraft:dragon_breath")
-    player.sendMessage (string (load :p))
-    call :player.playParticle (load :p) (call :loc 0 64 0 0 0) (call :vec 0 0 0)
-    player.setGamemode (:gamemode.creative)
+    call :player.playParticle (call :particle "minecraft:dragon_breath") (call :loc 0 67 0 0 0) (call :vec 0 0 0)
 }
-
-

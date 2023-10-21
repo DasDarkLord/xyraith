@@ -1,7 +1,8 @@
-val majorVersion = 0
-val minorVersion = 1
-val patchVersion = 0
+import java.nio.file.Paths
 
+val majorVersion = 0
+val minorVersion = 2
+val patchVersion = 0
 
 plugins {
     kotlin("jvm") version "1.9.0"
@@ -11,7 +12,7 @@ plugins {
 }
 
 group = "net.realmofuz"
-version = "1.0-SNAPSHOT"
+version = "0.2.0"
 
 repositories {
     mavenCentral()
@@ -40,3 +41,24 @@ kotlin {
 application {
     mainClass.set("MainKt")
 }
+
+/*
+Generate the standard library from the source files
+ */
+fun generateStdlib(): String {
+    var output = "package stdlib\n\n//Automatically generated in `build.gradle.kts`\n\n"
+    output += "val stdlibFiles = mutableMapOf<String, String>(\n"
+    File("${project.rootDir.path}/std/").walk().forEach {
+        if(it.isFile && !it.isDirectory) {
+            val path = it.canonicalPath
+                .replace(project.rootDir.path + "\\", "")
+                .replace("\\", "/")
+                .removeSuffix(".xr")
+            output += "\"${path}\" to \"\"\"${it.readText()}\"\"\"\n,"
+        }
+    }
+    output += "\n)"
+    return output
+}
+
+File("${project.rootDir.path}/src/main/kotlin/stdlib/Stdlib.kt").writeText(generateStdlib())

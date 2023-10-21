@@ -84,6 +84,7 @@ object Call : Visitable {
             val argument = visitor.environment.stack.popValue()
             arguments.add(argument)
         }
+        arguments.reverse()
         val symbol = visitor.environment.stack.popValue()
         if(symbol is Value.Symbol) {
             visitor.environment.stack.pushFrame()

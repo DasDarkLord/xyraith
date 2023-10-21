@@ -90,7 +90,7 @@ object StructGet : Visitable {
     override suspend fun visit(visitor: Interpreter) {
         val field = visitor.environment.stack.popValue() as Value.Symbol
         val struct = visitor.environment.stack.popValue() as Value.Struct
-
+        println("struct: $struct | field: $field")
         visitor.environment.stack.pushValue(struct.fields[field.value]!!)
     }
 }

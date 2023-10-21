@@ -24,13 +24,12 @@ class UnexpectedEOF(override val span: SpanData) : ParserError(span) {
 class InvalidCommand(val command: String, override val span: SpanData) : ParserError(span) {
     override fun emit(): Diagnostic {
         val distances = mutableMapOf<Int, String>()
-//        for(key in commandRegistry.keys) {
-//            distances[calculateLevenshteinDistance(command, key)] = key
-//        }
-//        val sorted = distances.toSortedMap()
-//        val correction = distances[sorted.firstKey()]
-        val correction = "ur mom"
-        return Diagnostic(3, "`$command` is not a valid command", span, "did you mean `$correction`?")
+        for(key in commandRegistry.keys) {
+            distances[calculateLevenshteinDistance(command, key)] = key
+        }
+        val sorted = distances.toSortedMap()
+        val correction = if(sorted.firstKey() <= 10) "did you mean `${distances[sorted.firstKey()]}`?" else null
+        return Diagnostic(3, "`$command` is not a valid command", span, correction)
     }
 }
 
@@ -108,6 +107,12 @@ class TooManyArguments(override val span: SpanData) : ParserError(span) {
 class NotAFieldOnStruct(override val span: SpanData) : ParserError(span) {
     override fun emit(): Diagnostic {
         return Diagnostic(14, "this is not a field for this structure", span)
+    }
+}
+
+class NotAValidImport(override val span: SpanData) : ParserError(span) {
+    override fun emit(): Diagnostic {
+        return Diagnostic(15, "this is not a valid import", span)
     }
 }
 

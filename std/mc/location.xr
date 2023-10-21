@@ -52,7 +52,7 @@ function :loc.addYaw (:loc number -> :loc) {
     return (struct.set (parameter 0) :yaw (add (struct.get (parameter 0) :yaw) (parameter 1)))
 }
 
-struct :vector {
+struct :vec {
     struct.field :x number 0
     struct.field :y number 0
     struct.field :z number 0
@@ -60,5 +60,5 @@ struct :vector {
 
 function :vec (number number number  -> :vec) {
     return (struct.set (struct.set (struct.set
-        (struct.init :vector) :x (parameter 0)) :y (parameter 1)) :z (parameter 2))
+        (struct.init :vec) :x (parameter 0)) :y (parameter 1)) :z (parameter 2))
 }
