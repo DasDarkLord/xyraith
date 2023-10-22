@@ -97,7 +97,6 @@ object Sub : Visitable {
     override suspend fun visit(visitor: Interpreter) {
         val rhs = visitor.environment.stack.popValue()
         val lhs = visitor.environment.stack.popValue()
-        val rhs = visitor.environment.stack.popValue()
         if(lhs is Value.Number && rhs is Value.Number) {
             visitor.environment.stack.pushValue(Value.Number(lhs.value - rhs.value))
         } else {
@@ -200,7 +199,6 @@ object Pow : Visitable {
     }
 
 }
-
 
 object Perlin : Visitable {
     override val code: Int get() = 37
