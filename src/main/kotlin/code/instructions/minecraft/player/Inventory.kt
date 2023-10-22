@@ -35,6 +35,30 @@ object GiveItems : Visitable {
     }
 }
 
+object ClearInventory : Visitable {
+    override val code: Int
+        get() = 1408
+    override val isExtension: Boolean
+        get() = true
+    override val command: String
+        get() = "player.clear"
+    override val arguments: ArgumentList
+        get() = NodeBuilder().build()
+    override val description: String
+        get() = "Clears the inventory of a player"
+    override val returnType: ArgumentType
+        get() = ArgumentType.NONE
+
+    override suspend fun visit(visitor: Interpreter) {
+        for (target in visitor.environment.targets) {
+            if (target as? Player != null) {
+                target.inventory.clear()
+            }
+        }
+    }
+
+}
+
 /*
 INVENTORY COMMANDS
  */
