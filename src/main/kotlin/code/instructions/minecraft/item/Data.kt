@@ -2,6 +2,7 @@ package code.instructions.minecraft.item
 
 import code.Interpreter
 import code.instructions.Visitable
+import miniMessage
 import mm
 import net.kyori.adventure.text.Component
 import parser.Value
@@ -112,12 +113,12 @@ object GetItemStackName : Visitable {
             .addSingleArgument(ArgumentType.ITEM, "Item to check")
             .build()
     override val returnType: ArgumentType
-        get() = ArgumentType.ITEM
+        get() = ArgumentType.STRING
     override val description: String
         get() = "Get an item's name."
 
     override suspend fun visit(visitor: Interpreter) {
         val item = (visitor.environment.stack.popValue() as Value.Item).itemStack
-        visitor.environment.stack.pushValue(Value.String(item.displayName?.examinableName() ?: item.material().toString()))
+        visitor.environment.stack.pushValue(Value.String(miniMessage.serialize(item.displayName ?: Component.text(item.material().name()))))
     }
 }
