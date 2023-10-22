@@ -5,6 +5,9 @@ import code.instructions.Visitable
 import miniMessage
 import mm
 import net.kyori.adventure.text.Component
+import net.minestom.server.item.ItemStack
+import net.minestom.server.item.Material
+import net.minestom.server.tag.Tag
 import parser.Value
 import typechecker.ArgumentList
 import typechecker.ArgumentType
@@ -32,7 +35,7 @@ object SetItemLore : Visitable {
         for(line in lore.value) {
             newLore.add(mm("<!italic><gray>" + line.value))
         }
-        val item = visitor.environment.stack.popValue() as Value.Item
+        val item = visitor.environment.stack.popValue() as? Value.Item ?: Value.Item(ItemStack.of(Material.STONE))
         visitor.environment.stack.pushValue(
             Value.Item(item.itemStack.withLore(newLore))
         )
@@ -121,4 +124,82 @@ object GetItemStackName : Visitable {
         val item = (visitor.environment.stack.popValue() as Value.Item).itemStack
         visitor.environment.stack.pushValue(Value.String(miniMessage.serialize(item.displayName ?: Component.text(item.material().name()))))
     }
+}
+
+object GetItemLore : Visitable {
+    override val code: Int
+        get() = 6007
+    override val isExtension: Boolean
+        get() = true
+    override val command: String
+        get() = "item.getLore"
+    override val arguments: ArgumentList
+        get() = NodeBuilder()
+            .addSingleArgument(ArgumentType.ITEM, "Item to get the lore of")
+            .build()
+    override val description: String
+        get() = "Gets the lore of an item"
+    override val returnType: ArgumentType
+        get() = ArgumentType.STRING_LIST
+
+    override suspend fun visit(visitor: Interpreter) {
+        val item = ((visitor.environment.stack.popValue()) as Value.Item).itemStack
+        val lore = mutableListOf<String>()
+        for (loreLine in item.lore) {
+            lore.add(miniMessage.serialize(loreLine))
+        }
+        visitor.environment.stack.pushValue(Value.StringList(lore.map { Value.String(it) }))
+    }
+
+}
+
+object GetItemDamage : Visitable {
+    override val code: Int
+        get() = 6008
+    override val isExtension: Boolean
+        get() = true
+    override val command: String
+        get() = "item.getDamage"
+    override val arguments: ArgumentList
+        get() = NodeBuilder()
+            .addSingleArgument(ArgumentType.ITEM, "The item to get the damage of")
+            .build()
+    override val description: String
+        get() = "Gets the damage of an item"
+    override val returnType: ArgumentType
+        get() = ArgumentType.NUMBER
+
+    override suspend fun visit(visitor: Interpreter) {
+        val item = (visitor.environment.stack.popValue() as Value.Item).itemStack
+        val damage = Value.Number(item.meta().damage.toDouble())
+        visitor.environment.stack.pushValue(damage)
+    }
+
+}
+
+object SetItemDamage : Visitable {
+    override val code: Int
+        get() = 6009
+    override val isExtension: Boolean
+        get() = true
+    override val command: String
+        get() = "item.setDamage"
+    override val arguments: ArgumentList
+        get() = NodeBuilder()
+            .addSingleArgument(ArgumentType.ITEM, "Item to set damage of")
+            .addSingleArgument(ArgumentType.NUMBER, "Damage to set")
+            .build()
+    override val description: String
+        get() = "Sets an items damage"
+    override val returnType: ArgumentType
+        get() = ArgumentType.ITEM
+
+    override suspend fun visit(visitor: Interpreter) {
+        val durability = visitor.environment.stack.popValue().castToNumber()
+        val item = (visitor.environment.stack.popValue() as Value.Item).itemStack
+        visitor.environment.stack.pushValue(Value.Item(
+            item.withTag(Tag.Integer("Damage").defaultValue(0), durability.toInt())
+        ))
+    }
+
 }
