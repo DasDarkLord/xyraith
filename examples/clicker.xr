@@ -1,0 +1,10 @@
+import "std/mc"
+
+event rightClick {
+    target.store :clicks (add (target.load :clicks) 1)
+    player.sendMessage (target.load :clicks)
+}
+
+event join {
+    world.setBlock (:loc 0 62 0 0 0) "minecraft:stone"
+}

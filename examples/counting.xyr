@@ -1,5 +1,0 @@
-(event join (
-    (foreach :index (range 1 10) (
-        (player.sendMessage (fmt "#{}" (load :index)))
-    ))
-))
