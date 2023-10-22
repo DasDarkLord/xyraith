@@ -120,6 +120,22 @@ object PlayerUsername : Visitable {
     }
 }
 
+object PlayerUuid : Visitable {
+    override val code: Int get() = 1107
+    override val isExtension: Boolean get() = true
+    override val command: String get() = "player.uuid"
+    override val arguments: ArgumentList get() = NodeBuilder().build()
+    override val description: String get() = "Get the uuid of a player"
+    override val returnType: ArgumentType get() = ArgumentType.STRING
+
+    override suspend fun visit(visitor: Interpreter) {
+        val target = visitor.environment.targets.firstOrNull()
+        if (target as? Player != null) {
+            visitor.environment.stack.pushValue(Value.String(target.uuid.toString()))
+        } else visitor.environment.stack.pushValue(Value.Null)
+    }
+}
+
 object UnsafeSetGamemode : Visitable {
     override val code: Int get() = 1300
     override val isExtension: Boolean get() = true
