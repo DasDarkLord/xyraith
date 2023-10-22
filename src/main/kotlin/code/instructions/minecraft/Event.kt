@@ -73,7 +73,7 @@ object EventSetCancelled : Visitable {
     override suspend fun visit(visitor: Interpreter) {
         val event = visitor.environment.event
         if(event is CancellableEvent) {
-            event.isCancelled = true
+            event.isCancelled = visitor.environment.stack.popValue().castToBoolean()
         }
     }
 }

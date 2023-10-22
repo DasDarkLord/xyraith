@@ -172,4 +172,9 @@ sealed class Value {
             else -> this.castToArgumentType()
         }
     }
+
+    fun castToBoolean(): Boolean {
+        return if (this is Bool) value
+        else false
+    }
 }
