@@ -15,4 +15,5 @@ val events = mapOf(
     "respawn" to 13,
     "placeBlock" to 14,
     "breakBlock" to 15,
+    "commandRequest" to 16,
 )

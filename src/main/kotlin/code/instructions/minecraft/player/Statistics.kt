@@ -165,3 +165,95 @@ object SetGamemode : Visitable {
         }
     }
 }
+
+object SetExpProgress : Visitable {
+    override val code: Int get() = 1302
+    override val isExtension: Boolean get() = true
+    override val command: String get() = "player.setExpProgress"
+    override val arguments: ArgumentList
+        get() = NodeBuilder()
+            .addSingleArgument(ArgumentType.NUMBER, "XP progress to set (in %)")
+            .build()
+    override val returnType: ArgumentType
+        get() = ArgumentType.NONE
+    override val description: String
+        get() = "Change a player's XP progress."
+
+    override suspend fun visit(visitor: Interpreter) {
+        val exp = visitor.environment.stack.popValue().castToNumber().toFloat()
+        for(target in visitor.environment.targets) {
+            if(target is Player) {
+                target.exp = (exp/100)
+            }
+        }
+    }
+}
+
+object SetExpLevel : Visitable {
+    override val code: Int get() = 1303
+    override val isExtension: Boolean get() = true
+    override val command: String get() = "player.setExpLevel"
+    override val arguments: ArgumentList
+        get() = NodeBuilder()
+            .addSingleArgument(ArgumentType.NUMBER, "XP level to set")
+            .build()
+    override val returnType: ArgumentType
+        get() = ArgumentType.NONE
+    override val description: String
+        get() = "Change a player's XP level."
+
+    override suspend fun visit(visitor: Interpreter) {
+        val level = visitor.environment.stack.popValue().castToNumber().toFloat()
+        for(target in visitor.environment.targets) {
+            if(target is Player) {
+                target.level = level.toInt()
+            }
+        }
+    }
+}
+
+object GetExpProgress : Visitable {
+    override val code: Int get() = 1304
+    override val isExtension: Boolean get() = true
+    override val command: String get() = "player.getExpProgress"
+    override val arguments: ArgumentList
+        get() = NodeBuilder()
+            .addSingleArgument(ArgumentType.NUMBER, "XP progress to set (in %)")
+            .build()
+    override val returnType: ArgumentType
+        get() = ArgumentType.NONE
+    override val description: String
+        get() = "Change a player's XP progress."
+
+    override suspend fun visit(visitor: Interpreter) {
+        val exp = visitor.environment.stack.popValue().castToNumber().toFloat()
+        for(target in visitor.environment.targets) {
+            if(target is Player) {
+                target.exp = (exp/100)
+            }
+        }
+    }
+}
+
+object GetExpLevel : Visitable {
+    override val code: Int get() = 1305
+    override val isExtension: Boolean get() = true
+    override val command: String get() = "player.getExpLevel"
+    override val arguments: ArgumentList
+        get() = NodeBuilder()
+            .addSingleArgument(ArgumentType.NUMBER, "XP level to set")
+            .build()
+    override val returnType: ArgumentType
+        get() = ArgumentType.NONE
+    override val description: String
+        get() = "Change a player's XP level."
+
+    override suspend fun visit(visitor: Interpreter) {
+        val level = visitor.environment.stack.popValue().castToNumber().toFloat()
+        for(target in visitor.environment.targets) {
+            if(target is Player) {
+                target.level = level.toInt()
+            }
+        }
+    }
+}
