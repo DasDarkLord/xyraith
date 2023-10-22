@@ -4,6 +4,7 @@ import code.Interpreter
 import code.instructions.Visitable
 import net.minestom.server.coordinate.Pos
 import net.minestom.server.entity.Entity
+import net.minestom.server.entity.EntityCreature
 import net.minestom.server.entity.EntityType
 import net.minestom.server.entity.metadata.item.ItemEntityMeta
 import parser.Value
@@ -29,15 +30,15 @@ object SpawnEntity : Visitable {
         val id = visitor.environment.stack.popValue().castToString()
 
         println("id: $id, pos: $pos")
-        val entity = Entity(EntityType.fromNamespaceId(id))
-        entity.setInstance(visitor.environment.instance!!)
-        entity.teleport(Pos(
+        val entity = EntityCreature(EntityType.fromNamespaceId(id))
+        entity.setInstance(visitor.environment.instance!!, Pos(
             pos.fields[":x"]!!.castToNumber(),
             pos.fields[":y"]!!.castToNumber(),
             pos.fields[":z"]!!.castToNumber(),
             pos.fields[":pitch"]!!.castToNumber().toFloat(),
             pos.fields[":yaw"]!!.castToNumber().toFloat(),
         ))
+
         visitor.environment.stack.pushValue(Value.String(entity.uuid.toString()))
     }
 }
