@@ -22,11 +22,11 @@ function :math.radians_to_degrees (-> number) {
 }
 
 function :math.toDegrees (number -> number) {
-    return (mul (parameter 0) (call :math.radians_to_degrees)
+    return (mul (parameter 0) (call :math.radians_to_degrees))
 }
 
 function :math.toRadians (number -> number) {
-    return (mul (parameter 0) (call :math.degrees_to_radians)
+    return (mul (parameter 0) (call :math.degrees_to_radians))
 }
 
 function :math.factorial (number -> number) {
@@ -42,10 +42,6 @@ function :math.sqrt (number -> number) {
 
 function :math.cbrt (number -> number) {
     return (pow (parameter 0) (div 1 3))
-}
-
-function :math.root (number, number -> number) {
-    return (pow (parameter 0) (div 1 (parameter 1))
 }
 
 function :math.sin (number -> number) {
@@ -83,7 +79,6 @@ function :math.atan (number -> number) {
 function :math.atan2 (number, number -> number) {
     return (invokeMethod (getMethod (javaClass "java.lang.Math") "atan2(DD)D") (parameter 0) (parameter 1))
 }
-
 
 function :math.tanh (number -> number) {
     return (invokeMethod (getMethod (javaClass "java.lang.Math") "tanh(D)D") (parameter 0))
