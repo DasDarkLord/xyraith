@@ -173,7 +173,7 @@ object SetGamemode : Visitable {
         get() = "Change a player's game mode."
 
     override suspend fun visit(visitor: Interpreter) {
-        val mode = visitor.environment.stack.popValue().castToNumber().toFloat()
+        val mode = (visitor.environment.stack.popValue() as Value.Struct).fields[":id"]!!.castToNumber().toFloat()
         for(target in visitor.environment.targets) {
             if(target is Player) {
                 target.sendPacket(ChangeGameStatePacket(ChangeGameStatePacket.Reason.CHANGE_GAMEMODE, mode))
