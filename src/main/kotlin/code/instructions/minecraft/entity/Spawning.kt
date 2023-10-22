@@ -1,4 +1,4 @@
-package code.instructions.minecraft
+package code.instructions.minecraft.entity
 
 import code.Interpreter
 import code.instructions.Visitable
@@ -37,7 +37,8 @@ object SpawnEntity : Visitable {
             pos.fields[":z"]!!.castToNumber(),
             pos.fields[":pitch"]!!.castToNumber().toFloat(),
             pos.fields[":yaw"]!!.castToNumber().toFloat(),
-        ))
+        )
+        )
 
         visitor.environment.stack.pushValue(Value.String(entity.uuid.toString()))
     }
@@ -63,13 +64,15 @@ object SpawnItem : Visitable {
         val entity = Entity(EntityType.ITEM)
         entity.setInstance(visitor.environment.instance!!)
 
-        entity.teleport(Pos(
+        entity.teleport(
+            Pos(
             pos.fields[":x"]!!.castToNumber(),
             pos.fields[":y"]!!.castToNumber(),
             pos.fields[":z"]!!.castToNumber(),
             pos.fields[":pitch"]!!.castToNumber().toFloat(),
             pos.fields[":yaw"]!!.castToNumber().toFloat(),
-        ))
+        )
+        )
 
         val meta = entity.entityMeta as ItemEntityMeta
         meta.item = item.itemStack

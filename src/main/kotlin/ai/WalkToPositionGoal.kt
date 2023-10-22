@@ -1,4 +1,4 @@
-package uuh
+package ai
 
 import net.minestom.server.coordinate.Pos
 import net.minestom.server.entity.EntityCreature
