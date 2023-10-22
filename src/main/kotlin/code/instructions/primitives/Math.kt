@@ -6,6 +6,7 @@ import typechecker.ArgumentList
 import typechecker.ArgumentType
 import typechecker.NodeBuilder
 import parser.Value
+import kotlin.math.pow
 import kotlin.random.Random
 
 object Random : Visitable {
@@ -94,8 +95,8 @@ object Sub : Visitable {
         get() = "Subtract two numbers from eachother."
 
     override suspend fun visit(visitor: Interpreter) {
-        val lhs = visitor.environment.stack.popValue()
         val rhs = visitor.environment.stack.popValue()
+        val lhs = visitor.environment.stack.popValue()
         if(lhs is Value.Number && rhs is Value.Number) {
             visitor.environment.stack.pushValue(Value.Number(lhs.value - rhs.value))
         } else {
@@ -177,6 +178,27 @@ object Mod : Visitable {
     }
 }
 
+object Pow : Visitable {
+    override val code: Int get() = 38
+    override val isExtension: Boolean get() = false
+    override val command: String get() = "pow"
+    override val arguments: ArgumentList
+        get() = NodeBuilder()
+            .addSingleArgument(ArgumentType.NUMBER, "Base")
+            .addSingleArgument(ArgumentType.NUMBER, "Exponent")
+            .build()
+    override val description: String
+        get() = "Raises the given base to the given exponent"
+    override val returnType: ArgumentType
+        get() = ArgumentType.NUMBER
+
+    override suspend fun visit(visitor: Interpreter) {
+        val exponent = visitor.environment.stack.popValue().castToNumber()
+        val base = visitor.environment.stack.popValue().castToNumber()
+        visitor.environment.stack.pushValue(Value.Number(base.pow(exponent)))
+    }
+
+}
 
 object Perlin : Visitable {
     override val code: Int get() = 37

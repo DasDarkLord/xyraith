@@ -3,7 +3,56 @@ package stdlib
 //Automatically generated in `build.gradle.kts`
 
 val stdlibFiles = mutableMapOf<String, String>(
-"std/mc/location" to """;; TODO: location
+"std/math" to """struct :math {
+}
+
+function :math.e (-> number) {
+    return 2.718281828459045
+}
+
+function :math.pi (-> number) {
+    return 3.141592653589793
+}
+
+function :math.tau (-> number) {
+    return (mul (call :math.pi) 2)
+}
+
+function :math.degrees_to_radians (-> number) {
+    return 0.017453292519943295
+}
+
+function :math.radians_to_degrees (-> number) {
+    return 57.29577951308232
+}
+
+function :math.factorial (number -> number) {
+    if (leq (parameter 0) 0) {
+        return 1
+    }
+    return (mul (parameter 0) (call :math.factorial (sub (parameter 0) 1)))
+}
+
+function :math.sqrt (number -> number) {
+    return (pow (parameter 0) 0.5)
+}
+
+function :math.sin (number -> number) {
+    return (invokeMethod (getMethod (javaClass "java.lang.Math") "sin(D)D") (parameter 0))
+}
+
+function :math.asin (number -> number) {
+    return (invokeMethod (getMethod (javaClass "java.lang.Math") "asin(D)D") (parameter 0))
+}
+
+function :math.sinh (number -> number) {
+    return (invokeMethod (getMethod (javaClass "java.lang.Math") "sinh(D)D") (parameter 0))
+}
+
+function :math.asinh (number -> number) {
+    return (invokeMethod (getMethod (javaClass "kotlin.math.MathJVM") "asinh(D)D") (parameter 0))
+}"""
+,"std/mc/location" to """;; TODO: location
 struct :loc {
     struct.field :x number 0
     struct.field :y number 0
