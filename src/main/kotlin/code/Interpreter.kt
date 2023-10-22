@@ -31,6 +31,7 @@ fun runEvent(eventIdChk: Int, targets: MutableList<Entity> = mutableListOf(), in
             val eventId = block.get()
             if(eventId.toInt() == eventIdChk) {
                 val interpreter = Interpreter(constants, blockMap, this)
+                interpreter.environment.eventTargets = targets
                 interpreter.environment.targets = targets
                 interpreter.environment.instance = instance
                 interpreter.environment.event = event

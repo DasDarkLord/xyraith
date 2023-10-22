@@ -65,6 +65,6 @@ object ResetSelection : Visitable {
         get() = "Set targets based on selector."
 
     override suspend fun visit(visitor: Interpreter) {
-       TODO()
+        visitor.environment.targets = visitor.environment.eventTargets
     }
 }

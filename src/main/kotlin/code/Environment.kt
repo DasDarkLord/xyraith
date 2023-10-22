@@ -15,6 +15,7 @@ data class Environment(
     var endBlock: Boolean = false,
     var returnValue: Value = Value.Null,
 
+    var eventTargets: MutableList<Entity> = mutableListOf(),
     var targets: MutableList<Entity> = mutableListOf(),
     var instance: Instance? = null,
     var event: Event? = null,
