@@ -1,10 +1,12 @@
 import "std/mc"
 
 event join {
-    player.sendMessage "Hello world!"
-    world.setBlock (call :loc 0 62 0 0 0) "minecraft:stone"
-}
-
-event sneak {
-    call :player.playParticle (call :particle "minecraft:dragon_breath") (call :loc 0 67 0 0 0) (call :vec 0 0 0)
+    foreach :x (range -10 10) {
+        foreach :z (range -10 10) {
+            world.setBlock (:loc (load :x) 62 (load :z) 0 0) "minecraft:stone"
+        }
+    }
+    store :uuid (entity.summon "minecraft:zombie" (:loc 0 63 0 0 0))
+    select mobs (string "uuid=" (load :uuid))
+    target.stroll 2
 }

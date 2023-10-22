@@ -48,7 +48,10 @@ object TargetAIStroll : Visitable {
     override val isExtension: Boolean get() = true
     override val command: String get() = "target.stroll"
     override val arguments: ArgumentList
-        get() = NodeBuilder().addOptionalArgument(ArgumentType.NUMBER, Value.Number(16.0), "The radius it should walk around in").build()
+        get() = NodeBuilder()
+            .addOptionalArgument(ArgumentType.NUMBER, Value.Number(16.0), "The radius it should walk around in")
+            .build()
+
     override val description: String get() = "Makes the target randomly walk/stroll around"
     override val returnType: ArgumentType get() = ArgumentType.NONE
 

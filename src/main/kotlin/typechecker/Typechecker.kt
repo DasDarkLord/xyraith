@@ -89,13 +89,7 @@ class Typechecker {
 
 
 
-        for(value in command.arguments) {
-            if(value is Value.Block)
-                typecheckBlock(value.value, functionName)
 
-            if(value is Value.Command)
-                typecheckCommand(value.value, functionName)
-        }
 
         while(true) {
             val nextNode = if(nodeIter.hasNext()) nodeIter.next() else break
@@ -106,10 +100,23 @@ class Typechecker {
                 is ArgumentNode.OptionalPluralArgumentNode -> nextNode.type
                 else -> throw Unreachable()
             }
-            typecheckValue(valueIter, nextArgumentType, nextNode, visitable.command, command.nameSpan, spanIter, functionName)
+            typecheckValue(
+                valueIter, nextArgumentType, nextNode, visitable.command,
+                command.nameSpan, spanIter, functionName, command
+            )
+        }
+
+        for(value in command.arguments) {
+            if(value is Value.Command)
+                typecheckCommand(value.value, functionName)
         }
 
         typecheckSpecialBehavior(command, functionName)
+
+        for(value in command.arguments) {
+            if(value is Value.Block)
+                typecheckBlock(value.value, functionName)
+        }
     }
 
     /**
@@ -122,7 +129,8 @@ class Typechecker {
         name: String,
         span: SpanData,
         spanIter: Iterator<SpanData>,
-        functionName: String?
+        functionName: String?,
+        commandRef: Ast.Command,
     ) {
         if(node == null)
             throw UnfinishedCommand(expected.toString(), span)
@@ -147,9 +155,8 @@ class Typechecker {
         }
         if(node is ArgumentNode.OptionalPluralArgumentNode) {
             while(true) {
-                if(!valueIter.hasNext()) {
+                if(!valueIter.hasNext())
                     return
-                }
                 val next = valueIter.next()
                 val nextSpan = spanIter.next()
                 var nextType = next.castToArgumentType()
@@ -171,7 +178,10 @@ class Typechecker {
                 throw IncorrectArgument(expected.toString(), nextType.toString(), name, nextSpan)
         }
         if(node is ArgumentNode.OptionalArgumentNode) {
-            if(!valueIter.hasNext()) return
+            if(!valueIter.hasNext()) {
+                commandRef.arguments.add(node.defaultValue)
+                return
+            }
             val next = valueIter.next()
             val nextSpan = spanIter.next()
             var nextType = next.castToArgumentType()
