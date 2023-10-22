@@ -33,6 +33,7 @@ object TargetStore : Visitable {
                     is Value.Number -> target.setTag(Tag.Double(name), value.value)
                     is Value.String -> target.setTag(Tag.String(name), value.value)
                     is Value.Bool -> target.setTag(Tag.Boolean(name), value.value)
+                    is Value.Item -> target.setTag(Tag.ItemStack(name), value.itemStack)
                     else -> target.setTag(Tag.Double(name), 0.0)
                 }
             }
@@ -70,6 +71,10 @@ object TargetLoad : Visitable {
                 }
                 if(target.getTag(Tag.Boolean(name)) != null) {
                     visitor.environment.stack.pushValue(Value.Bool(target.getTag(Tag.Boolean(name))))
+                    return
+                }
+                if (target.getTag(Tag.ItemStack(name)) != null) {
+                    visitor.environment.stack.pushValue(Value.Item(target.getTag(Tag.ItemStack(name))))
                     return
                 }
                 visitor.environment.stack.pushValue(Value.Null)
