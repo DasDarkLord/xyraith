@@ -132,9 +132,34 @@ object ListCmd : Visitable {
 
     override suspend fun visit(visitor: Interpreter) {
         val list = mutableListOf<Value>()
-        for(x in 2..visitor.environment.argumentCount) {
+        for(x in 1..visitor.environment.argumentCount) {
             list.add(visitor.environment.stack.popValue())
         }
+        list.reverse()
         visitor.environment.stack.pushValue(Value.GenericList(list))
+    }
+}
+
+object StringListCmd : Visitable {
+    override val code: Int get() = 19
+    override val isExtension: Boolean get() = false
+    override val command: String get() = "stringlist"
+    override val returnType: ArgumentType
+        get() = ArgumentType.STRING_LIST
+    override val arguments: ArgumentList
+        get() = NodeBuilder()
+            .addPluralArgument(ArgumentType.STRING, "Values of the list")
+            .build()
+
+    override val description: String
+        get() = "Makes a list[string] with the given values.\nIf the values are not a string, an error will be thrown\nat compile-time."
+
+    override suspend fun visit(visitor: Interpreter) {
+        val list = mutableListOf<Value.String>()
+        for(x in 1..visitor.environment.argumentCount) {
+            list.add(visitor.environment.stack.popValue() as Value.String)
+        }
+        list.reverse()
+        visitor.environment.stack.pushValue(Value.StringList(list))
     }
 }
