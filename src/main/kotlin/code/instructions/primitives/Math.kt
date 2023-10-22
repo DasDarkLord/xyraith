@@ -95,6 +95,7 @@ object Sub : Visitable {
         get() = "Subtract two numbers from eachother."
 
     override suspend fun visit(visitor: Interpreter) {
+        val rhs = visitor.environment.stack.popValue()
         val lhs = visitor.environment.stack.popValue()
         val rhs = visitor.environment.stack.popValue()
         if(lhs is Value.Number && rhs is Value.Number) {
