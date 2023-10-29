@@ -91,7 +91,7 @@ object SetItemStackSize : Visitable {
 object GetItemStackSize : Visitable {
     override val code: Int get() = 6005
     override val isExtension: Boolean get() = true
-    override val command: String get() = "item.setStackSize"
+    override val command: String get() = "item.getStackSize"
     override val arguments: ArgumentList
         get() = NodeBuilder()
             .addSingleArgument(ArgumentType.ITEM, "Item to check")
