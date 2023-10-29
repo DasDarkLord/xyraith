@@ -35,4 +35,4 @@ jobs:
             - uses: actions/upload-artifact@v3
               with:
                 name: Latest Nightly Build
-                path: ./build/libs/XyrGr-1.0-SNAPSHOT-all.jar
+                path: ./build/libs/XyrGr-0.2.0-all.jar
