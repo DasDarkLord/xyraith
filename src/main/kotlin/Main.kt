@@ -11,6 +11,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage
 import net.minestom.server.entity.Player
 import parser.Parser
 import error.ParserError
+import ir.transformAst
 import org.reflections.Reflections
 import org.reflections.util.ConfigurationBuilder
 import registry.validateRegistry
@@ -138,6 +139,8 @@ fun runServer(withServer: Boolean) {
         for(event in ast) {
             typeChecker.typecheckEvent(event)
         }
+        println(transformAst(ast))
+        return
         val emitter = Emitter(ast)
         emitter.emit()
         Logger.trace(emitter)
