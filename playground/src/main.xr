@@ -1,12 +1,5 @@
 import "std/mc"
 
-event join {
-    foreach :x (range -10 10) {
-        foreach :z (range -10 10) {
-            world.setBlock (:loc (load :x) 62 (load :z) 0 0) "minecraft:stone"
-        }
-    }
-    store :uuid (entity.summon "minecraft:zombie" (:loc 0 63 0 0 0))
-    select mobs (string "uuid=" (load :uuid))
-    target.stroll 2
+event startup {
+    console.log "test"
 }
