@@ -1,6 +1,5 @@
 package registry
 
-import code.instructions.*
 import code.opcodes
 import code.shortcodes
 

@@ -50,7 +50,8 @@ sealed class InterpreterData {
     data class BasicBlock(val code: ByteBuffer, val id: Int, val codeLength: Int, val event: InterpreterData.Event) : InterpreterData()
 }
 
-fun parseBytecode(buf: ByteBuffer): MutableList<InterpreterData.BasicBlock> {
+fun parseBytecode(buf: ByteBuffer): Pair<MutableList<InterpreterData.BasicBlock>, Map<Int, Value>> {
+    val constants = parseConstants(buf)
     val blocks = mutableListOf<InterpreterData.BasicBlock>()
     try {
         while(true) {
@@ -92,12 +93,6 @@ fun parseBytecode(buf: ByteBuffer): MutableList<InterpreterData.BasicBlock> {
                     code = out
                 }
                 if(fn.toInt() == -126) {
-                    println("""
-                        id: $id
-                        code: $code
-                        codeLength: $codeLength
-                        event: $event
-                    """.trimIndent())
                     if(id < 0) throw InvalidBytecode()
                     if(code == null) throw InvalidBytecode()
                     if(codeLength < 0) throw InvalidBytecode()
@@ -111,7 +106,54 @@ fun parseBytecode(buf: ByteBuffer): MutableList<InterpreterData.BasicBlock> {
         }
     } catch(_: BufferUnderflowException) {}
 
-    return blocks
+    return Pair(blocks, constants)
+}
+
+fun parseConstants(buf: ByteBuffer): Map<Int, Value> {
+    val map = mutableMapOf<Int, Value>()
+
+    while(true) {
+        val next = buf.get()
+
+        buf.position(buf.position()-1)
+
+        if(next.toInt() == -127) {
+            break
+        }
+
+        val id = buf.getInt()
+        val type = buf.get()
+
+
+        when(type.toInt()) {
+            1 -> {
+                map[id] = Value.Number(buf.getDouble())
+            }
+            2 -> {
+                var chars = ""
+                while(true) {
+                    val ch = buf.getChar()
+                    if(ch.code == 0) break
+                    chars += ch
+                }
+                map[id] = Value.String(chars)
+            }
+            3 -> {
+                var chars = ""
+                while(true) {
+                    val ch = buf.getChar()
+                    if(ch.code == 0) break
+                    chars += ch
+                }
+                map[id] = Value.Symbol(chars)
+            }
+            4 -> {
+                map[id] = Value.BasicBlockRef(buf.getInt())
+            }
+        }
+    }
+
+    return map
 }
 
 class Interpreter(val constants: Map<Int, Value>, val blockMap: Map<Int, ByteBuffer>, val coroutineScope: CoroutineScope) {

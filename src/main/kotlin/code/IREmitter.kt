@@ -1,5 +1,6 @@
 package code
 
+import error.Unreachable
 import ir.IR
 import registry.commandRegistry
 import java.nio.ByteBuffer
@@ -11,12 +12,17 @@ class IREmitter(val module: IR.Module) {
     private var constants: MutableMap<IR.Argument, Int> = mutableMapOf()
     private var constantsBytes: ByteBuffer = ByteBuffer.allocate(IR_BUFFER_SIZE)
 
-    fun emit(): MutableList<Byte> {
+    fun emit(): List<Byte> {
         val out = mutableListOf<Byte>()
         for(block in module.blocks) {
             out.addAll(emitBlock(block).array().toMutableList())
         }
-        return out
+
+        val arr2 = ByteArray(constantsBytes.position())
+        constantsBytes.rewind()
+        constantsBytes.get(arr2)
+        val arr3 = arr2.toMutableList()
+        return arr3 + out
     }
 
     /**
@@ -49,6 +55,7 @@ class IREmitter(val module: IR.Module) {
         buf.rewind()
         val arr = ByteArray(endCodePos)
         buf.get(arr)
+
         return ByteBuffer.allocate(arr.size + 7)
             .put(-127)
             .put(-120)
@@ -79,12 +86,12 @@ class IREmitter(val module: IR.Module) {
         val constantID = addConstant(value)
         if(value !is IR.Argument.SSARef) {
             buf.put(0)
-            buf.putInt(constantID)
+            buf.putInt(constantID!!)
         }
     }
 
-    private fun addConstant(value: IR.Argument): Int {
-        return if(!constants.containsKey(value)) {
+    private fun addConstant(value: IR.Argument): Int? {
+        return if(!constants.containsKey(value) && value !is IR.Argument.SSARef) {
             constants[value] = ++constantIdRecord
             constantsBytes.putInt(constantIdRecord)
             when(value) {
@@ -94,9 +101,7 @@ class IREmitter(val module: IR.Module) {
                 }
                 is IR.Argument.BlockRef -> {
                     constantsBytes.put(4)
-                }
-                is IR.Argument.SSARef -> {
-                    // will be on stack in bytecode, do nothing
+                    constantsBytes.putInt(value.value)
                 }
                 is IR.Argument.String -> {
                     constantsBytes.put(2)
@@ -112,10 +117,12 @@ class IREmitter(val module: IR.Module) {
                     }
                     constantsBytes.putShort(0)
                 }
+
+                else -> { throw Unreachable() }
             }
             constantIdRecord
         } else {
-            constants[value]!!
+            constants[value]
         }
     }
 }

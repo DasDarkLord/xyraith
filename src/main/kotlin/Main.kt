@@ -150,6 +150,7 @@ fun runServer(withServer: Boolean) {
         val parsed = parseBytecode(ByteBuffer.wrap(bytes.toByteArray()))
         println("parsed: " + parsed)
 
+        constants = parsed.second
         return
 
         val emitter = Emitter(ast)
