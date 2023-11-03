@@ -139,8 +139,15 @@ fun runServer(withServer: Boolean) {
         for(event in ast) {
             typeChecker.typecheckEvent(event)
         }
-        println(transformAst(ast))
+        val module = transformAst(ast)
+        println(module)
         println(StdBuiltins::class.java.canonicalName)
+
+        val irEmitter = IREmitter(module)
+        val bytes = irEmitter.emit()
+        println(bytes)
+
+        return
 
         val emitter = Emitter(ast)
         emitter.emit()
