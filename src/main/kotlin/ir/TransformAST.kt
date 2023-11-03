@@ -24,9 +24,10 @@ fun transformBlock(block: Ast.Block, eventData: Ast.Event?): IR.BasicBlock {
     val prev = currentBlock
     currentBlock = mutableListOf()
     for(command in block.nodes) {
-        transformCommand(command)
+        commands.add(transformCommand(command))
     }
     if(eventData == null) {
+        currentBlock = prev
         headers.add(
             IR.BasicBlock(
                 ++basicBlockId,
@@ -39,6 +40,7 @@ fun transformBlock(block: Ast.Block, eventData: Ast.Event?): IR.BasicBlock {
             commands,
             IR.BlockData.Event(events["callable"]!!)
         )
+
     }
     val data: IR.BlockData = when(eventData.eventType) {
         is EventType.Struct -> IR.BlockData.Function(eventData.name)
