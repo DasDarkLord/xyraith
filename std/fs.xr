@@ -1,0 +1,7 @@
+function :file.read (string -> string) {
+    return (invokeMethod (getMethod (javaClass "StdBuiltins") "fs_readFile(Ljava/lang/String;)Ljava/lang/String;") (parameter 0))
+}
+
+function :file.write(string string -> nothing) {
+    invokeMethod (getMethod (javaClass "StdBuiltins") "fs_writeFile(Ljava/lang/String;Ljava/lang/String;)V") (parameter 0) (parameter 1)
+}

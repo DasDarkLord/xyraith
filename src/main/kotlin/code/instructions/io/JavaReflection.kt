@@ -69,6 +69,7 @@ object GetMethod : Visitable {
         val classStruct = visitor.environment.stack.popValue() as Value.Struct
         val javaClass = Class.forName(classStruct.fields["java_path"]!!.castToString())
         for (method in javaClass.declaredMethods) {
+            println("method: ${getMethodDescriptor(method)}")
             if (getMethodDescriptor(method) == targetMethod.castToString()) {
                 val parameterTypesField = mutableListOf<Value>()
                 for (type in method.parameterTypes) parameterTypesField.add(Value.String(type.descriptorString()))
@@ -115,6 +116,7 @@ object InvokeMethod : Visitable {
         for (i in 2..visitor.environment.argumentCount) {
             arguments.add(visitor.environment.stack.popValue())
         }
+        arguments.reverse()
 
         val javaMethodStruct = visitor.environment.stack.popValue() as Value.Struct
         val javaArguments = mutableListOf<Any?>()
@@ -174,7 +176,10 @@ fun descriptorTypeToClass(typeStr: String): Class<*> {
     }
     if (type == null) {
         if (typeStr.startsWith("L")) {
-            type = Class.forName(typeStr.replace(Regex("^L"), ""))
+            type = Class.forName(typeStr
+                .replace(Regex("^L"), "")
+                .replace(";", "")
+                .replace("/", "."))
         }
     }
 

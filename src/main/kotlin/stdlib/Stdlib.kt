@@ -3,7 +3,14 @@ package stdlib
 //Automatically generated in `build.gradle.kts`
 
 val stdlibFiles = mutableMapOf<String, String>(
-"std/math" to """struct :math {
+"std/fs" to """function :file.read (string -> string) {
+    return (invokeMethod (getMethod (javaClass "StdBuiltins") "fs_readFile(Ljava/lang/String;)Ljava/lang/String;") (parameter 0))
+}
+
+function :file.write(string string -> nothing) {
+    invokeMethod (getMethod (javaClass "StdBuiltins") "fs_writeFile(Ljava/lang/String;Ljava/lang/String;)V") (parameter 0) (parameter 1)
+}"""
+,"std/math" to """struct :math {
 }
 
 function :math.e (-> number) {
@@ -81,7 +88,7 @@ function :math.atan (number -> number) {
     return (invokeMethod (getMethod (javaClass "java.lang.Math") "atan(D)D") (parameter 0))
 }
 
-function :math.atan2 (number, number -> number) {
+function :math.atan2 (number number -> number) {
     return (invokeMethod (getMethod (javaClass "java.lang.Math") "atan2(DD)D") (parameter 0) (parameter 1))
 }
 
@@ -224,6 +231,7 @@ function :gamemode.spectator (-> :gamemode) {
 ,"std/mc" to """import "std/mc/location"
 import "std/mc/particle"
 import "std/mc/player""""
-,"std/std" to """import "std/math""""
+,"std/std" to """import "std/math"
+import "std/fs""""
 ,
 )

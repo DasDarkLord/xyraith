@@ -76,7 +76,7 @@ function :math.atan (number -> number) {
     return (invokeMethod (getMethod (javaClass "java.lang.Math") "atan(D)D") (parameter 0))
 }
 
-function :math.atan2 (number, number -> number) {
+function :math.atan2 (number number -> number) {
     return (invokeMethod (getMethod (javaClass "java.lang.Math") "atan2(DD)D") (parameter 0) (parameter 1))
 }
 

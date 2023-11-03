@@ -116,6 +116,12 @@ class NotAValidImport(override val span: SpanData) : ParserError(span) {
     }
 }
 
+class NotAValidFunction(override val span: SpanData) : ParserError(span) {
+    override fun emit(): Diagnostic {
+        return Diagnostic(15, "this is not a valid function", span)
+    }
+}
+
 class Unreachable : Exception()
 
 // thanks chatgpt

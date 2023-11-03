@@ -140,7 +140,8 @@ fun runServer(withServer: Boolean) {
             typeChecker.typecheckEvent(event)
         }
         println(transformAst(ast))
-        return
+        println(StdBuiltins::class.java.canonicalName)
+
         val emitter = Emitter(ast)
         emitter.emit()
         Logger.trace(emitter)

@@ -1,7 +1,9 @@
 import "std/std"
 
 event startup {
-
     console.log "test"
-
+    store :a 10
+    store :b 20
+    store :c 30
+    console.log (load :c)
 }
