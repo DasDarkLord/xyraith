@@ -97,7 +97,7 @@ function :math.log10 (number -> number) {
     return (invokeMethod (getMethod (javaClass "java.lang.Math") "log10(D)D") (parameter 0))
 }
 
-function :math.log1p (number -< number) {
+function :math.log1p (number -> number) {
     return (invokeMethod (getMethod (javaClass "java.lang.Math") "log1p(D)D") (parameter 0))
 }
 
@@ -224,5 +224,6 @@ function :gamemode.spectator (-> :gamemode) {
 ,"std/mc" to """import "std/mc/location"
 import "std/mc/particle"
 import "std/mc/player""""
+,"std/std" to """import "std/math""""
 ,
 )

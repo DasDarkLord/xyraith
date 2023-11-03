@@ -115,7 +115,7 @@ class Parser(private val input: MutableList<Token>) {
                         is Token.Symbol -> next.value
                         is Token.Identifier -> next.value
                         is Token.RightParen -> ")"
-                        else -> throw SQLClientInfoException()
+                        else -> throw UnexpectedToken(TokenType.RightParen, next.toType(), next.span)
                     }
                     if(txt == "->") doingReturns = true
                     else {

@@ -1,5 +1,7 @@
-import "std/mc"
+import "std/std"
 
 event startup {
+
     console.log "test"
+
 }

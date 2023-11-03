@@ -92,7 +92,7 @@ function :math.log10 (number -> number) {
     return (invokeMethod (getMethod (javaClass "java.lang.Math") "log10(D)D") (parameter 0))
 }
 
-function :math.log1p (number -< number) {
+function :math.log1p (number -> number) {
     return (invokeMethod (getMethod (javaClass "java.lang.Math") "log1p(D)D") (parameter 0))
 }
 
