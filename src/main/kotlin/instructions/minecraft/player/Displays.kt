@@ -1,7 +1,7 @@
-package code.instructions.minecraft.player
+package instructions.minecraft.player
 
 import code.Interpreter
-import code.instructions.Visitable
+import instructions.Visitable
 import mm
 import net.minestom.server.entity.Player
 import net.minestom.server.network.packet.server.play.ActionBarPacket
@@ -12,7 +12,7 @@ import typechecker.ArgumentList
 import typechecker.ArgumentType
 import typechecker.NodeBuilder
 
-object SendMessage : Visitable {
+object SendMessage : instructions.Visitable {
     override val code: Int get() = 1000
     override val isExtension: Boolean get() = true
     override val command: String get() = "player.sendMessage"
@@ -36,7 +36,7 @@ object SendMessage : Visitable {
     }
 }
 
-object SendActionBar : Visitable {
+object SendActionBar : instructions.Visitable {
     override val code: Int get() = 1001
     override val isExtension: Boolean get() = true
     override val command: String get() = "player.sendActionBar"
@@ -60,7 +60,7 @@ object SendActionBar : Visitable {
     }
 }
 
-object SendTitle : Visitable {
+object SendTitle : instructions.Visitable {
     override val code: Int get() = 1002
     override val isExtension: Boolean get() = true
     override val command: String get() = "player.sendTitleText"
@@ -80,7 +80,7 @@ object SendTitle : Visitable {
     }
 }
 
-object SendSubtitle : Visitable {
+object SendSubtitle : instructions.Visitable {
     override val code: Int get() = 1003
     override val isExtension: Boolean get() = true
     override val command: String get() = "player.sendSubtitleText"
@@ -100,7 +100,7 @@ object SendSubtitle : Visitable {
     }
 }
 
-object SendTitleTimes : Visitable {
+object SendTitleTimes : instructions.Visitable {
     override val code: Int get() = 1003
     override val isExtension: Boolean get() = true
     override val command: String get() = "player.sendTitleTimes"

@@ -1,10 +1,10 @@
 package docs
 
-import code.instructions.visitables
+import instructions.visitables
 
 fun dumpCommands(): String {
     var output = "["
-    for(obj in visitables) {
+    for(obj in instructions.visitables) {
         val documentation = CommandDocument(
             obj.command,
             decomposeList(obj.arguments),

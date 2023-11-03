@@ -1,7 +1,7 @@
-package code.instructions.io
+package instructions.io
 
 import code.Interpreter
-import code.instructions.Visitable
+import instructions.Visitable
 import parser.Value
 import typechecker.ArgumentList
 import typechecker.ArgumentType
@@ -11,7 +11,7 @@ import java.lang.reflect.Modifier
 import java.util.Objects
 import kotlin.math.exp
 
-object JavaClass : Visitable {
+object JavaClass : instructions.Visitable {
     override val code: Int get() = -3
     override val isExtension: Boolean get() = false
     override val command: String get() = "javaClass"
@@ -47,7 +47,7 @@ object JavaClass : Visitable {
 
 }
 
-object GetMethod : Visitable {
+object GetMethod : instructions.Visitable {
     override val code: Int
         get() = -4
     override val isExtension: Boolean
@@ -96,7 +96,7 @@ object GetMethod : Visitable {
 
 }
 
-object InvokeMethod : Visitable {
+object InvokeMethod : instructions.Visitable {
     override val code: Int get() = -5
     override val isExtension: Boolean get() = false
     override val command: String

@@ -1,7 +1,7 @@
-package code.instructions.minecraft.entity
+package instructions.minecraft.entity
 
 import code.Interpreter
-import code.instructions.Visitable
+import instructions.Visitable
 import net.minestom.server.coordinate.Pos
 import net.minestom.server.entity.Entity
 import net.minestom.server.entity.EntityCreature
@@ -12,7 +12,7 @@ import typechecker.ArgumentList
 import typechecker.ArgumentType
 import typechecker.NodeBuilder
 
-object SpawnEntity : Visitable {
+object SpawnEntity : instructions.Visitable {
     override val code: Int get() = 3000
     override val isExtension: Boolean get() = true
     override val command: String get() = "entity.summon"
@@ -44,7 +44,7 @@ object SpawnEntity : Visitable {
     }
 }
 
-object SpawnItem : Visitable {
+object SpawnItem : instructions.Visitable {
     override val code: Int get() = 3001
     override val isExtension: Boolean get() = true
     override val command: String get() = "entity.summonItem"

@@ -1,14 +1,14 @@
-package code.instructions.io
+package instructions.io
 
 import code.Interpreter
-import code.instructions.Visitable
+import instructions.Visitable
 import typechecker.ArgumentList
 import typechecker.ArgumentType
 import typechecker.NodeBuilder
 import parser.Value
 import java.io.File
 
-object ReadFileText : Visitable {
+object ReadFileText : instructions.Visitable {
     override val code: Int get() = -2
     override val isExtension: Boolean get() = false
     override val command: String get() = "io.readFile"
@@ -28,7 +28,7 @@ object ReadFileText : Visitable {
     }
 }
 
-object ReadFileBytes : Visitable {
+object ReadFileBytes : instructions.Visitable {
     override val code: Int get() = -3
     override val isExtension: Boolean get() = false
     override val command: String get() = "io.readFileBytes"

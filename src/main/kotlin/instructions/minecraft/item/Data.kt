@@ -1,7 +1,7 @@
-package code.instructions.minecraft.item
+package instructions.minecraft.item
 
 import code.Interpreter
-import code.instructions.Visitable
+import instructions.Visitable
 import miniMessage
 import mm
 import net.kyori.adventure.text.Component
@@ -14,7 +14,7 @@ import typechecker.ArgumentType
 import typechecker.NodeBuilder
 
 
-object SetItemLore : Visitable {
+object SetItemLore : instructions.Visitable {
     override val code: Int get() = 6000
     override val isExtension: Boolean get() = true
     override val command: String get() = "item.setLore"
@@ -42,7 +42,7 @@ object SetItemLore : Visitable {
     }
 }
 
-object SetItemName : Visitable {
+object SetItemName : instructions.Visitable {
     override val code: Int get() = 6001
     override val isExtension: Boolean get() = true
     override val command: String get() = "item.setName"
@@ -67,7 +67,7 @@ object SetItemName : Visitable {
     }
 }
 
-object SetItemStackSize : Visitable {
+object SetItemStackSize : instructions.Visitable {
     override val code: Int get() = 6004
     override val isExtension: Boolean get() = true
     override val command: String get() = "item.setStackSize"
@@ -88,7 +88,7 @@ object SetItemStackSize : Visitable {
     }
 }
 
-object GetItemStackSize : Visitable {
+object GetItemStackSize : instructions.Visitable {
     override val code: Int get() = 6005
     override val isExtension: Boolean get() = true
     override val command: String get() = "item.getStackSize"
@@ -107,7 +107,7 @@ object GetItemStackSize : Visitable {
     }
 }
 
-object GetItemStackName : Visitable {
+object GetItemStackName : instructions.Visitable {
     override val code: Int get() = 6006
     override val isExtension: Boolean get() = true
     override val command: String get() = "item.getName"
@@ -126,7 +126,7 @@ object GetItemStackName : Visitable {
     }
 }
 
-object GetItemLore : Visitable {
+object GetItemLore : instructions.Visitable {
     override val code: Int
         get() = 6007
     override val isExtension: Boolean
@@ -153,7 +153,7 @@ object GetItemLore : Visitable {
 
 }
 
-object GetItemDamage : Visitable {
+object GetItemDamage : instructions.Visitable {
     override val code: Int
         get() = 6008
     override val isExtension: Boolean
@@ -177,7 +177,7 @@ object GetItemDamage : Visitable {
 
 }
 
-object SetItemDamage : Visitable {
+object SetItemDamage : instructions.Visitable {
     override val code: Int
         get() = 6009
     override val isExtension: Boolean

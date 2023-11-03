@@ -1,8 +1,8 @@
-package code.instructions.minecraft.target
+package instructions.minecraft.target
 
 import ai.WalkToPositionGoal
 import code.Interpreter
-import code.instructions.Visitable
+import instructions.Visitable
 import net.minestom.server.coordinate.Pos
 import net.minestom.server.entity.EntityCreature
 import net.minestom.server.entity.ai.goal.RandomStrollGoal
@@ -12,7 +12,7 @@ import typechecker.ArgumentType
 import typechecker.NodeBuilder
 
 
-object TargetWalkTo : Visitable {
+object TargetWalkTo : instructions.Visitable {
     override val code: Int get() = 5100
     override val isExtension: Boolean get() = true
     override val command: String get() = "target.walkTo"
@@ -43,7 +43,7 @@ object TargetWalkTo : Visitable {
 
 }
 
-object TargetAIStroll : Visitable {
+object TargetAIStroll : instructions.Visitable {
     override val code: Int get() = 5101
     override val isExtension: Boolean get() = true
     override val command: String get() = "target.stroll"
@@ -71,7 +71,7 @@ object TargetAIStroll : Visitable {
 
 }
 
-object TargetAIDisable : Visitable {
+object TargetAIDisable : instructions.Visitable {
     override val code: Int
         get() = 5102
     override val isExtension: Boolean

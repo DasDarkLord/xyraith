@@ -1,7 +1,7 @@
-package code.instructions.minecraft.player
+package instructions.minecraft.player
 
 import code.Interpreter
-import code.instructions.Visitable
+import instructions.Visitable
 import net.minestom.server.entity.Player
 import net.minestom.server.item.ItemStack
 import parser.Value
@@ -10,7 +10,7 @@ import typechecker.ArgumentType
 import typechecker.NodeBuilder
 
 
-object GiveItems : Visitable {
+object GiveItems : instructions.Visitable {
     override val code: Int get() = 1400
     override val isExtension: Boolean get() = true
     override val command: String get() = "player.giveItems"
@@ -35,7 +35,7 @@ object GiveItems : Visitable {
     }
 }
 
-object ClearInventory : Visitable {
+object ClearInventory : instructions.Visitable {
     override val code: Int
         get() = 1408
     override val isExtension: Boolean
@@ -62,7 +62,7 @@ object ClearInventory : Visitable {
 /*
 INVENTORY COMMANDS
  */
-object HasItems : Visitable {
+object HasItems : instructions.Visitable {
     override val code: Int get() = 1401
     override val isExtension: Boolean get() = true
     override val command: String get() = "player.hasItem"
@@ -91,7 +91,7 @@ object HasItems : Visitable {
     }
 }
 
-object HoldingItems : Visitable {
+object HoldingItems : instructions.Visitable {
     override val code: Int get() = 1402
     override val isExtension: Boolean get() = true
     override val command: String get() = "player.holdingItem"
@@ -118,7 +118,7 @@ object HoldingItems : Visitable {
     }
 }
 
-object HeldItem : Visitable {
+object HeldItem : instructions.Visitable {
     override val code: Int get() = 1403
     override val isExtension: Boolean get() = true
     override val command: String get() = "player.getHeldItem"
@@ -140,7 +140,7 @@ object HeldItem : Visitable {
     }
 }
 
-object Helmet : Visitable {
+object Helmet : instructions.Visitable {
     override val code: Int get() = 1404
     override val isExtension: Boolean get() = true
     override val command: String get() = "player.getHelmet"
@@ -162,7 +162,7 @@ object Helmet : Visitable {
     }
 }
 
-object Chestplate : Visitable {
+object Chestplate : instructions.Visitable {
     override val code: Int get() = 1405
     override val isExtension: Boolean get() = true
     override val command: String get() = "player.getChestplate"
@@ -184,7 +184,7 @@ object Chestplate : Visitable {
     }
 }
 
-object Leggings : Visitable {
+object Leggings : instructions.Visitable {
     override val code: Int get() = 1406
     override val isExtension: Boolean get() = true
     override val command: String get() = "player.getLeggings"
@@ -206,7 +206,7 @@ object Leggings : Visitable {
     }
 }
 
-object Boots : Visitable {
+object Boots : instructions.Visitable {
     override val code: Int get() = 1407
     override val isExtension: Boolean get() = true
     override val command: String get() = "player.getBoots"

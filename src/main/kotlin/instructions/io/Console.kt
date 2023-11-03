@@ -1,12 +1,12 @@
-package code.instructions.io
+package instructions.io
 
 import code.Interpreter
-import code.instructions.Visitable
+import instructions.Visitable
 import typechecker.ArgumentList
 import typechecker.ArgumentType
 import typechecker.NodeBuilder
 
-object Log : Visitable {
+object Log : instructions.Visitable {
     override val code: Int get() = -1
     override val isExtension: Boolean get() = false
     override val command: String get() = "console.log"

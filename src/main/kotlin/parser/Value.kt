@@ -1,6 +1,6 @@
 package parser
 
-import code.instructions.Visitable
+import instructions.Visitable
 import net.minestom.server.coordinate.Pos
 import net.minestom.server.item.ItemStack
 import registry.commandRegistry

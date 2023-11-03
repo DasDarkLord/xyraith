@@ -1,7 +1,7 @@
-package code.instructions.minecraft.target
+package instructions.minecraft.target
 
 import code.Interpreter
-import code.instructions.Visitable
+import instructions.Visitable
 import net.minestom.server.entity.LivingEntity
 import net.minestom.server.entity.Player
 import parser.Value
@@ -10,7 +10,7 @@ import typechecker.ArgumentType
 import typechecker.NodeBuilder
 
 
-object TargetUUID : Visitable {
+object TargetUUID : instructions.Visitable {
     override val code: Int get() = 5000
     override val isExtension: Boolean get() = true
     override val command: String get() = "target.uuid"
@@ -32,7 +32,7 @@ object TargetUUID : Visitable {
     }
 }
 
-object Damage : Visitable {
+object Damage : instructions.Visitable {
     override val code: Int get() = 5002
     override val isExtension: Boolean get() = true
     override val command: String get() = "target.damage"
@@ -55,7 +55,7 @@ object Damage : Visitable {
     }
 }
 
-object Heal : Visitable {
+object Heal : instructions.Visitable {
     override val code: Int get() = 5003
     override val isExtension: Boolean get() = true
     override val command: String get() = "target.heal"
@@ -78,7 +78,7 @@ object Heal : Visitable {
     }
 }
 
-object SetHealth : Visitable {
+object SetHealth : instructions.Visitable {
     override val code: Int get() = 5004
     override val isExtension: Boolean get() = true
     override val command: String get() = "target.setHealth"
@@ -101,7 +101,7 @@ object SetHealth : Visitable {
     }
 }
 
-object GetHealth : Visitable {
+object GetHealth : instructions.Visitable {
     override val code: Int get() = 5005
     override val isExtension: Boolean get() = true
     override val command: String get() = "target.getHealth"

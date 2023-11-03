@@ -1,6 +1,6 @@
 package typechecker
 
-import code.instructions.Visitable
+import instructions.Visitable
 import error.*
 import events
 import functions
@@ -84,7 +84,7 @@ class Typechecker {
 
         if(!commandRegistry.containsKey(command.name))
             throw InvalidCommand(command.name, command.nameSpan)
-        val visitable = commandRegistry[command.name]!!["object"]!! as Visitable
+        val visitable = commandRegistry[command.name]!!["object"]!! as instructions.Visitable
         val nodeIter = visitable.arguments.list.iterator()
 
 
@@ -245,7 +245,7 @@ class Typechecker {
             else -> {
                 if(!commandRegistry.containsKey(command.name))
                         throw InvalidCommand(command.name, command.nameSpan)
-                (commandRegistry[command.name]!!["object"] as Visitable).returnType
+                (commandRegistry[command.name]!!["object"] as instructions.Visitable).returnType
             }
         }
     }

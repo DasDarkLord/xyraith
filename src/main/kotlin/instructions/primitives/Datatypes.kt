@@ -1,7 +1,7 @@
-package code.instructions.primitives
+package instructions.primitives
 
 import code.Interpreter
-import code.instructions.Visitable
+import instructions.Visitable
 import net.minestom.server.item.ItemStack
 import net.minestom.server.item.Material
 import typechecker.ArgumentList
@@ -9,7 +9,7 @@ import typechecker.ArgumentType
 import typechecker.NodeBuilder
 import parser.Value
 
-object Item : Visitable {
+object Item : instructions.Visitable {
     override val code: Int get() = 11
     override val isExtension: Boolean get() = false
     override val command: String get() = "item"
@@ -35,7 +35,7 @@ object Item : Visitable {
     }
 }
 
-object True : Visitable {
+object True : instructions.Visitable {
     override val code: Int get() = 12
     override val isExtension: Boolean get() = false
     override val command: String get() = "true"
@@ -53,7 +53,7 @@ object True : Visitable {
     }
 }
 
-object False : Visitable {
+object False : instructions.Visitable {
     override val code: Int get() = 13
     override val isExtension: Boolean get() = false
     override val command: String get() = "false"
@@ -71,7 +71,7 @@ object False : Visitable {
     }
 }
 
-object StringCmd : Visitable {
+object StringCmd : instructions.Visitable {
     override val code: Int get() = 14
     override val isExtension: Boolean get() = false
     override val command: String get() = "string"
@@ -96,7 +96,7 @@ object StringCmd : Visitable {
     }
 }
 
-object IsNull : Visitable {
+object IsNull : instructions.Visitable {
     override val code: Int get() = 17
     override val isExtension: Boolean get() = false
     override val command: String get() = "isNull"
@@ -116,7 +116,7 @@ object IsNull : Visitable {
     }
 }
 
-object ListCmd : Visitable {
+object ListCmd : instructions.Visitable {
     override val code: Int get() = 18
     override val isExtension: Boolean get() = false
     override val command: String get() = "list"
@@ -140,7 +140,7 @@ object ListCmd : Visitable {
     }
 }
 
-object StringListCmd : Visitable {
+object StringListCmd : instructions.Visitable {
     override val code: Int get() = 19
     override val isExtension: Boolean get() = false
     override val command: String get() = "stringlist"

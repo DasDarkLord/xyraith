@@ -1,8 +1,8 @@
-package code.instructions.primitives
+package instructions.primitives
 
 import blockMap
 import code.Interpreter
-import code.instructions.Visitable
+import instructions.Visitable
 import constants
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -11,7 +11,7 @@ import typechecker.ArgumentType
 import typechecker.NodeBuilder
 import parser.Value
 
-object ForEach : Visitable {
+object ForEach : instructions.Visitable {
     override val code: Int get() = 20
     override val isExtension: Boolean get() = false
     override val command: String get() = "foreach"
@@ -40,7 +40,7 @@ object ForEach : Visitable {
     }
 }
 
-object If : Visitable {
+object If : instructions.Visitable {
     override val code: Int get() = 21
     override val isExtension: Boolean get() = false
     override val command: String get() = "if"
@@ -64,7 +64,7 @@ object If : Visitable {
     }
 }
 
-object Call : Visitable {
+object Call : instructions.Visitable {
     override val code: Int get() = 22
     override val isExtension: Boolean get() = false
     override val command: String get() = "call"
@@ -100,7 +100,7 @@ object Call : Visitable {
     }
 }
 
-object GetParam : Visitable {
+object GetParam : instructions.Visitable {
     override val code: Int get() = 23
     override val isExtension: Boolean get() = false
     override val command: String get() = "parameter"
@@ -119,7 +119,7 @@ object GetParam : Visitable {
     }
 }
 
-object Return : Visitable {
+object Return : instructions.Visitable {
     override val code: Int get() = 24
     override val isExtension: Boolean get() = false
     override val command: String get() = "return"
@@ -138,7 +138,7 @@ object Return : Visitable {
     }
 }
 
-object AsyncCall : Visitable {
+object AsyncCall : instructions.Visitable {
     override val code: Int get() = 25
     override val isExtension: Boolean get() = false
     override val command: String get() = "asyncCall"
@@ -173,7 +173,7 @@ object AsyncCall : Visitable {
     }
 }
 
-object Sleep : Visitable {
+object Sleep : instructions.Visitable {
     override val code: Int get() = 26
     override val isExtension: Boolean get() = false
     override val command: String get() = "sleep"
@@ -192,7 +192,7 @@ object Sleep : Visitable {
     }
 }
 
-object Loop : Visitable {
+object Loop : instructions.Visitable {
     override val code: Int get() = 27
     override val isExtension: Boolean get() = false
     override val command: String get() = "loop"

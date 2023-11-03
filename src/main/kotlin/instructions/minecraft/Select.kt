@@ -1,14 +1,14 @@
-package code.instructions.minecraft
+package instructions.minecraft
 
 import code.Interpreter
-import code.instructions.Visitable
+import instructions.Visitable
 import net.minestom.server.entity.Player
 import typechecker.ArgumentList
 import typechecker.ArgumentType
 import typechecker.NodeBuilder
 
 // TODO: finish command and make it stable by supporting usernames
-object Select : Visitable {
+object Select : instructions.Visitable {
     override val code: Int get() = 4000
     override val isExtension: Boolean get() = true
     override val command: String get() = "select"
@@ -52,7 +52,7 @@ object Select : Visitable {
     }
 }
 
-object ResetSelection : Visitable {
+object ResetSelection : instructions.Visitable {
     override val code: Int get() = 4999
     override val isExtension: Boolean get() = true
     override val command: String get() = "resetSelection"

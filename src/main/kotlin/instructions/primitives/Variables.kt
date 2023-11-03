@@ -1,7 +1,7 @@
-package code.instructions.primitives
+package instructions.primitives
 
 import code.Interpreter
-import code.instructions.Visitable
+import instructions.Visitable
 import globalVariables
 import net.minestom.server.tag.Tag
 import typechecker.ArgumentList
@@ -9,7 +9,7 @@ import typechecker.ArgumentType
 import typechecker.NodeBuilder
 import parser.Value
 
-object FLocalStore : Visitable {
+object FLocalStore : instructions.Visitable {
     override val code: Int get() = 50
     override val isExtension: Boolean get() = false
     override val command: String get() = "store"
@@ -32,7 +32,7 @@ object FLocalStore : Visitable {
     }
 }
 
-object FLocalLoad : Visitable {
+object FLocalLoad : instructions.Visitable {
     override val code: Int get() = 51
     override val isExtension: Boolean get() = false
     override val command: String get() = "load"
@@ -54,7 +54,7 @@ object FLocalLoad : Visitable {
     }
 }
 
-object GlobalStore : Visitable {
+object GlobalStore : instructions.Visitable {
     override val code: Int get() = 52
     override val isExtension: Boolean get() = false
     override val command: String get() = "global.store"
@@ -77,7 +77,7 @@ object GlobalStore : Visitable {
     }
 }
 
-object GlobalLoad : Visitable {
+object GlobalLoad : instructions.Visitable {
     override val code: Int get() = 53
     override val isExtension: Boolean get() = false
     override val command: String get() = "global.load"

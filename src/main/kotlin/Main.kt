@@ -1,6 +1,6 @@
 import code.*
-import code.instructions.Visitable
-import code.instructions.visitables
+import instructions.Visitable
+import instructions.visitables
 import code.server.startServer
 import config.parseToml
 import docs.dumpCommands
@@ -146,6 +146,9 @@ fun runServer(withServer: Boolean) {
         val irEmitter = IREmitter(module)
         val bytes = irEmitter.emit()
         println(bytes)
+
+        val parsed = parseBytecode(ByteBuffer.wrap(bytes.toByteArray()))
+        println("parsed: " + parsed)
 
         return
 

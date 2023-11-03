@@ -1,14 +1,14 @@
-package code.instructions.primitives
+package instructions.primitives
 
 import code.Interpreter
-import code.instructions.Visitable
+import instructions.Visitable
 import parser.Value
 import typechecker.ArgumentList
 import typechecker.ArgumentType
 import typechecker.NodeBuilder
 
 
-object StructField : Visitable {
+object StructField : instructions.Visitable {
     override val code: Int get() = 60
     override val isExtension: Boolean get() = false
     override val command: String get() = "struct.field"
@@ -38,7 +38,7 @@ object StructField : Visitable {
     }
 }
 
-object StructInit : Visitable {
+object StructInit : instructions.Visitable {
     override val code: Int get() = 61
     override val isExtension: Boolean get() = false
     override val command: String get() = "struct.init"
@@ -73,7 +73,7 @@ object StructInit : Visitable {
     }
 }
 
-object StructGet : Visitable {
+object StructGet : instructions.Visitable {
     override val code: Int get() = 62
     override val isExtension: Boolean get() = false
     override val command: String get() = "struct.get"
@@ -95,7 +95,7 @@ object StructGet : Visitable {
     }
 }
 
-object StructSet : Visitable {
+object StructSet : instructions.Visitable {
     override val code: Int get() = 63
     override val isExtension: Boolean get() = false
     override val command: String get() = "struct.set"

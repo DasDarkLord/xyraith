@@ -1,24 +1,21 @@
-package code.instructions
+package instructions
 
 import code.Interpreter
-import code.instructions.io.Log
-import code.instructions.minecraft.*
-import code.instructions.minecraft.player.*
-import code.instructions.primitives.*
 import org.reflections.Reflections
 import org.reflections.util.ConfigurationBuilder
 import typechecker.ArgumentList
 import typechecker.ArgumentType
 import java.lang.reflect.Field
 
-var visitables: List<Visitable> = Reflections(ConfigurationBuilder().forPackage("")).getSubTypesOf(Visitable::class.java).map { type ->
+var visitables: List<instructions.Visitable> = Reflections(ConfigurationBuilder().forPackage("")).getSubTypesOf(
+    instructions.Visitable::class.java).map { type ->
     val instanceField: Field?
     try {
         instanceField = type.getDeclaredField("INSTANCE")
     } catch(nsfe: NoSuchFieldException) {
         return@map null
     }
-    return@map instanceField.get(null) as Visitable
+    return@map instanceField.get(null) as instructions.Visitable
 }.filterNotNull()
 
 /**

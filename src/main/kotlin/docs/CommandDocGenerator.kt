@@ -1,6 +1,6 @@
 package docs
 
-import code.instructions.visitables
+import instructions.visitables
 import typechecker.*
 
 fun generateDocumentation(): Map<String, String> {

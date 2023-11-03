@@ -1,7 +1,7 @@
-package code.instructions.minecraft
+package instructions.minecraft
 
 import code.Interpreter
-import code.instructions.Visitable
+import instructions.Visitable
 import mm
 import net.minestom.server.event.player.PlayerBlockBreakEvent
 import net.minestom.server.event.player.PlayerBlockInteractEvent
@@ -14,7 +14,7 @@ import typechecker.ArgumentType
 import typechecker.NodeBuilder
 import parser.Value
 
-object EventChatSetFormat : Visitable {
+object EventChatSetFormat : instructions.Visitable {
     override val code: Int get() = 3000
     override val isExtension: Boolean get() = true
     override val command: String get() = "event.chat.setChatFormat"
@@ -36,7 +36,7 @@ object EventChatSetFormat : Visitable {
     }
 }
 
-object EventChatGetMessage : Visitable {
+object EventChatGetMessage : instructions.Visitable {
     override val code: Int get() = 3001
     override val isExtension: Boolean get() = true
     override val command: String get() = "event.chat.getMessage"
@@ -57,7 +57,7 @@ object EventChatGetMessage : Visitable {
     }
 }
 
-object EventSetCancelled : Visitable {
+object EventSetCancelled : instructions.Visitable {
     override val code: Int get() = 3002
     override val isExtension: Boolean get() = true
     override val command: String get() = "event.setCancelled"
@@ -80,7 +80,7 @@ object EventSetCancelled : Visitable {
 
 
 
-object EventBlockGetBlock : Visitable {
+object EventBlockGetBlock : instructions.Visitable {
     override val code: Int get() = 3003
     override val isExtension: Boolean get() = true
     override val command: String get() = "event.block.getBlock"
@@ -102,7 +102,7 @@ object EventBlockGetBlock : Visitable {
     }
 }
 
-object EventGetLocation : Visitable {
+object EventGetLocation : instructions.Visitable {
     override val code: Int get() = 3004
     override val isExtension: Boolean get() = true
     override val command: String get() = "event.getLocation"

@@ -35,6 +35,7 @@ class IREmitter(val module: IR.Module) {
         buf.put(-122)
         if (block.blockData is IR.BlockData.Function) {
             buf.put(6)
+            pushRawValue(IR.Argument.Symbol(block.blockData.functionName), buf)
         } else if (block.blockData is IR.BlockData.Event) {
             val eventId = block.blockData.eventId
             buf.put(eventId.toByte())

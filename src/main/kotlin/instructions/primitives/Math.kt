@@ -1,7 +1,7 @@
-package code.instructions.primitives
+package instructions.primitives
 
 import code.Interpreter
-import code.instructions.Visitable
+import instructions.Visitable
 import typechecker.ArgumentList
 import typechecker.ArgumentType
 import typechecker.NodeBuilder
@@ -9,7 +9,7 @@ import parser.Value
 import kotlin.math.pow
 import kotlin.random.Random
 
-object Random : Visitable {
+object Random : instructions.Visitable {
     override val code: Int get() = 30
     override val isExtension: Boolean get() = false
     override val command: String get() = "random"
@@ -36,7 +36,7 @@ object Random : Visitable {
     }
 }
 
-object Range : Visitable {
+object Range : instructions.Visitable {
     override val code: Int get() = 31
     override val isExtension: Boolean get() = false
     override val command: String get() = "range"
@@ -58,7 +58,7 @@ object Range : Visitable {
     }
 }
 
-object Add : Visitable {
+object Add : instructions.Visitable {
     override val code: Int get() = 32
     override val isExtension: Boolean get() = false
     override val command: String get() = "add"
@@ -80,7 +80,7 @@ object Add : Visitable {
     }
 }
 
-object Sub : Visitable {
+object Sub : instructions.Visitable {
     override val code: Int get() = 33
     override val isExtension: Boolean get() = false
     override val command: String get() = "sub"
@@ -105,7 +105,7 @@ object Sub : Visitable {
     }
 }
 
-object Mul : Visitable {
+object Mul : instructions.Visitable {
     override val code: Int get() = 34
     override val isExtension: Boolean get() = false
     override val command: String get() = "mul"
@@ -127,7 +127,7 @@ object Mul : Visitable {
     }
 }
 
-object Div : Visitable {
+object Div : instructions.Visitable {
     override val code: Int get() = 35
     override val isExtension: Boolean get() = false
     override val command: String get() = "div"
@@ -153,7 +153,7 @@ object Div : Visitable {
     }
 }
 
-object Mod : Visitable {
+object Mod : instructions.Visitable {
     override val code: Int get() = 36
     override val isExtension: Boolean get() = false
     override val command: String get() = "mod"
@@ -178,7 +178,7 @@ object Mod : Visitable {
     }
 }
 
-object Pow : Visitable {
+object Pow : instructions.Visitable {
     override val code: Int get() = 38
     override val isExtension: Boolean get() = false
     override val command: String get() = "pow"
@@ -200,7 +200,7 @@ object Pow : Visitable {
 
 }
 
-object Perlin : Visitable {
+object Perlin : instructions.Visitable {
     override val code: Int get() = 37
     override val isExtension: Boolean get() = false
     override val command: String get() = "math.perlin"
@@ -221,7 +221,7 @@ object Perlin : Visitable {
     }
 }
 
-object GreaterThan : Visitable {
+object GreaterThan : instructions.Visitable {
     override val code: Int get() = 40
     override val isExtension: Boolean get() = false
     override val command: String get() = "ge"
@@ -242,7 +242,7 @@ object GreaterThan : Visitable {
     }
 }
 
-object GreaterThanOrEqual : Visitable {
+object GreaterThanOrEqual : instructions.Visitable {
     override val code: Int get() = 41
     override val isExtension: Boolean get() = false
     override val command: String get() = "geq"
@@ -263,7 +263,7 @@ object GreaterThanOrEqual : Visitable {
     }
 }
 
-object LessThan : Visitable {
+object LessThan : instructions.Visitable {
     override val code: Int get() = 42
     override val isExtension: Boolean get() = false
     override val command: String get() = "le"
@@ -284,7 +284,7 @@ object LessThan : Visitable {
     }
 }
 
-object LessThanOrEqual : Visitable {
+object LessThanOrEqual : instructions.Visitable {
     override val code: Int get() = 43
     override val isExtension: Boolean get() = false
     override val command: String get() = "leq"
@@ -305,7 +305,7 @@ object LessThanOrEqual : Visitable {
     }
 }
 
-object EqualTo : Visitable {
+object EqualTo : instructions.Visitable {
     override val code: Int get() = 44
     override val isExtension: Boolean get() = false
     override val command: String get() = "eq"

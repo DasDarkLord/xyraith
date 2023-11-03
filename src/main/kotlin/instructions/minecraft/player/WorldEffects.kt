@@ -1,7 +1,7 @@
-package code.instructions.minecraft.player
+package instructions.minecraft.player
 
 import code.Interpreter
-import code.instructions.Visitable
+import instructions.Visitable
 import net.minestom.server.coordinate.Pos
 import net.minestom.server.entity.Player
 import net.minestom.server.instance.block.Block
@@ -13,7 +13,7 @@ import typechecker.ArgumentList
 import typechecker.ArgumentType
 import typechecker.NodeBuilder
 
-object PlayRawParticle : Visitable {
+object PlayRawParticle : instructions.Visitable {
     override val code: Int get() = 1500
     override val isExtension: Boolean get() = true
     override val command: String get() = "player.playRawParticle"
@@ -61,7 +61,7 @@ object PlayRawParticle : Visitable {
     }
 }
 
-object PlayRawDisplayBlock : Visitable {
+object PlayRawDisplayBlock : instructions.Visitable {
     override val code: Int get() = 1501
     override val isExtension: Boolean get() = true
     override val command: String get() = "player.playRawClientBlock"
@@ -102,7 +102,7 @@ object PlayRawDisplayBlock : Visitable {
 }
 
 
-object PlayUpdateTime : Visitable {
+object PlayUpdateTime : instructions.Visitable {
     override val code: Int get() = 1502
     override val isExtension: Boolean get() = true
     override val command: String get() = "player.updateTime"

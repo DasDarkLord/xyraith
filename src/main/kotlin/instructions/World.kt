@@ -1,4 +1,4 @@
-package code.instructions
+package instructions
 
 import code.Interpreter
 import net.minestom.server.coordinate.Pos
@@ -9,7 +9,7 @@ import typechecker.ArgumentList
 import typechecker.ArgumentType
 import typechecker.NodeBuilder
 
-object SetBlock : Visitable {
+object SetBlock : instructions.Visitable {
     override val code: Int get() = 2000
     override val isExtension: Boolean get() = true
     override val command: String get() = "world.setBlock"
@@ -39,7 +39,7 @@ object SetBlock : Visitable {
     }
 }
 
-object LoadAnvilWorld : Visitable {
+object LoadAnvilWorld : instructions.Visitable {
     override val code: Int get() = 2001
     override val isExtension: Boolean get() = true
     override val command: String get() = "world.loadAnvilWorld"

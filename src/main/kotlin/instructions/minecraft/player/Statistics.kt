@@ -1,7 +1,7 @@
-package code.instructions.minecraft.player
+package instructions.minecraft.player
 
 import code.Interpreter
-import code.instructions.Visitable
+import instructions.Visitable
 import net.minestom.server.entity.Player
 import net.minestom.server.network.packet.server.play.ChangeGameStatePacket
 import parser.Value
@@ -10,7 +10,7 @@ import typechecker.ArgumentType
 import typechecker.NodeBuilder
 
 
-object SetHunger : Visitable {
+object SetHunger : instructions.Visitable {
     override val code: Int get() = 1102
     override val isExtension: Boolean get() = true
     override val command: String get() = "player.setHunger"
@@ -33,7 +33,7 @@ object SetHunger : Visitable {
     }
 }
 
-object GetHunger : Visitable {
+object GetHunger : instructions.Visitable {
     override val code: Int get() = 1105
     override val isExtension: Boolean get() = true
     override val command: String get() = "player.getSaturation"
@@ -54,7 +54,7 @@ object GetHunger : Visitable {
     }
 }
 
-object SetSaturation : Visitable {
+object SetSaturation : instructions.Visitable {
     override val code: Int get() = 1104
     override val isExtension: Boolean get() = true
     override val command: String get() = "player.setSaturation"
@@ -77,7 +77,7 @@ object SetSaturation : Visitable {
     }
 }
 
-object GetSaturation : Visitable {
+object GetSaturation : instructions.Visitable {
     override val code: Int get() = 1106
     override val isExtension: Boolean get() = true
     override val command: String get() = "player.getSaturation"
@@ -98,7 +98,7 @@ object GetSaturation : Visitable {
     }
 }
 
-object PlayerUsername : Visitable {
+object PlayerUsername : instructions.Visitable {
     override val code: Int get() = 1109
     override val isExtension: Boolean get() = true
     override val command: String get() = "player.username"
@@ -120,7 +120,7 @@ object PlayerUsername : Visitable {
     }
 }
 
-object PlayerUuid : Visitable {
+object PlayerUuid : instructions.Visitable {
     override val code: Int get() = 1107
     override val isExtension: Boolean get() = true
     override val command: String get() = "player.uuid"
@@ -136,7 +136,7 @@ object PlayerUuid : Visitable {
     }
 }
 
-object UnsafeSetGamemode : Visitable {
+object UnsafeSetGamemode : instructions.Visitable {
     override val code: Int get() = 1300
     override val isExtension: Boolean get() = true
     override val command: String get() = "player.unsafe.setGamemode"
@@ -159,7 +159,7 @@ object UnsafeSetGamemode : Visitable {
     }
 }
 
-object SetGamemode : Visitable {
+object SetGamemode : instructions.Visitable {
     override val code: Int get() = 1301
     override val isExtension: Boolean get() = true
     override val command: String get() = "player.setGamemode"
@@ -182,7 +182,7 @@ object SetGamemode : Visitable {
     }
 }
 
-object SetExpProgress : Visitable {
+object SetExpProgress : instructions.Visitable {
     override val code: Int get() = 1302
     override val isExtension: Boolean get() = true
     override val command: String get() = "player.setExpProgress"
@@ -205,7 +205,7 @@ object SetExpProgress : Visitable {
     }
 }
 
-object SetExpLevel : Visitable {
+object SetExpLevel : instructions.Visitable {
     override val code: Int get() = 1303
     override val isExtension: Boolean get() = true
     override val command: String get() = "player.setExpLevel"
@@ -228,7 +228,7 @@ object SetExpLevel : Visitable {
     }
 }
 
-object GetExpProgress : Visitable {
+object GetExpProgress : instructions.Visitable {
     override val code: Int get() = 1304
     override val isExtension: Boolean get() = true
     override val command: String get() = "player.getExpProgress"
@@ -251,7 +251,7 @@ object GetExpProgress : Visitable {
     }
 }
 
-object GetExpLevel : Visitable {
+object GetExpLevel : instructions.Visitable {
     override val code: Int get() = 1305
     override val isExtension: Boolean get() = true
     override val command: String get() = "player.getExpLevel"

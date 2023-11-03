@@ -1,14 +1,14 @@
-package code.instructions.minecraft.item
+package instructions.minecraft.item
 
 import code.Interpreter
-import code.instructions.Visitable
+import instructions.Visitable
 import net.minestom.server.tag.Tag
 import parser.Value
 import typechecker.ArgumentList
 import typechecker.ArgumentType
 import typechecker.NodeBuilder
 
-object ItemStore : Visitable {
+object ItemStore : instructions.Visitable {
     override val code: Int get() = 6002
     override val isExtension: Boolean get() = true
     override val command: String get() = "item.store"
@@ -41,7 +41,7 @@ object ItemStore : Visitable {
     }
 }
 
-object ItemLoad : Visitable {
+object ItemLoad : instructions.Visitable {
     override val code: Int get() = 6003
     override val isExtension: Boolean get() = true
     override val command: String get() = "item.load"
