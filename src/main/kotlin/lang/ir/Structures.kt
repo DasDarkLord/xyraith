@@ -53,7 +53,7 @@ bb$id $blockData =>
         }
         data class Symbol(val value: kotlin.String) : Argument() {
             override fun toString(): kotlin.String {
-                return """$value"""
+                return value
             }
         }
     }
