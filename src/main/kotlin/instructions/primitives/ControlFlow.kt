@@ -1,15 +1,14 @@
 package instructions.primitives
 
 import blockMap
-import code.Interpreter
-import instructions.Visitable
+import runtime.Interpreter
 import constants
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import typechecker.ArgumentList
 import typechecker.ArgumentType
 import typechecker.NodeBuilder
-import parser.Value
+import runtime.Value
 
 object ForEach : instructions.Visitable {
     override val code: Int get() = 20
@@ -25,7 +24,8 @@ object ForEach : instructions.Visitable {
         get() = ArgumentType.NONE
     override val description: String
         get() = "Loop through a series of items in a list."
-
+    override val pure: Boolean
+        get() = false
     override suspend fun visit(visitor: Interpreter) {
         val block = visitor.environment.stack.popValue()
         val list = visitor.environment.stack.popValue()
@@ -53,7 +53,8 @@ object If : instructions.Visitable {
         get() = ArgumentType.NONE
     override val description: String
         get() = "Run a block if a condition is true"
-
+    override val pure: Boolean
+        get() = false
     override suspend fun visit(visitor: Interpreter) {
         val block = visitor.environment.stack.popValue()
         val condition = visitor.environment.stack.popValue()
@@ -77,7 +78,8 @@ object Call : instructions.Visitable {
         get() = ArgumentType.ANY
     override val description: String
         get() = "Call a function and pass it parameters if wanted. Functions do not share local variables."
-
+    override val pure: Boolean
+        get() = false
     override suspend fun visit(visitor: Interpreter) {
         val arguments = mutableListOf<Value>()
         for(index in 2..visitor.environment.argumentCount) {
@@ -112,7 +114,8 @@ object GetParam : instructions.Visitable {
         get() = ArgumentType.ANY
     override val description: String
         get() = "Get a parameter passed to this function by index"
-
+    override val pure: Boolean
+        get() = true
     override suspend fun visit(visitor: Interpreter) {
         val index = visitor.environment.stack.popValue().castToNumber()
         visitor.environment.stack.pushValue(visitor.environment.functionParameters[index.toInt()] ?: Value.Null)
@@ -131,7 +134,8 @@ object Return : instructions.Visitable {
         get() = ArgumentType.ANY
     override val description: String
         get() = "Get a parameter passed to this function by index"
-
+    override val pure: Boolean
+        get() = false
     override suspend fun visit(visitor: Interpreter) {
         visitor.environment.returnValue = visitor.environment.stack.popValue()
         visitor.environment.endBlock = true
@@ -151,7 +155,8 @@ object AsyncCall : instructions.Visitable {
         get() = ArgumentType.NONE
     override val description: String
         get() = "Call a function asynchronously and pass it parameters if wanted.\nYou can not recievce values back from asynchronous calls."
-
+    override val pure: Boolean
+        get() = false
     override suspend fun visit(visitor: Interpreter) {
         val arguments = mutableListOf<Value>()
         for(index in 2..visitor.environment.argumentCount) {
@@ -185,7 +190,8 @@ object Sleep : instructions.Visitable {
         get() = ArgumentType.NONE
     override val description: String
         get() = "Delay the current thread for a given amount of milliseconds."
-
+    override val pure: Boolean
+        get() = false
     override suspend fun visit(visitor: Interpreter) {
         val number = visitor.environment.stack.popValue().castToNumber()
         delay(number.toLong())
@@ -204,7 +210,8 @@ object Loop : instructions.Visitable {
         get() = ArgumentType.NONE
     override val description: String
         get() = "Run a block infinitely"
-
+    override val pure: Boolean
+        get() = false
     override suspend fun visit(visitor: Interpreter) {
         val block = visitor.environment.stack.popValue()
         if(block is Value.BasicBlockRef) {

@@ -1,9 +1,8 @@
 package instructions.minecraft.target
 
-import code.Interpreter
-import instructions.Visitable
+import runtime.Interpreter
 import net.minestom.server.tag.Tag
-import parser.Value
+import runtime.Value
 import typechecker.ArgumentList
 import typechecker.ArgumentType
 import typechecker.NodeBuilder
@@ -22,7 +21,8 @@ object TargetStore : instructions.Visitable {
         get() = ArgumentType.NONE
     override val description: String
         get() = "Set a value of a symbol to the targets."
-
+    override val pure: Boolean
+        get() = false
     override suspend fun visit(visitor: Interpreter) {
         val value = visitor.environment.stack.popValue()
         val symbol = visitor.environment.stack.popValue()
@@ -53,7 +53,8 @@ object TargetLoad : instructions.Visitable {
         get() = ArgumentType.ANY
     override val description: String
         get() = "Get a value of a symbol from the target."
-
+    override val pure: Boolean
+        get() = true
     override suspend fun visit(visitor: Interpreter) {
         val symbol = visitor.environment.stack.popValue()
         if(symbol is Value.Symbol) {

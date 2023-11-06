@@ -1,13 +1,12 @@
 package instructions.primitives
 
-import code.Interpreter
-import instructions.Visitable
+import runtime.Interpreter
 import net.minestom.server.item.ItemStack
 import net.minestom.server.item.Material
 import typechecker.ArgumentList
 import typechecker.ArgumentType
 import typechecker.NodeBuilder
-import parser.Value
+import runtime.Value
 
 object Item : instructions.Visitable {
     override val code: Int get() = 11
@@ -20,9 +19,10 @@ object Item : instructions.Visitable {
             .addSingleArgument(ArgumentType.STRING, "Namespace ID")
             .addOptionalArgument(ArgumentType.NUMBER, Value.Number(1.0), "Amount of item")
             .build()
-
     override val description: String
         get() = "Generate an item from an ID and an amount"
+    override val pure: Boolean
+        get() = true
 
     override suspend fun visit(visitor: Interpreter) {
         var amount = 1.0
@@ -30,7 +30,8 @@ object Item : instructions.Visitable {
             amount = visitor.environment.stack.popValue().castToNumber()
         }
         val id = visitor.environment.stack.popValue().castToString()
-        visitor.environment.stack.pushValue(Value.Item(
+        visitor.environment.stack.pushValue(
+            Value.Item(
             ItemStack.of(Material.fromNamespaceId(id) ?: Material.AIR, amount.toInt())))
     }
 }
@@ -47,7 +48,8 @@ object True : instructions.Visitable {
 
     override val description: String
         get() = "Return a true boolean."
-
+    override val pure: Boolean
+        get() = true
     override suspend fun visit(visitor: Interpreter) {
         visitor.environment.stack.pushValue(Value.Bool(true))
     }
@@ -65,7 +67,8 @@ object False : instructions.Visitable {
 
     override val description: String
         get() = "Return a false boolean."
-
+    override val pure: Boolean
+        get() = true
     override suspend fun visit(visitor: Interpreter) {
         visitor.environment.stack.pushValue(Value.Bool(false))
     }
@@ -84,7 +87,8 @@ object StringCmd : instructions.Visitable {
 
     override val description: String
         get() = "Return a string with all values concatenated."
-
+    override val pure: Boolean
+        get() = true
     override suspend fun visit(visitor: Interpreter) {
         val size = visitor.environment.argumentCount
         var output = ""
@@ -109,7 +113,8 @@ object IsNull : instructions.Visitable {
 
     override val description: String
         get() = "Returns true if the value is null."
-
+    override val pure: Boolean
+        get() = true
     override suspend fun visit(visitor: Interpreter) {
         val value = visitor.environment.stack.popValue()
         visitor.environment.stack.pushValue(Value.Bool(value == Value.Null))
@@ -129,7 +134,8 @@ object ListCmd : instructions.Visitable {
 
     override val description: String
         get() = "Makes a list with the given values.\nIf the values are not of the same type, an error will be thrown\nat compile-time."
-
+    override val pure: Boolean
+        get() = true
     override suspend fun visit(visitor: Interpreter) {
         val list = mutableListOf<Value>()
         for(x in 1..visitor.environment.argumentCount) {
@@ -153,7 +159,8 @@ object StringListCmd : instructions.Visitable {
 
     override val description: String
         get() = "Makes a list[string] with the given values.\nIf the values are not a string, an error will be thrown\nat compile-time."
-
+    override val pure: Boolean
+        get() = true
     override suspend fun visit(visitor: Interpreter) {
         val list = mutableListOf<Value.String>()
         for(x in 1..visitor.environment.argumentCount) {

@@ -1,7 +1,7 @@
 package registry
 
-import code.opcodes
-import code.shortcodes
+import runtime.opcodes
+import runtime.shortcodes
 
 val commandRegistry = (
     opcodes.map {

@@ -1,23 +1,23 @@
-package code
+package runtime
 
 import blockMap
 import instructions.Visitable
 import instructions.visitables
 import constants
-import error.Unreachable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.runBlocking
+import lang.emitter.BUFFER_SIZE
 import net.minestom.server.entity.Entity
 import net.minestom.server.event.Event
 import net.minestom.server.instance.Instance
 import java.nio.ByteBuffer
-import parser.Value
 import java.nio.BufferUnderflowException
 import kotlin.Exception
-import kotlin.concurrent.thread
 
-val shortcodes: Map<Int, instructions.Visitable> = instructions.visitables.filter { obj -> obj.isExtension }.associateBy { obj -> obj.code }
-val opcodes: Map<Int, instructions.Visitable> = instructions.visitables.filter { obj -> !obj.isExtension }.associateBy { obj -> obj.code }
+val shortcodes: Map<Int, Visitable> =
+    visitables.filter { obj -> obj.isExtension }.associateBy { obj -> obj.code }
+val opcodes: Map<Int, Visitable> =
+    visitables.filter { obj -> !obj.isExtension }.associateBy { obj -> obj.code }
 
 fun peek(buf: ByteBuffer): Byte {
     val out = buf.get()
@@ -28,23 +28,22 @@ fun peek(buf: ByteBuffer): Byte {
 fun runEvent(eventIdChk: Int, targets: MutableList<Entity> = mutableListOf(), instance: Instance? = null, event: Event? = null) {
     runBlocking {
         for(pair in blockMap) {
-            val block = pair.value.duplicate().position(0)
-            val zero = block.get()
-            val id = block.getInt()
-            val eventId = block.get()
-            if(eventId.toInt() == eventIdChk) {
+            val eventId = pair.value.event.id
+            if(eventId == eventIdChk) {
                 val interpreter = Interpreter(constants, blockMap, this)
                 interpreter.environment.eventTargets = targets
                 interpreter.environment.targets = targets
                 interpreter.environment.instance = instance
                 interpreter.environment.event = event
                 interpreter.runBlock(pair.key)
+
             }
         }
     }
 }
 
 class InvalidBytecode : Exception()
+
 sealed class InterpreterData {
     data class Event(val id: Int, val constant: Int?) : InterpreterData()
     data class BasicBlock(val code: ByteBuffer, val id: Int, val codeLength: Int, val event: InterpreterData.Event) : InterpreterData()
@@ -81,7 +80,7 @@ fun parseBytecode(buf: ByteBuffer): Pair<MutableList<InterpreterData.BasicBlock>
                     }
                 }
                 if(fn.toInt() == -123) {
-                    val out = ByteBuffer.allocate(IR_BUFFER_SIZE)
+                    val out = ByteBuffer.allocate(BUFFER_SIZE)
                     while(true) {
                         val next2 = buf.get()
                         if(next2.toInt() == -126) {
@@ -156,22 +155,16 @@ fun parseConstants(buf: ByteBuffer): Map<Int, Value> {
     return map
 }
 
-class Interpreter(val constants: Map<Int, Value>, val blockMap: Map<Int, ByteBuffer>, val coroutineScope: CoroutineScope) {
+class Interpreter(val constants: Map<Int, Value>, val blockMap: Map<Int, InterpreterData.BasicBlock>, val coroutineScope: CoroutineScope) {
     val environment: Environment = Environment()
 
     suspend fun runBlock(blockId: Int): Value {
-        val block = blockMap[blockId]!!.asReadOnlyBuffer().position(0)
-        val zero = block.get()
-        val id = block.getInt()
-        val eventId = block.get()
-        if(eventId.toInt() == 6) {
-            block.get()
-            block.getInt()
-        }
-        var opcode = peek(block)
+        val block = blockMap[blockId]!!
+        val buf = block.code.duplicate().position(0)
+        var opcode = peek(buf)
         while(opcode.toInt() != 0) {
-            runInstruction(block)
-            opcode = peek(block)
+            runInstruction(buf)
+            opcode = peek(buf)
             if(environment.endBlock) {
                 return environment.returnValue
             }
@@ -181,17 +174,13 @@ class Interpreter(val constants: Map<Int, Value>, val blockMap: Map<Int, ByteBuf
 
     suspend fun runFunction(functionName: String): Value {
         for(block in blockMap) {
-            val buf = block.value.asReadOnlyBuffer().position(0)
-            buf.get()
-            val id = buf.getInt()
-            val eventId = buf.get()
-            if(eventId.toInt() != 6) {
+            val buf = block.value.code
+            if(block.value.event.id != 6) {
                 continue
             }
-            buf.get()
-            val name = constants[buf.getInt()]
+            val name = constants[block.value.event.constant]
             if(name is Value.Symbol && name.value == functionName) {
-                val value = runBlock(id)
+                val value = runBlock(block.value.id)
                 environment.endBlock = false
                 return value
             }

@@ -1,4 +1,4 @@
-package lexer
+package lang.lexer
 
 import java.lang.NumberFormatException
 

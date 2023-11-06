@@ -1,10 +1,9 @@
 package instructions.minecraft.player
 
-import code.Interpreter
-import instructions.Visitable
+import runtime.Interpreter
 import net.minestom.server.entity.Player
 import net.minestom.server.item.ItemStack
-import parser.Value
+import runtime.Value
 import typechecker.ArgumentList
 import typechecker.ArgumentType
 import typechecker.NodeBuilder
@@ -22,7 +21,8 @@ object GiveItems : instructions.Visitable {
         get() = ArgumentType.NONE
     override val description: String
         get() = "Give a player items."
-
+    override val pure: Boolean
+        get() = false
     override suspend fun visit(visitor: Interpreter) {
         for(x in 1..visitor.environment.argumentCount) {
             val item = visitor.environment.stack.popValue() as Value.Item
@@ -48,7 +48,8 @@ object ClearInventory : instructions.Visitable {
         get() = "Clears the inventory of a player"
     override val returnType: ArgumentType
         get() = ArgumentType.NONE
-
+    override val pure: Boolean
+        get() = false
     override suspend fun visit(visitor: Interpreter) {
         for (target in visitor.environment.targets) {
             if (target as? Player != null) {
@@ -74,7 +75,8 @@ object HasItems : instructions.Visitable {
         get() = ArgumentType.BOOL
     override val description: String
         get() = "Check if a player has an item."
-
+    override val pure: Boolean
+        get() = true
     override suspend fun visit(visitor: Interpreter) {
         val item = visitor.environment.stack.popValue() as Value.Item
         for(target in visitor.environment.targets) {
@@ -103,7 +105,8 @@ object HoldingItems : instructions.Visitable {
         get() = ArgumentType.BOOL
     override val description: String
         get() = "Check if a player has an item."
-
+    override val pure: Boolean
+        get() = true
     override suspend fun visit(visitor: Interpreter) {
         val item = visitor.environment.stack.popValue() as Value.Item
         for(target in visitor.environment.targets) {
@@ -129,7 +132,8 @@ object HeldItem : instructions.Visitable {
         get() = ArgumentType.ITEM
     override val description: String
         get() = "Gets the item a player is holding"
-
+    override val pure: Boolean
+        get() = true
     override suspend fun visit(visitor: Interpreter) {
         val target = visitor.environment.targets.firstOrNull()
         if(target is Player) {
@@ -151,7 +155,8 @@ object Helmet : instructions.Visitable {
         get() = ArgumentType.ITEM
     override val description: String
         get() = "Gets the helmet a player is wearing"
-
+    override val pure: Boolean
+        get() = true
     override suspend fun visit(visitor: Interpreter) {
         val target = visitor.environment.targets.firstOrNull()
         if(target is Player) {
@@ -173,7 +178,8 @@ object Chestplate : instructions.Visitable {
         get() = ArgumentType.ITEM
     override val description: String
         get() = "Gets the chestplate a player is wearing"
-
+    override val pure: Boolean
+        get() = true
     override suspend fun visit(visitor: Interpreter) {
         val target = visitor.environment.targets.firstOrNull()
         if(target is Player) {
@@ -195,7 +201,8 @@ object Leggings : instructions.Visitable {
         get() = ArgumentType.ITEM
     override val description: String
         get() = "Gets the leggings a player is wearing"
-
+    override val pure: Boolean
+        get() = true
     override suspend fun visit(visitor: Interpreter) {
         val target = visitor.environment.targets.firstOrNull()
         if(target is Player) {
@@ -217,7 +224,8 @@ object Boots : instructions.Visitable {
         get() = ArgumentType.ITEM
     override val description: String
         get() = "Gets the boots a player is wearing"
-
+    override val pure: Boolean
+        get() = true
     override suspend fun visit(visitor: Interpreter) {
         val target = visitor.environment.targets.firstOrNull()
         if(target is Player) {

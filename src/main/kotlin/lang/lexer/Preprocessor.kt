@@ -1,4 +1,4 @@
-package lexer
+package lang.lexer
 
 import error.NotAValidImport
 import error.UnexpectedEOF

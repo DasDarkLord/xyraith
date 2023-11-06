@@ -1,11 +1,10 @@
-package code
+package runtime
 
-import code.stackframe.ListFrames
-import code.stackframe.MapFrames
+import runtime.stackframe.ListFrames
+import runtime.stackframe.MapFrames
 import net.minestom.server.entity.Entity
 import net.minestom.server.event.Event
 import net.minestom.server.instance.Instance
-import parser.Value
 
 data class Environment(
     val localVariables: MapFrames<String, Value> = MapFrames(),
@@ -21,4 +20,4 @@ data class Environment(
     var event: Event? = null,
     var argumentCount: Byte = 0,
 
-)
+    )

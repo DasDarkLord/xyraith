@@ -30,7 +30,7 @@ function :math.toRadians (number -> number) {
 }
 
 function :math.factorial (number -> number) {
-    if (leq (parameter 0) 0) {
+    if (<= (parameter 0) 0) {
         return 1
     }
     return (mul (parameter 0) (call :math.factorial (sub (parameter 0) 1)))

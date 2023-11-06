@@ -1,11 +1,10 @@
 package instructions.primitives
 
-import code.Interpreter
-import instructions.Visitable
+import runtime.Interpreter
 import typechecker.ArgumentList
 import typechecker.ArgumentType
 import typechecker.NodeBuilder
-import parser.Value
+import runtime.Value
 import kotlin.math.pow
 import kotlin.random.Random
 
@@ -22,6 +21,8 @@ object Random : instructions.Visitable {
         get() = ArgumentType.NUMBER
     override val description: String
         get() = "Generate a random number."
+    override val pure: Boolean
+        get() = true
 
     override suspend fun visit(visitor: Interpreter) {
         var max = visitor.environment.stack.popValue().castToNumber()
@@ -49,6 +50,8 @@ object Range : instructions.Visitable {
         get() = ArgumentType.NUMBER_LIST
     override val description: String
         get() = "Generate a series of numbers."
+    override val pure: Boolean
+        get() = true
 
     override suspend fun visit(visitor: Interpreter) {
         val max = visitor.environment.stack.popValue().castToNumber()
@@ -70,6 +73,8 @@ object Add : instructions.Visitable {
         get() = ArgumentType.NUMBER
     override val description: String
         get() = "Sum a series of numbers."
+    override val pure: Boolean
+        get() = true
 
     override suspend fun visit(visitor: Interpreter) {
         var md = 0.0
@@ -93,6 +98,8 @@ object Sub : instructions.Visitable {
         get() = ArgumentType.NUMBER
     override val description: String
         get() = "Subtract two numbers from eachother."
+    override val pure: Boolean
+        get() = true
 
     override suspend fun visit(visitor: Interpreter) {
         val rhs = visitor.environment.stack.popValue()
@@ -117,7 +124,8 @@ object Mul : instructions.Visitable {
         get() = ArgumentType.NUMBER
     override val description: String
         get() = "Multiply a series of numbers"
-
+    override val pure: Boolean
+        get() = true
     override suspend fun visit(visitor: Interpreter) {
         var md = 1.0
         for(x in 1..visitor.environment.argumentCount) {
@@ -140,6 +148,8 @@ object Div : instructions.Visitable {
         get() = ArgumentType.NUMBER
     override val description: String
         get() = "Divide two numbers"
+    override val pure: Boolean
+        get() = true
 
     override suspend fun visit(visitor: Interpreter) {
         val rhs = visitor.environment.stack.popValue()
@@ -166,6 +176,8 @@ object Mod : instructions.Visitable {
         get() = ArgumentType.NUMBER
     override val description: String
         get() = "Get the modulo of two numbers."
+    override val pure: Boolean
+        get() = true
 
     override suspend fun visit(visitor: Interpreter) {
         val lhs = visitor.environment.stack.popValue()
@@ -191,6 +203,8 @@ object Pow : instructions.Visitable {
         get() = "Raises the given base to the given exponent"
     override val returnType: ArgumentType
         get() = ArgumentType.NUMBER
+    override val pure: Boolean
+        get() = true
 
     override suspend fun visit(visitor: Interpreter) {
         val exponent = visitor.environment.stack.popValue().castToNumber()
@@ -213,6 +227,8 @@ object Perlin : instructions.Visitable {
         get() = ArgumentType.NUMBER
     override val description: String
         get() = "Generate a random number 0.0-1.0 based on location and seed."
+    override val pure: Boolean
+        get() = true
 
     override suspend fun visit(visitor: Interpreter) {
         val pos = visitor.environment.stack.popValue() as Value.Struct
@@ -224,7 +240,7 @@ object Perlin : instructions.Visitable {
 object GreaterThan : instructions.Visitable {
     override val code: Int get() = 40
     override val isExtension: Boolean get() = false
-    override val command: String get() = "ge"
+    override val command: String get() = ">"
     override val arguments: ArgumentList
         get() = NodeBuilder()
             .addSingleArgument(ArgumentType.NUMBER, "Left hand side")
@@ -234,6 +250,8 @@ object GreaterThan : instructions.Visitable {
         get() = ArgumentType.BOOL
     override val description: String
         get() = "Check if a number is greater than another"
+    override val pure: Boolean
+        get() = true
 
     override suspend fun visit(visitor: Interpreter) {
         val rhs = visitor.environment.stack.popValue().castToNumber()
@@ -245,7 +263,7 @@ object GreaterThan : instructions.Visitable {
 object GreaterThanOrEqual : instructions.Visitable {
     override val code: Int get() = 41
     override val isExtension: Boolean get() = false
-    override val command: String get() = "geq"
+    override val command: String get() = ">="
     override val arguments: ArgumentList
         get() = NodeBuilder()
             .addSingleArgument(ArgumentType.NUMBER, "Left hand side")
@@ -255,6 +273,8 @@ object GreaterThanOrEqual : instructions.Visitable {
         get() = ArgumentType.BOOL
     override val description: String
         get() = "Check if a number is greater than or equal to another"
+    override val pure: Boolean
+        get() = true
 
     override suspend fun visit(visitor: Interpreter) {
         val rhs = visitor.environment.stack.popValue().castToNumber()
@@ -266,7 +286,7 @@ object GreaterThanOrEqual : instructions.Visitable {
 object LessThan : instructions.Visitable {
     override val code: Int get() = 42
     override val isExtension: Boolean get() = false
-    override val command: String get() = "le"
+    override val command: String get() = "<"
     override val arguments: ArgumentList
         get() = NodeBuilder()
             .addSingleArgument(ArgumentType.NUMBER, "Left hand side")
@@ -276,7 +296,8 @@ object LessThan : instructions.Visitable {
         get() = ArgumentType.BOOL
     override val description: String
         get() = "Check if a number is less than another"
-
+    override val pure: Boolean
+        get() = true
     override suspend fun visit(visitor: Interpreter) {
         val rhs = visitor.environment.stack.popValue().castToNumber()
         val lhs = visitor.environment.stack.popValue().castToNumber()
@@ -287,7 +308,7 @@ object LessThan : instructions.Visitable {
 object LessThanOrEqual : instructions.Visitable {
     override val code: Int get() = 43
     override val isExtension: Boolean get() = false
-    override val command: String get() = "leq"
+    override val command: String get() = "<="
     override val arguments: ArgumentList
         get() = NodeBuilder()
             .addSingleArgument(ArgumentType.NUMBER, "Left hand side")
@@ -297,6 +318,8 @@ object LessThanOrEqual : instructions.Visitable {
         get() = ArgumentType.BOOL
     override val description: String
         get() = "Check if a number is less than or equal to another"
+    override val pure: Boolean
+        get() = true
 
     override suspend fun visit(visitor: Interpreter) {
         val rhs = visitor.environment.stack.popValue().castToNumber()
@@ -308,7 +331,7 @@ object LessThanOrEqual : instructions.Visitable {
 object EqualTo : instructions.Visitable {
     override val code: Int get() = 44
     override val isExtension: Boolean get() = false
-    override val command: String get() = "eq"
+    override val command: String get() = "=="
     override val arguments: ArgumentList
         get() = NodeBuilder()
             .addSingleArgument(ArgumentType.ANY, "Left hand side")
@@ -318,6 +341,8 @@ object EqualTo : instructions.Visitable {
         get() = ArgumentType.BOOL
     override val description: String
         get() = "Check if a value is equal to another"
+    override val pure: Boolean
+        get() = true
 
     override suspend fun visit(visitor: Interpreter) {
         val rhs = visitor.environment.stack.popValue()

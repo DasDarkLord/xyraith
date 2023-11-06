@@ -1,10 +1,10 @@
-package ir
+package lang.ir
 
 import error.Unreachable
 import events
 import parser.Ast
 import parser.EventType
-import parser.Value
+import runtime.Value
 
 var basicBlockId = 0
 var ssaId = 0
@@ -18,8 +18,9 @@ fun transformAst(ast: List<Ast.Event>): IR.Module {
         transformBlock(event.code, event)
     }
     return IR.Module(headers)
-        .dse()
-        .dce()
+        .deadStoreElimination()
+        .deadFunctionElimination()
+        .deadCallElimination()
 }
 
 fun transformBlock(block: Ast.Block, eventData: Ast.Event?): IR.BasicBlock {

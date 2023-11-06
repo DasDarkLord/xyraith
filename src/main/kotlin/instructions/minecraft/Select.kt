@@ -1,7 +1,6 @@
 package instructions.minecraft
 
-import code.Interpreter
-import instructions.Visitable
+import runtime.Interpreter
 import net.minestom.server.entity.Player
 import typechecker.ArgumentList
 import typechecker.ArgumentType
@@ -21,7 +20,8 @@ object Select : instructions.Visitable {
         get() = ArgumentType.NONE
     override val description: String
         get() = "Set targets based on selector."
-
+    override val pure: Boolean
+        get() = false
     override suspend fun visit(visitor: Interpreter) {
         val requirements = mutableListOf<String>()
         for(index in 2..visitor.environment.argumentCount) {
@@ -63,7 +63,8 @@ object ResetSelection : instructions.Visitable {
         get() = ArgumentType.NONE
     override val description: String
         get() = "Set targets based on selector."
-
+    override val pure: Boolean
+        get() = false
     override suspend fun visit(visitor: Interpreter) {
         visitor.environment.targets = visitor.environment.eventTargets
     }

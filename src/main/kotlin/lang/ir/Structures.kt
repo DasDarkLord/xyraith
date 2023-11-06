@@ -1,4 +1,4 @@
-package ir
+package lang.ir
 
 sealed class IR {
     data class Module(val blocks: MutableList<BasicBlock>) : IR() {
@@ -6,7 +6,7 @@ sealed class IR {
             return """$blocks"""
         }
     }
-    data class BasicBlock(val id: Int, val commands: MutableList<IR.Command>, val blockData: IR.BlockData) : IR() {
+    data class BasicBlock(val id: Int, val commands: MutableList<Command>, val blockData: BlockData) : IR() {
         override fun toString(): String {
             return """   
 bb$id $blockData =>
@@ -25,7 +25,7 @@ bb$id $blockData =>
             }
         }
     }
-    data class Command(val id: Int, val name: String, val arguments: MutableList<IR.Argument>) : IR() {
+    data class Command(val id: Int, val name: String, val arguments: MutableList<Argument>) : IR() {
         override fun toString(): String {
             return "%$id = $name $arguments"
         }

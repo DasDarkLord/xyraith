@@ -1,16 +1,16 @@
-package code
+package lang.emitter
 
 import error.Unreachable
-import ir.IR
+import lang.ir.IR
 import registry.commandRegistry
 import java.nio.ByteBuffer
 
-const val IR_BUFFER_SIZE = 1000
+const val BUFFER_SIZE = 1000
 
 class IREmitter(val module: IR.Module) {
     private var constantIdRecord: Int = 1
     private var constants: MutableMap<IR.Argument, Int> = mutableMapOf()
-    private var constantsBytes: ByteBuffer = ByteBuffer.allocate(IR_BUFFER_SIZE)
+    private var constantsBytes: ByteBuffer = ByteBuffer.allocate(BUFFER_SIZE)
 
     fun emit(): List<Byte> {
         val out = mutableListOf<Byte>()
@@ -85,7 +85,7 @@ class IREmitter(val module: IR.Module) {
     fun pushRawValue(value: IR.Argument, buf: ByteBuffer) {
         val constantID = addConstant(value)
         if(value !is IR.Argument.SSARef) {
-            buf.put(0)
+            buf.put(1)
             buf.putInt(constantID!!)
         }
     }

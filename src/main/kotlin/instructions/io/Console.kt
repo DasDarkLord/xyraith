@@ -1,13 +1,12 @@
 package instructions.io
 
-import code.Interpreter
-import instructions.Visitable
+import runtime.Interpreter
 import typechecker.ArgumentList
 import typechecker.ArgumentType
 import typechecker.NodeBuilder
 
 object Log : instructions.Visitable {
-    override val code: Int get() = -1
+    override val code: Int get() = 70
     override val isExtension: Boolean get() = false
     override val command: String get() = "console.log"
     override val arguments: ArgumentList
@@ -18,6 +17,8 @@ object Log : instructions.Visitable {
         get() = ArgumentType.NONE
     override val description: String
         get() = "Log a message to the console."
+    override val pure: Boolean
+        get() = true
 
     override suspend fun visit(visitor: Interpreter) {
         println(visitor.environment.stack.popValue().toDisplay())

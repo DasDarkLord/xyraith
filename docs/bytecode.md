@@ -1,5 +1,5 @@
 # Bytecode Info
-This document acts as Xyraith's documentation  for it's code format.
+This document acts as Xyraith's documentation  for it's runtime format.
 
 ## Names
 - **Byte** 1 byte in memory
@@ -37,7 +37,7 @@ Xyraith has a constants table at the start of its files. Repeat the below for ea
 ```
 When all constants are done, put `0x00` to indicate the end of the constant table.
 ## Basic Blocks
-Xyraith's code is split into "basic blocks". This is the format for them:
+Xyraith's runtime is split into "basic blocks". This is the format for them:
 ```
 [Int - Block Size]
 /* block header */

@@ -1,10 +1,9 @@
 package instructions.minecraft.player
 
-import code.Interpreter
-import instructions.Visitable
+import runtime.Interpreter
 import net.minestom.server.entity.Player
 import net.minestom.server.network.packet.server.play.ChangeGameStatePacket
-import parser.Value
+import runtime.Value
 import typechecker.ArgumentList
 import typechecker.ArgumentType
 import typechecker.NodeBuilder
@@ -22,7 +21,8 @@ object SetHunger : instructions.Visitable {
         get() = ArgumentType.NONE
     override val description: String
         get() = "Set a player's hunger points."
-
+    override val pure: Boolean
+        get() = false
     override suspend fun visit(visitor: Interpreter) {
         val food = visitor.environment.stack.popValue().castToNumber()
         for(target in visitor.environment.targets) {
@@ -44,7 +44,8 @@ object GetHunger : instructions.Visitable {
         get() = ArgumentType.NUMBER
     override val description: String
         get() = "Get a player's hunger points."
-
+    override val pure: Boolean
+        get() = true
     override suspend fun visit(visitor: Interpreter) {
         for(target in visitor.environment.targets) {
             if(target as? Player != null) {
@@ -66,7 +67,8 @@ object SetSaturation : instructions.Visitable {
         get() = ArgumentType.NONE
     override val description: String
         get() = "Set a player's saturation points."
-
+    override val pure: Boolean
+        get() = false
     override suspend fun visit(visitor: Interpreter) {
         val food = visitor.environment.stack.popValue().castToNumber()
         for(target in visitor.environment.targets) {
@@ -88,7 +90,8 @@ object GetSaturation : instructions.Visitable {
         get() = ArgumentType.NUMBER
     override val description: String
         get() = "Get a player's saturation points."
-
+    override val pure: Boolean
+        get() = true
     override suspend fun visit(visitor: Interpreter) {
         for(target in visitor.environment.targets) {
             if(target as? Player != null) {
@@ -109,7 +112,8 @@ object PlayerUsername : instructions.Visitable {
         get() = ArgumentType.STRING
     override val description: String
         get() = "Get the username of a player"
-
+    override val pure: Boolean
+        get() = true
     override suspend fun visit(visitor: Interpreter) {
         val target = visitor.environment.targets.firstOrNull()
         if(target as? Player != null) {
@@ -127,7 +131,8 @@ object PlayerUuid : instructions.Visitable {
     override val arguments: ArgumentList get() = NodeBuilder().build()
     override val description: String get() = "Get the uuid of a player"
     override val returnType: ArgumentType get() = ArgumentType.STRING
-
+    override val pure: Boolean
+        get() = true
     override suspend fun visit(visitor: Interpreter) {
         val target = visitor.environment.targets.firstOrNull()
         if (target as? Player != null) {
@@ -148,7 +153,8 @@ object UnsafeSetGamemode : instructions.Visitable {
         get() = ArgumentType.NONE
     override val description: String
         get() = "Change a player's game mode."
-
+    override val pure: Boolean
+        get() = false
     override suspend fun visit(visitor: Interpreter) {
         val mode = visitor.environment.stack.popValue().castToNumber().toFloat()
         for(target in visitor.environment.targets) {
@@ -171,7 +177,8 @@ object SetGamemode : instructions.Visitable {
         get() = ArgumentType.NONE
     override val description: String
         get() = "Change a player's game mode."
-
+    override val pure: Boolean
+        get() = false
     override suspend fun visit(visitor: Interpreter) {
         val mode = (visitor.environment.stack.popValue() as Value.Struct).fields[":id"]!!.castToNumber().toFloat()
         for(target in visitor.environment.targets) {
@@ -194,7 +201,8 @@ object SetExpProgress : instructions.Visitable {
         get() = ArgumentType.NONE
     override val description: String
         get() = "Change a player's XP progress."
-
+    override val pure: Boolean
+        get() = false
     override suspend fun visit(visitor: Interpreter) {
         val exp = visitor.environment.stack.popValue().castToNumber().toFloat()
         for(target in visitor.environment.targets) {
@@ -217,7 +225,8 @@ object SetExpLevel : instructions.Visitable {
         get() = ArgumentType.NONE
     override val description: String
         get() = "Change a player's XP level."
-
+    override val pure: Boolean
+        get() = false
     override suspend fun visit(visitor: Interpreter) {
         val level = visitor.environment.stack.popValue().castToNumber().toFloat()
         for(target in visitor.environment.targets) {
@@ -240,7 +249,8 @@ object GetExpProgress : instructions.Visitable {
         get() = ArgumentType.NONE
     override val description: String
         get() = "Change a player's XP progress."
-
+    override val pure: Boolean
+        get() = true
     override suspend fun visit(visitor: Interpreter) {
         val exp = visitor.environment.stack.popValue().castToNumber().toFloat()
         for(target in visitor.environment.targets) {
@@ -263,7 +273,8 @@ object GetExpLevel : instructions.Visitable {
         get() = ArgumentType.NONE
     override val description: String
         get() = "Change a player's XP level."
-
+    override val pure: Boolean
+        get() = true
     override suspend fun visit(visitor: Interpreter) {
         val level = visitor.environment.stack.popValue().castToNumber().toFloat()
         for(target in visitor.environment.targets) {

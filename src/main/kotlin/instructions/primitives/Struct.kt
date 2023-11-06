@@ -1,8 +1,7 @@
 package instructions.primitives
 
-import code.Interpreter
-import instructions.Visitable
-import parser.Value
+import runtime.Interpreter
+import runtime.Value
 import typechecker.ArgumentList
 import typechecker.ArgumentType
 import typechecker.NodeBuilder
@@ -22,6 +21,8 @@ object StructField : instructions.Visitable {
         get() = ArgumentType.NONE
     override val description: String
         get() = "Define a field of a struct"
+    override val pure: Boolean
+        get() = false
 
     override suspend fun visit(visitor: Interpreter) {
         val defaultValue = visitor.environment.stack.popValue()
@@ -30,7 +31,8 @@ object StructField : instructions.Visitable {
         if(typeName.startsWith("list")) {
             TODO()
         }
-        visitor.environment.stack.pushValue(Value.StructField(
+        visitor.environment.stack.pushValue(
+            Value.StructField(
             type = ArgumentType(typeName, listOf()),
             name = fieldName,
             value = defaultValue,
@@ -50,6 +52,8 @@ object StructInit : instructions.Visitable {
         get() = ArgumentType.ANY
     override val description: String
         get() = "Initialize a struct"
+    override val pure: Boolean
+        get() = false
 
     override suspend fun visit(visitor: Interpreter) {
         val typeName = visitor.environment.stack.popValue()
@@ -64,7 +68,8 @@ object StructInit : instructions.Visitable {
                     fields[field.name] = field.value
                 }
             }
-            visitor.environment.stack.pushValue(Value.Struct(
+            visitor.environment.stack.pushValue(
+                Value.Struct(
                 type = ArgumentType(typeName.value, listOf()),
                 fields = fields
             ))
@@ -86,6 +91,8 @@ object StructGet : instructions.Visitable {
         get() = ArgumentType.ANY
     override val description: String
         get() = "Get a value from a field of a struct"
+    override val pure: Boolean
+        get() = true
 
     override suspend fun visit(visitor: Interpreter) {
         val field = visitor.environment.stack.popValue() as Value.Symbol
@@ -109,6 +116,8 @@ object StructSet : instructions.Visitable {
         get() = ArgumentType.ANY
     override val description: String
         get() = "Set a value of a field of a struct"
+    override val pure: Boolean
+        get() = false
 
     override suspend fun visit(visitor: Interpreter) {
         val value = visitor.environment.stack.popValue()

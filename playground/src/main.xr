@@ -1,7 +1,11 @@
+import "std/std"
+
 event startup {
-    add 1 (:x)
+    console.log (:x 5)
+    store :c 10
+    load :c
 }
 
-function :x (-> number) {
-    return 5
+function :x (number -> number) {
+    return (add (parameter 0) 5)
 }

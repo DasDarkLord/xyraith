@@ -1,13 +1,11 @@
 package instructions.primitives
 
-import code.Interpreter
-import instructions.Visitable
+import runtime.Interpreter
 import globalVariables
-import net.minestom.server.tag.Tag
 import typechecker.ArgumentList
 import typechecker.ArgumentType
 import typechecker.NodeBuilder
-import parser.Value
+import runtime.Value
 
 object FLocalStore : instructions.Visitable {
     override val code: Int get() = 50
@@ -22,6 +20,8 @@ object FLocalStore : instructions.Visitable {
         get() = ArgumentType.NONE
     override val description: String
         get() = "Set a value of a symbol in local scope."
+    override val pure: Boolean
+        get() = false
 
     override suspend fun visit(visitor: Interpreter) {
         val value = visitor.environment.stack.popValue()
@@ -44,6 +44,8 @@ object FLocalLoad : instructions.Visitable {
         get() = ArgumentType.ANY
     override val description: String
         get() = "Get a value of a symbol in local scope."
+    override val pure: Boolean
+        get() = true
 
     override suspend fun visit(visitor: Interpreter) {
         val symbol = visitor.environment.stack.popValue()
@@ -67,6 +69,8 @@ object GlobalStore : instructions.Visitable {
         get() = ArgumentType.NONE
     override val description: String
         get() = "Set a value of a symbol in global scope."
+    override val pure: Boolean
+        get() = false
 
     override suspend fun visit(visitor: Interpreter) {
         val value = visitor.environment.stack.popValue()
@@ -89,6 +93,8 @@ object GlobalLoad : instructions.Visitable {
         get() = ArgumentType.ANY
     override val description: String
         get() = "Get a value of a symbol in global scope."
+    override val pure: Boolean
+        get() = true
 
     override suspend fun visit(visitor: Interpreter) {
         val symbol = visitor.environment.stack.popValue()

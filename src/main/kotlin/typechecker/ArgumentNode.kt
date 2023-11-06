@@ -1,6 +1,6 @@
 package typechecker
 
-import parser.Value
+import runtime.Value
 
 data class ArgumentList(val list: List<ArgumentNode>) : ArgumentNode
 

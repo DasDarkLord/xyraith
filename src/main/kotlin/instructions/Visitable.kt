@@ -1,6 +1,6 @@
 package instructions
 
-import code.Interpreter
+import runtime.Interpreter
 import org.reflections.Reflections
 import org.reflections.util.ConfigurationBuilder
 import typechecker.ArgumentList
@@ -65,4 +65,9 @@ interface Visitable {
      * The code to run when the interpreter comes across your command.
      */
     suspend fun visit(visitor: Interpreter)
+
+    /**
+     * Does this command perform no side effects?
+     */
+    val pure: Boolean
 }

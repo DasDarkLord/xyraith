@@ -1,9 +1,8 @@
 package instructions.minecraft.item
 
-import code.Interpreter
-import instructions.Visitable
+import runtime.Interpreter
 import net.minestom.server.tag.Tag
-import parser.Value
+import runtime.Value
 import typechecker.ArgumentList
 import typechecker.ArgumentType
 import typechecker.NodeBuilder
@@ -22,7 +21,8 @@ object ItemStore : instructions.Visitable {
         get() = ArgumentType.ITEM
     override val description: String
         get() = "Set a value of a symbol to the item."
-
+    override val pure: Boolean
+        get() = true
     override suspend fun visit(visitor: Interpreter) {
         val value = visitor.environment.stack.popValue()
         val symbol = visitor.environment.stack.popValue() as Value.Symbol
@@ -54,7 +54,8 @@ object ItemLoad : instructions.Visitable {
         get() = ArgumentType.ANY
     override val description: String
         get() = "Get a value of a symbol from the item."
-
+    override val pure: Boolean
+        get() = true
     override suspend fun visit(visitor: Interpreter) {
         val symbol = visitor.environment.stack.popValue() as Value.Symbol
         val itemTmp = visitor.environment.stack.popValue() as Value.Item

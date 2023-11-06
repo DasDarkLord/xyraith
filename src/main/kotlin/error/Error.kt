@@ -1,7 +1,7 @@
 package error
 
-import lexer.SpanData
-import lexer.TokenType
+import lang.lexer.SpanData
+import lang.lexer.TokenType
 import registry.commandRegistry
 import typechecker.ArgumentType
 

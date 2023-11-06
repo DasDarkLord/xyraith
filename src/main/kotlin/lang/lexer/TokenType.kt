@@ -1,4 +1,4 @@
-package lexer
+package lang.lexer
 
 sealed class TokenType {
     data object LeftParen : TokenType()

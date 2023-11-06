@@ -1,10 +1,9 @@
 package instructions.minecraft.target
 
-import code.Interpreter
-import instructions.Visitable
+import runtime.Interpreter
 import net.minestom.server.entity.LivingEntity
 import net.minestom.server.entity.Player
-import parser.Value
+import runtime.Value
 import typechecker.ArgumentList
 import typechecker.ArgumentType
 import typechecker.NodeBuilder
@@ -21,7 +20,8 @@ object TargetUUID : instructions.Visitable {
         get() = ArgumentType.STRING
     override val description: String
         get() = "Get the UUID of a target"
-
+    override val pure: Boolean
+        get() = true
     override suspend fun visit(visitor: Interpreter) {
         val target = visitor.environment.targets.firstOrNull()
         if(target as? Player != null) {
@@ -44,7 +44,8 @@ object Damage : instructions.Visitable {
         get() = ArgumentType.NONE
     override val description: String
         get() = "Deals damage to the targets"
-
+    override val pure: Boolean
+        get() = false
     override suspend fun visit(visitor: Interpreter) {
         val num = visitor.environment.stack.popValue().castToNumber()
         for(entity in visitor.environment.targets) {
@@ -67,7 +68,8 @@ object Heal : instructions.Visitable {
         get() = ArgumentType.NONE
     override val description: String
         get() = "Heals targets' health"
-
+    override val pure: Boolean
+        get() = false
     override suspend fun visit(visitor: Interpreter) {
         val num = visitor.environment.stack.popValue().castToNumber()
         for(entity in visitor.environment.targets) {
@@ -90,7 +92,8 @@ object SetHealth : instructions.Visitable {
         get() = ArgumentType.NONE
     override val description: String
         get() = "Sets the targets' health to given value"
-
+    override val pure: Boolean
+        get() = false
     override suspend fun visit(visitor: Interpreter) {
         val num = visitor.environment.stack.popValue().castToNumber()
         for(entity in visitor.environment.targets) {
@@ -112,7 +115,8 @@ object GetHealth : instructions.Visitable {
         get() = ArgumentType.NUMBER
     override val description: String
         get() = "Gets the target's health"
-
+    override val pure: Boolean
+        get() = true
     override suspend fun visit(visitor: Interpreter) {
         val entity = visitor.environment.targets.firstOrNull() as? LivingEntity
         visitor.environment.stack.pushValue(Value.Number(entity?.health?.toDouble() ?: 0.0))

@@ -1,16 +1,15 @@
 package typechecker
 
-import instructions.Visitable
 import error.*
 import events
 import functions
-import lexer.SpanData
+import lang.lexer.SpanData
 import parser.*
 import registry.commandRegistry
+import runtime.Value
 
 import types
 import structs
-import kotlin.math.exp
 
 /**
  * The Typechecker validates your program at compile time to ensure
@@ -33,7 +32,6 @@ class Typechecker {
                 throw InvalidEvent(event.name, event.eventNameSpan)
         }
         if(event.eventType is EventType.Function) {
-            println("doing function ${event.eventType.name}")
             typecheckBlock(event.code, event.eventType.name)
         } else {
             println("block")
@@ -78,7 +76,6 @@ class Typechecker {
      * Typecheck a command
      */
     private fun typecheckCommand(command: Ast.Command, functionName: String?) {
-        println("types at command ${command.name} time: $types")
         val valueIter = command.arguments.iterator()
         val spanIter = command.nodeSpans.iterator()
 
@@ -197,7 +194,6 @@ class Typechecker {
      * Gets the return type of a command and compares it to `expectedType`.
      */
     fun getCommandReturnType(command: Ast.Command, expectedType: ArgumentType?, functionName: String? = null): ArgumentType {
-        println("types when pre err: $types")
         return when(command.name) {
             "load" -> {
                 val symbol = command.arguments[0] as Value.Symbol
@@ -219,7 +215,6 @@ class Typechecker {
             }
             "struct.init" -> {
                 val symbol = command.arguments[0] as Value.Symbol
-                println("types when err: $types {${symbol.value}}")
                 if(!types.contains(symbol.value)) throw NotAType(symbol.value, types, command.nameSpan)
                 return ArgumentType(symbol.value, listOf())
             }

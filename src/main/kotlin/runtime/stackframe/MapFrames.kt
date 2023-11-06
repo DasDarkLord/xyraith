@@ -1,4 +1,4 @@
-package code.stackframe
+package runtime.stackframe
 
 class MapFrames<K, V> {
     private val inner: MutableList<MutableMap<K, V>> = mutableListOf(mutableMapOf())

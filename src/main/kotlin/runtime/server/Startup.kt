@@ -1,6 +1,6 @@
-package code.server
+package runtime.server
 
-import code.runEvent
+import runtime.runEvent
 import configInstance
 import events
 import net.minestom.server.MinecraftServer
@@ -9,10 +9,6 @@ import net.minestom.server.entity.Player
 import net.minestom.server.event.GlobalEventHandler
 import net.minestom.server.event.player.*
 import net.minestom.server.extras.MojangAuth
-import net.minestom.server.instance.Chunk
-import net.minestom.server.instance.LightingChunk
-import net.minestom.server.instance.block.Block
-import net.minestom.server.utils.chunk.ChunkSupplier
 
 
 fun startServer() {

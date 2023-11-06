@@ -1,7 +1,6 @@
 package instructions.minecraft.player
 
-import code.Interpreter
-import instructions.Visitable
+import runtime.Interpreter
 import net.minestom.server.coordinate.Pos
 import net.minestom.server.entity.Player
 import net.minestom.server.instance.block.Block
@@ -31,7 +30,8 @@ object PlayRawParticle : instructions.Visitable {
         get() = ArgumentType.NONE
     override val description: String
         get() = "Display a particle to a player through packets."
-
+    override val pure: Boolean
+        get() = false
     override suspend fun visit(visitor: Interpreter) {
         val fields = listOf(
             visitor.environment.stack.popValue().castToNumber(),
@@ -76,7 +76,8 @@ object PlayRawDisplayBlock : instructions.Visitable {
         get() = ArgumentType.NONE
     override val description: String
         get() = "Display a client-side block to a player through packets."
-
+    override val pure: Boolean
+        get() = false
     override suspend fun visit(visitor: Interpreter) {
         val fields = listOf(
             visitor.environment.stack.popValue().castToNumber(),
@@ -114,7 +115,8 @@ object PlayUpdateTime : instructions.Visitable {
         get() = ArgumentType.NONE
     override val description: String
         get() = "Set a players' time on their client."
-
+    override val pure: Boolean
+        get() = false
     override suspend fun visit(visitor: Interpreter) {
         val time = visitor.environment.stack.popValue().castToNumber()
 

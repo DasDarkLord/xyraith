@@ -1,18 +1,15 @@
 package instructions.io
 
-import code.Interpreter
-import instructions.Visitable
-import parser.Value
+import runtime.Interpreter
+import runtime.Value
 import typechecker.ArgumentList
 import typechecker.ArgumentType
 import typechecker.NodeBuilder
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
-import java.util.Objects
-import kotlin.math.exp
 
 object JavaClass : instructions.Visitable {
-    override val code: Int get() = -3
+    override val code: Int get() = 71
     override val isExtension: Boolean get() = false
     override val command: String get() = "javaClass"
     override val arguments: ArgumentList
@@ -23,6 +20,8 @@ object JavaClass : instructions.Visitable {
         get() = "Gets a class in Java as a Struct"
     override val returnType: ArgumentType
         get() = ArgumentType.ANY
+    override val pure: Boolean
+        get() = true
 
     override suspend fun visit(visitor: Interpreter) {
         val clazz = Class.forName(visitor.environment.stack.popValue().castToString())
@@ -49,7 +48,7 @@ object JavaClass : instructions.Visitable {
 
 object GetMethod : instructions.Visitable {
     override val code: Int
-        get() = -4
+        get() = 72
     override val isExtension: Boolean
         get() = false
     override val command: String
@@ -63,6 +62,8 @@ object GetMethod : instructions.Visitable {
         get() = "Gets a (static) method of a java class"
     override val returnType: ArgumentType
         get() = ArgumentType.ANY
+    override val pure: Boolean
+        get() = true
 
     override suspend fun visit(visitor: Interpreter) {
         val targetMethod = visitor.environment.stack.popValue()
@@ -97,7 +98,7 @@ object GetMethod : instructions.Visitable {
 }
 
 object InvokeMethod : instructions.Visitable {
-    override val code: Int get() = -5
+    override val code: Int get() = 73
     override val isExtension: Boolean get() = false
     override val command: String
         get() = "invokeMethod"
@@ -110,7 +111,8 @@ object InvokeMethod : instructions.Visitable {
         get() = "Invokes a method"
     override val returnType: ArgumentType
         get() = ArgumentType.ANY
-
+    override val pure: Boolean
+        get() = false
     override suspend fun visit(visitor: Interpreter) {
         val arguments = mutableListOf<Value>()
         for (i in 2..visitor.environment.argumentCount) {

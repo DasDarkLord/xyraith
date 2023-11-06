@@ -1,37 +1,29 @@
-import code.*
-import instructions.Visitable
-import instructions.visitables
-import code.server.startServer
+import runtime.*
+import runtime.server.startServer
 import config.parseToml
 import docs.dumpCommands
 import docs.generateDocumentation
-import lexer.Lexer
+import lang.lexer.Lexer
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
-import net.minestom.server.entity.Player
 import parser.Parser
 import error.ParserError
-import ir.transformAst
-import org.reflections.Reflections
-import org.reflections.util.ConfigurationBuilder
+import lang.emitter.IREmitter
+import lang.ir.transformAst
 import registry.validateRegistry
 import typechecker.ArgumentType
 import typechecker.Typechecker
 import java.io.File
-import java.lang.reflect.Field
 import java.nio.ByteBuffer
-import java.time.LocalDate
 
 val debug = 1
-var constants: Map<Int, parser.Value> = mapOf()
-var blockMap: MutableMap<Int, ByteBuffer> = mutableMapOf()
+var constants: Map<Int, Value> = mapOf()
+var blockMap: MutableMap<Int, InterpreterData.BasicBlock> = mutableMapOf()
 
 val miniMessage = MiniMessage.miniMessage()
 fun mm(str: String): Component = miniMessage.deserialize(str)
 
-var playerList = mutableListOf<Player>()
-
-val globalVariables: MutableMap<String, parser.Value> = mutableMapOf()
+val globalVariables: MutableMap<String, Value> = mutableMapOf()
 
 val configInstance = parseToml()
 
@@ -141,63 +133,26 @@ fun runServer(withServer: Boolean) {
         }
         val module = transformAst(ast)
         println(module)
-        println(StdBuiltins::class.java.canonicalName)
-
         val irEmitter = IREmitter(module)
         val bytes = irEmitter.emit()
         println(bytes)
 
         val parsed = parseBytecode(ByteBuffer.wrap(bytes.toByteArray()))
-        println("parsed: " + parsed)
 
         constants = parsed.second
-        return
+        blockMap = parsed.first.associateBy { it.id }.toMutableMap()
 
-        val emitter = Emitter(ast)
-        emitter.emit()
-        Logger.trace(emitter)
-
-        constants = emitter.constants.map { pair -> pair.value to pair.key }.toMap()
-        blockMap = emitter.blockMap
-        Disassembler.dissasemble(emitter)
-        saveBinary(emitter)
-        println("Executing...")
         if(!withServer) {
             runEvent(1)
             return
         }
         startServer()
+
+
     } catch(e: ParserError) {
         println(e.emit())
         e.printStackTrace()
     }
-}
-
-fun saveBinary(emitter: Emitter) {
-    val file = File("cached.xrv")
-    val listOfBytes = mutableListOf<Byte>()
-    var index = 0
-    println(emitter.constantsBytes.position())
-    listOfBytes.add(1)
-    for(byte in emitter.constantsBytes.array()) {
-        index++
-        if(index > emitter.constantsBytes.position()) {
-            continue
-        }
-        listOfBytes.add(byte)
-    }
-    listOfBytes.add(2)
-    for(entry in blockMap) {
-        var index2 = 0
-        for(byte in entry.value.array()) {
-            index2++
-            if(index2 > entry.value.position()) {
-                continue
-            }
-            listOfBytes.add(byte)
-        }
-    }
-    file.writeBytes(listOfBytes.toByteArray())
 }
 
 fun initProject() {

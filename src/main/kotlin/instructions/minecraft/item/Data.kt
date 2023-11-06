@@ -1,14 +1,13 @@
 package instructions.minecraft.item
 
-import code.Interpreter
-import instructions.Visitable
+import runtime.Interpreter
 import miniMessage
 import mm
 import net.kyori.adventure.text.Component
 import net.minestom.server.item.ItemStack
 import net.minestom.server.item.Material
 import net.minestom.server.tag.Tag
-import parser.Value
+import runtime.Value
 import typechecker.ArgumentList
 import typechecker.ArgumentType
 import typechecker.NodeBuilder
@@ -25,7 +24,8 @@ object SetItemLore : instructions.Visitable {
             .addSingleArgument(ArgumentType.ITEM, "Item to manipulate")
             .addSingleArgument(ArgumentType.STRING_LIST, "Lore to set")
             .build()
-
+    override val pure: Boolean
+        get() = true
     override val description: String
         get() = "Set an item's lore."
 
@@ -56,7 +56,8 @@ object SetItemName : instructions.Visitable {
 
     override val description: String
         get() = "Set an item's name."
-
+    override val pure: Boolean
+        get() = true
     override suspend fun visit(visitor: Interpreter) {
         val name = visitor.environment.stack.popValue().castToString()
         val item = visitor.environment.stack.popValue() as Value.Item
@@ -80,7 +81,8 @@ object SetItemStackSize : instructions.Visitable {
         get() = ArgumentType.ITEM
     override val description: String
         get() = "Set an item's stack size."
-
+    override val pure: Boolean
+        get() = true
     override suspend fun visit(visitor: Interpreter) {
         val size = visitor.environment.stack.popValue() as Value.Number
         val item = (visitor.environment.stack.popValue() as Value.Item).itemStack
@@ -100,7 +102,8 @@ object GetItemStackSize : instructions.Visitable {
         get() = ArgumentType.ITEM
     override val description: String
         get() = "Get an item's stack size."
-
+    override val pure: Boolean
+        get() = true
     override suspend fun visit(visitor: Interpreter) {
         val item = (visitor.environment.stack.popValue() as Value.Item).itemStack
         visitor.environment.stack.pushValue(Value.Number(item.amount().toDouble()))
@@ -119,7 +122,8 @@ object GetItemStackName : instructions.Visitable {
         get() = ArgumentType.STRING
     override val description: String
         get() = "Get an item's name."
-
+    override val pure: Boolean
+        get() = true
     override suspend fun visit(visitor: Interpreter) {
         val item = (visitor.environment.stack.popValue() as Value.Item).itemStack
         visitor.environment.stack.pushValue(Value.String(miniMessage.serialize(item.displayName ?: Component.text(item.material().name()))))
@@ -141,7 +145,8 @@ object GetItemLore : instructions.Visitable {
         get() = "Gets the lore of an item"
     override val returnType: ArgumentType
         get() = ArgumentType.STRING_LIST
-
+    override val pure: Boolean
+        get() = true
     override suspend fun visit(visitor: Interpreter) {
         val item = ((visitor.environment.stack.popValue()) as Value.Item).itemStack
         val lore = mutableListOf<String>()
@@ -168,7 +173,8 @@ object GetItemDamage : instructions.Visitable {
         get() = "Gets the damage of an item"
     override val returnType: ArgumentType
         get() = ArgumentType.NUMBER
-
+    override val pure: Boolean
+        get() = true
     override suspend fun visit(visitor: Interpreter) {
         val item = (visitor.environment.stack.popValue() as Value.Item).itemStack
         val damage = Value.Number(item.meta().damage.toDouble())
@@ -193,11 +199,13 @@ object SetItemDamage : instructions.Visitable {
         get() = "Sets an items damage"
     override val returnType: ArgumentType
         get() = ArgumentType.ITEM
-
+    override val pure: Boolean
+        get() = true
     override suspend fun visit(visitor: Interpreter) {
         val durability = visitor.environment.stack.popValue().castToNumber()
         val item = (visitor.environment.stack.popValue() as Value.Item).itemStack
-        visitor.environment.stack.pushValue(Value.Item(
+        visitor.environment.stack.pushValue(
+            Value.Item(
             item.withTag(Tag.Integer("Damage").defaultValue(0), durability.toInt())
         ))
     }

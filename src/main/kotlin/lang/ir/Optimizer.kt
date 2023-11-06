@@ -1,6 +1,9 @@
-package ir
+package lang.ir
 
-fun IR.Module.dse(): IR.Module {
+import instructions.Visitable
+import registry.commandRegistry
+
+fun IR.Module.deadStoreElimination(): IR.Module {
     for(block in this.blocks) {
         val usedLocals = mutableListOf<String>()
         val usedGlobals = mutableListOf<String>()
@@ -33,7 +36,7 @@ fun IR.Module.dse(): IR.Module {
     return this
 }
 
-fun IR.Module.dce(): IR.Module {
+fun IR.Module.deadFunctionElimination(): IR.Module {
     for(x in 1..10) {
         val usedFunctions = mutableListOf<String>()
         for(block in this.blocks) {
@@ -60,5 +63,33 @@ fun IR.Module.dce(): IR.Module {
         }
     }
 
+    return this
+}
+
+fun IR.Module.deadCallElimination(): IR.Module {
+    for(x in 1..10) {
+        val usedSSAs = mutableListOf<Int>()
+        for(block in this.blocks) {
+            for(command in block.commands) {
+                for(argument in command.arguments) {
+                    if(argument is IR.Argument.SSARef) {
+                        usedSSAs.add(argument.value)
+                    }
+                }
+            }
+        }
+
+        for(block in this.blocks) {
+            val markForRemoval = mutableListOf<IR.Command>()
+            for(command in block.commands) {
+                if(!usedSSAs.contains(command.id) && ((commandRegistry[command.name]!!["object"]!! as Visitable).pure)) {
+                    markForRemoval.add(command)
+                }
+            }
+            for(command in markForRemoval) {
+                block.commands.remove(command)
+            }
+        }
+    }
     return this
 }

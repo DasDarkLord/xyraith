@@ -1,7 +1,6 @@
 package instructions.minecraft
 
-import code.Interpreter
-import instructions.Visitable
+import runtime.Interpreter
 import mm
 import net.minestom.server.event.player.PlayerBlockBreakEvent
 import net.minestom.server.event.player.PlayerBlockInteractEvent
@@ -12,7 +11,7 @@ import net.minestom.server.event.trait.CancellableEvent
 import typechecker.ArgumentList
 import typechecker.ArgumentType
 import typechecker.NodeBuilder
-import parser.Value
+import runtime.Value
 
 object EventChatSetFormat : instructions.Visitable {
     override val code: Int get() = 3000
@@ -26,7 +25,8 @@ object EventChatSetFormat : instructions.Visitable {
         get() = ArgumentType.NONE
     override val description: String
         get() = "Requires `chat` event.\nSet a the format of the outgoing chat message."
-
+    override val pure: Boolean
+        get() = true
     override suspend fun visit(visitor: Interpreter) {
         val message = visitor.environment.stack.popValue().castToString()
         val event = visitor.environment.event
@@ -47,7 +47,8 @@ object EventChatGetMessage : instructions.Visitable {
         get() = ArgumentType.STRING
     override val description: String
         get() = "Requires `chat` event.\nGets the chat message of the event."
-
+    override val pure: Boolean
+        get() = true
     override suspend fun visit(visitor: Interpreter) {
         val format = visitor.environment.stack.popValue().castToString()
         val event = visitor.environment.event
@@ -69,7 +70,8 @@ object EventSetCancelled : instructions.Visitable {
         get() = ArgumentType.NONE
     override val description: String
         get() = "Requires a cancellable event. Sets whether an event is cancelled or not."
-
+    override val pure: Boolean
+        get() = false
     override suspend fun visit(visitor: Interpreter) {
         val event = visitor.environment.event
         if(event is CancellableEvent) {
@@ -91,11 +93,13 @@ object EventBlockGetBlock : instructions.Visitable {
         get() = ArgumentType.STRING
     override val description: String
         get() = "Requires a block event.\nGets the block material affected."
-
+    override val pure: Boolean
+        get() = true
     override suspend fun visit(visitor: Interpreter) {
         val event = visitor.environment.event
         if(event is BlockEvent) {
-            visitor.environment.stack.pushValue(Value.String(
+            visitor.environment.stack.pushValue(
+                Value.String(
                 event.block.namespace().toString()
             ))
         }
@@ -113,11 +117,13 @@ object EventGetLocation : instructions.Visitable {
         get() = ArgumentType.LOCATION
     override val description: String
         get() = "Requires an event involving a location.\nGets the location of the event."
-
+    override val pure: Boolean
+        get() = true
     override suspend fun visit(visitor: Interpreter) {
         val event = visitor.environment.event
         if(event is PlayerBlockBreakEvent) {
-            visitor.environment.stack.pushValue(Value.Struct(
+            visitor.environment.stack.pushValue(
+                Value.Struct(
                 ArgumentType.LOCATION,
                 mutableMapOf(
                     ":x" to Value.Number(event.blockPosition.x()),
@@ -129,7 +135,8 @@ object EventGetLocation : instructions.Visitable {
             ))
         }
         if(event is PlayerBlockPlaceEvent) {
-            visitor.environment.stack.pushValue(Value.Struct(
+            visitor.environment.stack.pushValue(
+                Value.Struct(
                 ArgumentType.LOCATION,
                 mutableMapOf(
                     ":x" to Value.Number(event.blockPosition.x()),
@@ -141,7 +148,8 @@ object EventGetLocation : instructions.Visitable {
             ))
         }
         if(event is PlayerBlockInteractEvent) {
-            visitor.environment.stack.pushValue(Value.Struct(
+            visitor.environment.stack.pushValue(
+                Value.Struct(
                 ArgumentType.LOCATION,
                 mutableMapOf(
                     ":x" to Value.Number(event.blockPosition.x()),

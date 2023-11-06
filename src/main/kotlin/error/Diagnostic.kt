@@ -1,6 +1,6 @@
 package error
 
-import lexer.SpanData
+import lang.lexer.SpanData
 import stdlib.stdlibFiles
 import java.io.File
 

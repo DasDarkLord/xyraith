@@ -1,7 +1,6 @@
 package instructions.minecraft.player
 
-import code.Interpreter
-import instructions.Visitable
+import runtime.Interpreter
 import mm
 import net.minestom.server.entity.Player
 import net.minestom.server.network.packet.server.play.ActionBarPacket
@@ -24,7 +23,8 @@ object SendMessage : instructions.Visitable {
         get() = ArgumentType.NONE
     override val description: String
         get() = "Send the player a message in chat."
-
+    override val pure: Boolean
+        get() = false
     override suspend fun visit(visitor: Interpreter) {
         val display = visitor.environment.stack.popValue().toDisplay()
         val component = mm(display)
@@ -48,7 +48,8 @@ object SendActionBar : instructions.Visitable {
         get() = ArgumentType.NONE
     override val description: String
         get() = "Send a player a message in the actionbar."
-
+    override val pure: Boolean
+        get() = false
     override suspend fun visit(visitor: Interpreter) {
         val display = visitor.environment.stack.popValue().toDisplay()
         val comp = mm(display)
@@ -72,7 +73,8 @@ object SendTitle : instructions.Visitable {
         get() = ArgumentType.NONE
     override val description: String
         get() = "Send a player a message through a title. Sends the main title"
-
+    override val pure: Boolean
+        get() = false
     override suspend fun visit(visitor: Interpreter) {
         val title = visitor.environment.stack.popValue().toDisplay()
         val comp = mm(title)
@@ -92,7 +94,8 @@ object SendSubtitle : instructions.Visitable {
         get() = ArgumentType.NONE
     override val description: String
         get() = "Send a player a message through a title. Sends the main subtitle."
-
+    override val pure: Boolean
+        get() = false
     override suspend fun visit(visitor: Interpreter) {
         val title = visitor.environment.stack.popValue().toDisplay()
         val comp = mm(title)
@@ -114,7 +117,8 @@ object SendTitleTimes : instructions.Visitable {
         get() = ArgumentType.NONE
     override val description: String
         get() = "Sets a players' title times."
-
+    override val pure: Boolean
+        get() = false
     override suspend fun visit(visitor: Interpreter) {
         val fadeStay = visitor.environment.stack.popValue().castToNumber()
         val fadeIn = visitor.environment.stack.popValue().castToNumber()
