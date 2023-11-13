@@ -49,11 +49,16 @@ fun IR.Module.deadFunctionElimination(): IR.Module {
                     val arg = (command.arguments[0] as IR.Argument.Symbol).value
                     if(arg != functionName) usedFunctions.add(arg)
                 }
+                if(command.name == "struct.init") {
+                    val arg = ":__struct_init_" + (command.arguments[0] as IR.Argument.Symbol).value
+                    if(arg != functionName) usedFunctions.add(arg)
+                }
             }
         }
         val markForRemoval = mutableListOf<IR.BasicBlock>()
         for(block in this.blocks) {
             if(block.blockData is IR.BlockData.Function && !usedFunctions.contains(block.blockData.functionName)) {
+                println("block data: ${block.blockData}")
                 markForRemoval.add(block)
             }
         }

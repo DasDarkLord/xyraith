@@ -371,8 +371,13 @@ class Typechecker {
             "struct.set" -> {
                 val type = command.arguments[0].getFixedType(this, functionName)
                 val symbol = command.arguments[1] as Value.Symbol
-                if(!types.contains(type.toTypeName())) throw NotAType(type.toTypeName(), types, command.nameSpan)
-                if(!structs.contains(type.toTypeName())) throw NotAType(type.toTypeName(), types, command.nameSpan)
+                if(!types.contains(type.toTypeName()))
+                    throw NotAType(type.toTypeName(), types, command.nameSpan)
+                if(!type.toTypeName().startsWith(":"))
+                    throw IncorrectArgument("a struct", type.toTypeName(),
+                        command.name, command.nodeSpans[0])
+                if(!structs.contains(type.toTypeName()))
+                    throw NotAType(type.toTypeName(), types, command.nameSpan)
                 println("Structs: $structs\n${type.toTypeName()}")
                 println("orig: $command")
                 if(!structs[type.toTypeName()]!!.contains(symbol.value)) throw NotAFieldOnStruct(command.nameSpan)

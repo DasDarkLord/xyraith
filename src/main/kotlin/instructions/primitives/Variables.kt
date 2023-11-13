@@ -49,6 +49,7 @@ object FLocalLoad : instructions.Visitable {
 
     override suspend fun visit(visitor: Interpreter) {
         val symbol = visitor.environment.stack.popValue()
+        println("LS LOCAL VARS: ${visitor.environment.localVariables.getFrame()}")
         if(symbol is Value.Symbol) {
             val push = visitor.environment.localVariables[symbol.value] ?: Value.Null
             visitor.environment.stack.pushValue(push)

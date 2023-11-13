@@ -158,8 +158,10 @@ fun parseConstants(buf: ByteBuffer): Map<Int, Value> {
 
 class Interpreter(val constants: Map<Int, Value>, val blockMap: Map<Int, InterpreterData.BasicBlock>, val coroutineScope: CoroutineScope) {
     val environment: Environment = Environment()
-
+    val scope: MutableList<String> = mutableListOf()
     suspend fun runBlock(blockId: Int): Value {
+        scope.add("block:$blockId")
+        environment.localVariables.pushFrame()
         val block = blockMap[blockId]!!
         println("Id: $blockId | block: $block")
         val buf = block.code.duplicate().position(0)
@@ -168,13 +170,18 @@ class Interpreter(val constants: Map<Int, Value>, val blockMap: Map<Int, Interpr
             runInstruction(buf)
             opcode = peek(buf)
             if(environment.endBlock) {
+                environment.localVariables.popFrame()
+                scope.removeLast()
                 return environment.returnValue
             }
         }
+        environment.localVariables.popFrame()
+        scope.removeLast()
         return Value.Null
     }
 
     suspend fun runFunction(functionName: String): Value {
+        scope.add("function$functionName")
         for(block in blockMap) {
             val buf = block.value.code
             if(block.value.event.id != 6) {
@@ -184,9 +191,11 @@ class Interpreter(val constants: Map<Int, Value>, val blockMap: Map<Int, Interpr
             if(name is Value.Symbol && name.value == functionName) {
                 val value = runBlock(block.value.id)
                 environment.endBlock = false
+                scope.removeLast()
                 return value
             }
         }
+        scope.removeLast()
         return Value.Null
     }
 
@@ -203,7 +212,20 @@ class Interpreter(val constants: Map<Int, Value>, val blockMap: Map<Int, Interpr
         } else {
             val argumentCount = buf.get()
             this.environment.argumentCount = argumentCount
+            println("""
+==== INTERPRETER PRE STACK TRACE ==== 
+Command: ${opcodes[opcode.toInt()]!!.command} 
+Stack: ${this.environment.stack}
+Locals: ${this.environment.localVariables}
+Scope: ${this.scope}
+========== AFTER COMMAND ===========""")
             opcodes[opcode.toInt()]!!.visit(this)
+            println("""Command: ${opcodes[opcode.toInt()]!!.command} 
+Stack: ${this.environment.stack}
+Locals: ${this.environment.localVariables}
+Scope: ${this.scope}
+=================================
+""")
         }
     }
 }

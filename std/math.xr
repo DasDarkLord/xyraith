@@ -37,6 +37,7 @@ function :math.factorial (number -> number) {
 }
 
 function :math.sqrt (number -> number) {
+    console.log (string "math sqrt ret " (pow (parameter 0) 0.5))
     return (pow (parameter 0) 0.5)
 }
 

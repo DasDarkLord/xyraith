@@ -73,6 +73,8 @@ object StructInit : instructions.Visitable {
                 type = ArgumentType(typeName.value, listOf()),
                 fields = fields
             ))
+        } else {
+            println("Error typename isn't symbl: $typeName")
         }
 
     }
@@ -120,10 +122,17 @@ object StructSet : instructions.Visitable {
         get() = false
 
     override suspend fun visit(visitor: Interpreter) {
+        val field = visitor.environment.stack.popValue()
         val value = visitor.environment.stack.popValue()
-        val field = visitor.environment.stack.popValue() as Value.Symbol
-        val struct = visitor.environment.stack.popValue() as Value.Struct
-        struct.fields[field.value] = value
+        val struct = visitor.environment.stack.popValue()
+        println("""
+value: $value
+field: $field
+struct: $struct
+        """.trimIndent())
+        if(struct is Value.Struct && field is Value.Symbol) {
+            struct.fields[field.value] = value
+        }
         visitor.environment.stack.pushValue(struct)
     }
 }

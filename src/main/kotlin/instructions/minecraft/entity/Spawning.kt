@@ -30,7 +30,6 @@ object SpawnEntity : instructions.Visitable {
         val pos = visitor.environment.stack.popValue() as Value.Struct
         val id = visitor.environment.stack.popValue().castToString()
 
-        println("id: $id, pos: $pos")
         val entity = EntityCreature(EntityType.fromNamespaceId(id))
         entity.setInstance(visitor.environment.instance!!, Pos(
             pos.fields[":x"]!!.castToNumber(),

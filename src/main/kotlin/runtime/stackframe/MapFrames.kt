@@ -22,4 +22,8 @@ class MapFrames<K, V> {
     operator fun set(key: K, value: V) {
         inner.last()[key] = value
     }
+
+    override fun toString(): String {
+        return this.inner.toString()
+    }
 }

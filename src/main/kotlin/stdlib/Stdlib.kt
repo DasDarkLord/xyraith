@@ -49,6 +49,7 @@ function :math.factorial (number -> number) {
 }
 
 function :math.sqrt (number -> number) {
+    console.log (string "math sqrt ret " (pow (parameter 0) 0.5))
     return (pow (parameter 0) 0.5)
 }
 
@@ -129,6 +130,8 @@ struct :loc {
 }
 
 function :loc (number number number number number -> :loc) {
+    console.log (string (struct.init :loc) " " (parameter 0) " " (parameter 1) " " (parameter 2) " "
+        (parameter 3) " " (parameter 4))
     return (struct.set (struct.set (struct.set (struct.set (struct.set
         (struct.init :loc) :x (parameter 0)) :y (parameter 1)) :z (parameter 2)) :pitch (parameter 3)) :yaw (parameter 4))
 }
@@ -186,6 +189,7 @@ function :loc.addYaw (:loc number -> :loc) {
 }
 
 function :loc.distance(:loc :loc -> number) {
+    console.log "getting dist"
     return (:math.sqrt
         (add
             (sub

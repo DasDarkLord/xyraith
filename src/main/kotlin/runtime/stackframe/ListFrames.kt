@@ -30,4 +30,8 @@ class ListFrames<T> {
     fun frameSize(): Int {
         return inner.last().size
     }
+
+    override fun toString(): String {
+        return this.inner.toString()
+    }
 }
