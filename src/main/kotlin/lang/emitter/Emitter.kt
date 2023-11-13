@@ -84,6 +84,16 @@ class IREmitter(val module: IR.Module) {
 
     fun pushRawValue(value: IR.Argument, buf: ByteBuffer) {
         val constantID = addConstant(value)
+        // TODO: fix ordering of output
+        // currently, commands are placed out of order
+        // %1 = load [:a]
+        // %2 = string [%1, "hi"]
+        // %3 = console.log %2
+        // this results in the output of:
+        // (console.log (string "hi" (load a))
+        // this is not ok!! this is not right!!
+        // fix this by properly associating commands to their SSA value
+        // don't emit them immediately, only emit them if they're needed
         if(value !is IR.Argument.SSARef) {
             buf.put(1)
             buf.putInt(constantID!!)

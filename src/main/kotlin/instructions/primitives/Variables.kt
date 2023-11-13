@@ -26,6 +26,7 @@ object FLocalStore : instructions.Visitable {
     override suspend fun visit(visitor: Interpreter) {
         val value = visitor.environment.stack.popValue()
         val symbol = visitor.environment.stack.popValue()
+        println("Value: $value | symbol: $symbol")
         if(symbol is Value.Symbol) {
             visitor.environment.localVariables[symbol.value] = value
         }
