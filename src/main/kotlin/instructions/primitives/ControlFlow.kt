@@ -31,7 +31,7 @@ object ForEach : instructions.Visitable {
         val list = visitor.environment.stack.popValue()
         val symbol = visitor.environment.stack.popValue()
 
-        if(block is Value.BasicBlockRef && list is Value.NumberList && symbol is Value.Symbol) {
+        if(block is Value.BasicBlockRef && list is Value.GenericList && symbol is Value.Symbol) {
             for(subValue in list.value) {
                 visitor.environment.localVariables[symbol.value] = subValue
                 visitor.runBlock(block.value)

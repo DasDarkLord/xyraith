@@ -28,15 +28,16 @@ fun peek(buf: ByteBuffer): Byte {
 fun runEvent(eventIdChk: Int, targets: MutableList<Entity> = mutableListOf(), instance: Instance? = null, event: Event? = null) {
     runBlocking {
         for(pair in blockMap) {
+            println("Pair: $pair | ")
             val eventId = pair.value.event.id
             if(eventId == eventIdChk) {
+                println("Is an OK event!")
                 val interpreter = Interpreter(constants, blockMap, this)
                 interpreter.environment.eventTargets = targets
                 interpreter.environment.targets = targets
                 interpreter.environment.instance = instance
                 interpreter.environment.event = event
                 interpreter.runBlock(pair.key)
-
             }
         }
     }
@@ -160,6 +161,7 @@ class Interpreter(val constants: Map<Int, Value>, val blockMap: Map<Int, Interpr
 
     suspend fun runBlock(blockId: Int): Value {
         val block = blockMap[blockId]!!
+        println("Id: $blockId | block: $block")
         val buf = block.code.duplicate().position(0)
         var opcode = peek(buf)
         while(opcode.toInt() != 0) {

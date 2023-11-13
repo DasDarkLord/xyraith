@@ -153,6 +153,18 @@ function :loc.setYaw (:loc number -> :loc) {
     return (struct.set (parameter 0) :yaw (parameter 1))
 }
 
+function :loc.getX (:loc -> number) {
+    return (struct.get (parameter 0) :x)
+}
+
+function :loc.getY (:loc -> number) {
+    return (struct.get (parameter 0) :y)
+}
+
+function :loc.getZ (:loc -> number) {
+    return (struct.get (parameter 0) :z)
+}
+
 function :loc.addX (:loc number -> :loc) {
     return (struct.set (parameter 0) :x (add (struct.get (parameter 0) :x) (parameter 1)))
 }
@@ -173,6 +185,24 @@ function :loc.addYaw (:loc number -> :loc) {
     return (struct.set (parameter 0) :yaw (add (struct.get (parameter 0) :yaw) (parameter 1)))
 }
 
+function :loc.distance(:loc :loc -> number) {
+    return (:math.sqrt
+        (add
+            (sub
+                (:loc.getX (parameter 0))
+                (:loc.getX (parameter 0))
+            )
+            (sub
+                (:loc.getY (parameter 1))
+                (:loc.getY (parameter 0))
+            )
+            (sub
+                (:loc.getZ (parameter 1))
+                (:loc.getZ (parameter 0))
+            )
+        )
+    )
+}
 struct :vec {
     struct.field :x number 0
     struct.field :y number 0

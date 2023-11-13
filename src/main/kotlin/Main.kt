@@ -142,6 +142,7 @@ fun runServer(withServer: Boolean) {
         constants = parsed.second
         blockMap = parsed.first.associateBy { it.id }.toMutableMap()
 
+        println("Here's the apps:")
         if(!withServer) {
             runEvent(1)
             return

@@ -57,7 +57,7 @@ object Range : instructions.Visitable {
         val max = visitor.environment.stack.popValue().castToNumber()
         val min = visitor.environment.stack.popValue().castToNumber()
         val list = (min.toInt()..max.toInt()).toList().map { Value.Number(it.toDouble()) }
-        visitor.environment.stack.pushValue(Value.NumberList(list))
+        visitor.environment.stack.pushValue(Value.GenericList(list))
     }
 }
 

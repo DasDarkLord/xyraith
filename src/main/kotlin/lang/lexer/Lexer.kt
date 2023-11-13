@@ -39,7 +39,7 @@ class Lexer(val source: String, val file: String) {
                     try {
                         output.add(Token.Number(number.toDouble(), SpanData(spanStart, position, file)))
                     } catch(e: NumberFormatException) {
-                        output.add(Token.StringText(number, SpanData(spanStart, position, file)))
+                        output.add(Token.Identifier(number, SpanData(spanStart, position, file)))
                     }
 
                 }

@@ -194,6 +194,7 @@ class Typechecker {
      * Gets the return type of a command and compares it to `expectedType`.
      */
     fun getCommandReturnType(command: Ast.Command, expectedType: ArgumentType?, functionName: String? = null): ArgumentType {
+        println("getting return type of: ${command}")
         return when(command.name) {
             "load" -> {
                 val symbol = command.arguments[0] as Value.Symbol
@@ -231,7 +232,11 @@ class Typechecker {
                 return command.arguments[0].getFixedType(this, functionName)
             }
             "call" -> {
-                return functions[(command.arguments[0] as Value.Symbol).value]!!.second
+                val name = (command.arguments[0] as Value.Symbol).value
+                if(!functions.containsKey(name)) {
+                    throw NotAValidFunction(command.nodeSpans[0])
+                }
+                return functions[name]!!.second
             }
             "parameter" -> {
                 if(!functions.containsKey(functionName)) throw InvalidCommand(functionName!!, command.nameSpan)

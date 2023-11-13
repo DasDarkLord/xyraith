@@ -1,11 +1,6 @@
 import "std/std"
 
 event startup {
-    console.log (:x 5)
-    store :c 10
-    load :c
-}
-
-function :x (number -> number) {
-    return (add (parameter 0) 5)
+    store :l1 20
+    console.log $l[:l1]
 }

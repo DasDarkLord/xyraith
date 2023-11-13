@@ -18,7 +18,7 @@ object Log : instructions.Visitable {
     override val description: String
         get() = "Log a message to the console."
     override val pure: Boolean
-        get() = true
+        get() = false
 
     override suspend fun visit(visitor: Interpreter) {
         println(visitor.environment.stack.popValue().toDisplay())

@@ -150,9 +150,6 @@ class Parser(private val input: MutableList<Token>) {
                 return null
             }
         }
-
-
-
     }
 
     private fun parseBlock(eventName: String, isFunction: Boolean): Ast.Block {
@@ -201,10 +198,25 @@ class Parser(private val input: MutableList<Token>) {
         return Ast.Command(commandName, args, nameToken.span, spans)
     }
 
+    private fun parseShorthand(shorthand: Token.Code): Value {
+        val value = shorthand.value
+        val span = shorthand.span
+        val regex = Regex("\\$(\\w)\\[(.*?)]")
+        val starter = regex.matchEntire(value)?.groupValues?.get(1)
+        var inner = regex.matchEntire(value)?.groupValues?.get(2)
+        println("inner: $inner | starter: $starter | value: $value")
+        if(inner == null || starter == null) {
+            throw SQLIntegrityConstraintViolationException()
+        }
+        return when(starter) {
+            "l" -> Value.Command(Ast.Command("load", mutableListOf(Value.Symbol(inner)), span, mutableListOf(span)))
+            else -> throw SQLIntegrityConstraintViolationException()
+        }
+    }
     private fun parseArgument(): Value {
         when(val next = next(true)) {
             is Token.Code -> {
-                TODO()
+                return parseShorthand(next)
             }
             is Token.At -> {
                 val next2 = next()
