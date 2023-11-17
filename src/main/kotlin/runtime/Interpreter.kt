@@ -207,12 +207,28 @@ class Interpreter(val constants: Map<Int, Value>, val blockMap: Map<Int, Interpr
             println("register: $register | constant: $constant")
             environment.registers[register] = constants[constant]!!
         } else {
+            environment.passedValues.pushFrame()
             val argumentCount = buf.get()
+            val arguments = mutableListOf<Value>()
+            var targetRegister = 0
+            for(x in 0..argumentCount) {
+                val reg = buf.getInt()
+                if(x == 0) {
+                    targetRegister = reg
+                } else {
+                    this.environment.passedValues.pushValue(
+                        this.environment.registers[reg]!!
+                    )
+                }
+
+            }
             this.environment.argumentCount = argumentCount
+
             println("""
 ==== INTERPRETER PRE STACK TRACE ==== 
 Command: ${opcodes[opcode.toInt()]!!.command} 
 Registers: ${this.environment.registers}
+Arguments: ${this.environment.passedValues}
 Locals: ${this.environment.localVariables}
 Scope: ${this.scope}
 ========== AFTER COMMAND ===========""")
@@ -223,6 +239,7 @@ Locals: ${this.environment.localVariables}
 Scope: ${this.scope}
 =================================
 """)
+            environment.passedValues.popFrame()
         }
     }
 }

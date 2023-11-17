@@ -18,9 +18,9 @@ fun createCoreVisitables(): MutableList<Visitable> {
             "h",
             ArgumentType.STRING,
             { visitable ->
-                val str = visitable.environment.stack.popValue().toDisplay()
-                println(str)
-                return@Visitable Value.String(str)
+                val str = visitable.environment.passedValues[0]!!
+                println(str.toDisplay())
+                return@Visitable str
             },
             false
     ))

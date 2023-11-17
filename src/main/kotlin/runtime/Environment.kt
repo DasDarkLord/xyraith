@@ -9,6 +9,7 @@ import net.minestom.server.instance.Instance
 data class Environment(
     val localVariables: MapFrames<String, Value> = MapFrames(),
     val registers: MapFrames<Int, Value> = MapFrames(),
+    val passedValues: ListFrames<Value> = ListFrames(),
     val structFieldStack: ListFrames<Value> = ListFrames(),
     val functionParameters: ListFrames<Value> = ListFrames(),
 
