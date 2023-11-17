@@ -8,6 +8,7 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
 import parser.Parser
 import error.ParserError
+import instructions.visitables
 import lang.emitter.IREmitter
 import lang.ir.transformAst
 import registry.validateRegistry
@@ -41,6 +42,7 @@ val types: MutableList<String> = mutableListOf(
 val functions: MutableMap<String, Pair<MutableList<ArgumentType>, ArgumentType>> = mutableMapOf()
 
 fun main(args: Array<String>) {
+    println(visitables)
     validateRegistry()
 
     when(args.getOrNull(0)) {
@@ -126,11 +128,11 @@ fun runServer(withServer: Boolean) {
     try {
         // val time1 = LocalDate.now()
         val ast = parser.parseAll()
-        Logger.trace(ast)
         val typeChecker = Typechecker()
         for(event in ast) {
             typeChecker.typecheckEvent(event)
         }
+        println("ast:\n${ast}")
         val module = transformAst(ast)
         println(module)
         val irEmitter = IREmitter(module)

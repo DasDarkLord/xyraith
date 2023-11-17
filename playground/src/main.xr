@@ -1,9 +1,3 @@
-import "std/std"
-import "std/mc/location"
-
 event startup {
-    store :w 10
-    store :lhs (:loc 10 10 10 0 0)
-    store :rhs (:loc 20 20 20 0 0)
-    console.log (:loc.distance $l[:lhs] $l[:rhs])
+    console.log "Hello world!"
 }

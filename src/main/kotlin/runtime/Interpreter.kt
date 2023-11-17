@@ -203,6 +203,7 @@ class Interpreter(val constants: Map<Int, Value>, val blockMap: Map<Int, Interpr
         val opcode = buf.get()
         if(opcode.toInt() == 1) {
             val id = buf.getInt()
+            println("id: $id | constants:\n$constants")
             environment.stack.pushValue(constants[id]!!)
         } else if (opcode.toInt() == 127) {
             val id = buf.getShort()
