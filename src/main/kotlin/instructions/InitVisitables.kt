@@ -13,13 +13,14 @@ fun createCoreVisitables(): MutableList<Visitable> {
             false,
             "console.log",
             NodeBuilder()
-                .addSingleArgument(ArgumentType.STRING, "Value")
+                .addSingleArgument(ArgumentType.ANY, "Value")
                 .build(),
             "h",
-            ArgumentType.NONE,
+            ArgumentType.STRING,
             { visitable ->
-                println(visitable.environment.stack.popValue().toDisplay())
-                return@Visitable Value.Null
+                val str = visitable.environment.stack.popValue().toDisplay()
+                println(str)
+                return@Visitable Value.String(str)
             },
             false
     ))

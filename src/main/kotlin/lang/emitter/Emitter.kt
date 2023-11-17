@@ -11,6 +11,12 @@ class IREmitter(val module: IR.Module) {
     private var constantIdRecord: Int = 1
     private var constants: MutableMap<IR.Argument, Int> = mutableMapOf()
     private var constantsBytes: ByteBuffer = ByteBuffer.allocate(BUFFER_SIZE)
+    private var register: Int = 1
+
+    /**
+     * Map of SSA ID <-> register allocated to it
+     */
+    private var registerAllocations: MutableMap<Int, Int> = mutableMapOf()
 
     fun emit(): List<Byte> {
         val out = mutableListOf<Byte>()
@@ -41,7 +47,7 @@ class IREmitter(val module: IR.Module) {
         buf.put(-122)
         if (block.blockData is IR.BlockData.Function) {
             buf.put(6)
-            pushRawValue(IR.Argument.Symbol(block.blockData.functionName), buf)
+            buf.putInt(addConstant(IR.Argument.Symbol(block.blockData.functionName))!!)
         } else if (block.blockData is IR.BlockData.Event) {
             val eventId = block.blockData.eventId
             buf.put(eventId.toByte())
@@ -49,7 +55,8 @@ class IREmitter(val module: IR.Module) {
         buf.put(-123)
         val startPos = buf.position()
         for (command in block.commands) {
-            emitCommand(command, buf)
+            val newRegister = emitCommand(command, buf)
+            registerAllocations[command.id] = newRegister
         }
         val endCodePos = buf.position()
         buf.rewind()
@@ -65,10 +72,12 @@ class IREmitter(val module: IR.Module) {
 
     }
 
-    private fun emitCommand(command: IR.Command, buf: ByteBuffer) {
+    private fun emitCommand(command: IR.Command, buf: ByteBuffer): Int {
+        val preRegister = register
         val commandObject = commandRegistry[command.name]!!
+        val usedRegisters = mutableListOf<Int>()
         for(argument in command.arguments) {
-            pushRawValue(argument, buf)
+            usedRegisters.add(allocateRegisterWithConstant(argument, buf))
         }
         if(commandObject["opcodeExtension"] == null && commandObject["opcode"] != null) {
             val opcode = commandObject["opcode"]!! as Byte
@@ -79,11 +88,19 @@ class IREmitter(val module: IR.Module) {
             buf.put(127)
             buf.putShort(shortcode)
         }
+        register -= usedRegisters.size
+
         buf.put(command.arguments.size.toByte())
+        buf.putInt(++register)
+        for(register in usedRegisters) {
+            buf.putInt(register)
+        }
+        return register
     }
 
-    fun pushRawValue(value: IR.Argument, buf: ByteBuffer) {
+    private fun allocateRegisterWithConstant(value: IR.Argument, buf: ByteBuffer): Int {
         val constantID = addConstant(value)
+
         // TODO: fix ordering of output
         // currently, commands are placed out of order
         // %1 = load [:a]
@@ -96,7 +113,11 @@ class IREmitter(val module: IR.Module) {
         // don't emit them immediately, only emit them if they're needed
         if(value !is IR.Argument.SSARef) {
             buf.put(1)
+            buf.putInt(++register)
             buf.putInt(constantID!!)
+            return register
+        } else {
+            return registerAllocations[value.value]!!
         }
     }
 
