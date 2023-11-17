@@ -24,5 +24,21 @@ fun createCoreVisitables(): MutableList<Visitable> {
             },
             false
     ))
+    out.add(Visitable(
+        3,
+        false,
+        "add",
+        NodeBuilder()
+            .addSingleArgument(ArgumentType.NUMBER, "Lhs")
+            .addSingleArgument(ArgumentType.NUMBER, "Rhs")
+            .build(),
+        "b",
+        ArgumentType.NUMBER,
+        { visitor ->
+            return@Visitable Value.Number((visitor.environment.passedValues[0] as Value.Number).value
+                + (visitor.environment.passedValues[1] as Value.Number).value)
+        },
+        true
+    ))
     return out
 }

@@ -1,6 +1,3 @@
 event startup {
-    console.log "nuh uh 2"
-    console.log "nuh uh 3"
-    console.log (console.log "nuh uh 4")
-    console.log (console.log (console.log "nuh uh 5"))
+    console.log (add 2 3)
 }

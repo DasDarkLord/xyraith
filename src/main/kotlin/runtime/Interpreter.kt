@@ -232,7 +232,8 @@ Arguments: ${this.environment.passedValues}
 Locals: ${this.environment.localVariables}
 Scope: ${this.scope}
 ========== AFTER COMMAND ===========""")
-            opcodes[opcode.toInt()]!!.visit(this)
+            val value = opcodes[opcode.toInt()]!!.visit(this)
+            environment.registers[targetRegister] = value
             println("""Command: ${opcodes[opcode.toInt()]!!.command} 
 Registers: ${this.environment.registers}
 Locals: ${this.environment.localVariables}
