@@ -202,27 +202,23 @@ class Interpreter(val constants: Map<Int, Value>, val blockMap: Map<Int, Interpr
     private suspend fun runInstruction(buf: ByteBuffer) {
         val opcode = buf.get()
         if(opcode.toInt() == 1) {
-            val id = buf.getInt()
-            println("id: $id | constants:\n$constants")
-            environment.stack.pushValue(constants[id]!!)
-        } else if (opcode.toInt() == 127) {
-            val id = buf.getShort()
-            val argumentCount = buf.get()
-            this.environment.argumentCount = argumentCount
-            shortcodes[id.toInt()]!!.visit(this)
+            val register = buf.getInt()
+            val constant = buf.getInt()
+            println("register: $register | constant: $constant")
+            environment.registers[register] = constants[constant]!!
         } else {
             val argumentCount = buf.get()
             this.environment.argumentCount = argumentCount
             println("""
 ==== INTERPRETER PRE STACK TRACE ==== 
 Command: ${opcodes[opcode.toInt()]!!.command} 
-Stack: ${this.environment.stack}
+Registers: ${this.environment.registers}
 Locals: ${this.environment.localVariables}
 Scope: ${this.scope}
 ========== AFTER COMMAND ===========""")
             opcodes[opcode.toInt()]!!.visit(this)
             println("""Command: ${opcodes[opcode.toInt()]!!.command} 
-Stack: ${this.environment.stack}
+Registers: ${this.environment.registers}
 Locals: ${this.environment.localVariables}
 Scope: ${this.scope}
 =================================

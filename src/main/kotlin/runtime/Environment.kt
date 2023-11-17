@@ -8,7 +8,8 @@ import net.minestom.server.instance.Instance
 
 data class Environment(
     val localVariables: MapFrames<String, Value> = MapFrames(),
-    val stack: ListFrames<Value> = ListFrames(),
+    val registers: MapFrames<Int, Value> = MapFrames(),
+    val structFieldStack: ListFrames<Value> = ListFrames(),
     val functionParameters: ListFrames<Value> = ListFrames(),
 
     var endBlock: Boolean = false,

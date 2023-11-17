@@ -83,11 +83,6 @@ class IREmitter(val module: IR.Module) {
             val opcode = commandObject["opcode"]!! as Byte
             buf.put(opcode)
         }
-        if(commandObject["opcodeExtension"] != null && commandObject["opcode"] == null) {
-            val shortcode = commandObject["opcodeExtension"]!! as Short
-            buf.put(127)
-            buf.putShort(shortcode)
-        }
         register -= usedRegisters.size
 
         buf.put(command.arguments.size.toByte())
