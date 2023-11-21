@@ -10,7 +10,6 @@ fun createCoreVisitables(): MutableList<Visitable> {
     out.add(
         Visitable(
             2,
-            false,
             "console.log",
             NodeBuilder()
                 .addSingleArgument(ArgumentType.ANY, "Value")
@@ -26,7 +25,6 @@ fun createCoreVisitables(): MutableList<Visitable> {
     ))
     out.add(Visitable(
         3,
-        false,
         "add",
         NodeBuilder()
             .addSingleArgument(ArgumentType.NUMBER, "Lhs")
@@ -42,7 +40,6 @@ fun createCoreVisitables(): MutableList<Visitable> {
     ))
     out.add(Visitable(
         4,
-        false,
         "sub",
         NodeBuilder()
             .addSingleArgument(ArgumentType.NUMBER, "Lhs")

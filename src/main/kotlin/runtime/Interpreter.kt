@@ -15,9 +15,9 @@ import java.nio.BufferUnderflowException
 import kotlin.Exception
 
 val shortcodes: Map<Int, Visitable> =
-    visitables.filter { obj -> obj.isExtension }.associateBy { obj -> obj.code }
+    visitables.filter { obj -> obj.isExtension() }.associateBy { obj -> obj.code }
 val opcodes: Map<Int, Visitable> =
-    visitables.filter { obj -> !obj.isExtension }.associateBy { obj -> obj.code }
+    visitables.filter { obj -> !obj.isExtension() }.associateBy { obj -> obj.code }
 
 fun peek(buf: ByteBuffer): Byte {
     val out = buf.get()

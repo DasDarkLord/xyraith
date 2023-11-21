@@ -20,12 +20,7 @@ class Visitable(
      * The opcode of the command.
      */
     val code: Int,
-    /**
-     * Determines whether the command is an extension opcode.
-     * If the opcode is an extension, mark it as true.
-     * If it is not, mark it as false and keep code within -127 to 127.
-     */
-    val isExtension: Boolean,
+
     /**
      * The name of the command that users will call it by.
      * Unless you will make an API for it in the standard
@@ -57,7 +52,14 @@ class Visitable(
     val pure: Boolean,
 
 ) {
-
+    /**
+     * Determines whether the command is an extension opcode.
+     * If the opcode is an extension, mark it as true.
+     * If it is not, mark it as false and keep code within -127 to 127.
+     */
+    fun isExtension(): Boolean {
+        return !(code >= -127 && code <= 127)
+    }
 
 
 }
