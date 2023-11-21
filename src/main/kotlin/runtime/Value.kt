@@ -175,7 +175,8 @@ sealed class Value {
     }
 }
 
-fun Any.getXyraithObject(): Value {
+fun Any?.getXyraithObject(): Value {
+    if(this == null) return Value.Null
     return when(this) {
         is String -> Value.String(this)
         is Double -> Value.Number(this)

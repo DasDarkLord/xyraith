@@ -10,7 +10,8 @@ import java.lang.reflect.Field
 import java.lang.reflect.Method
 
 val fields: MutableList<Method> = mutableListOf(
-    StdBuiltins().javaClass.getMethod("fs_readFile", java.lang.String::class.java)
+    StdBuiltins().javaClass.getMethod("fs_readFile", java.lang.String::class.java),
+    StdBuiltins().javaClass.getMethod("fs_writeFile", java.lang.String::class.java, java.lang.String::class.java),
 )
 
 val reflectionInstructions: MutableList<Visitable> = mutableListOf(

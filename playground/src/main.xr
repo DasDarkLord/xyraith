@@ -1,4 +1,6 @@
 event startup {
     console.log (sub (add 2 3) (add 7 4))
     console.log (reflection.method 0 "test.txt")
+    reflection.method 1 "test.txt" "im overriding you brother :sob:"
+    console.log (reflection.method 0 "test.txt")
 }
