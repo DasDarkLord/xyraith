@@ -66,6 +66,9 @@ fun main(args: Array<String>) {
             println("Initializing project..")
             initProject()
         }
+        "help" -> {
+            helpCommand()
+        }
         else -> {
             println("Unknown subcommand.\n")
             helpCommand()

@@ -1,5 +1,7 @@
 package instructions
 
+import instructions.primitives.fields
+import instructions.primitives.reflectionInstructions
 import runtime.Value
 import typechecker.ArgumentList
 import typechecker.ArgumentType
@@ -7,6 +9,8 @@ import typechecker.NodeBuilder
 
 fun createCoreVisitables(): MutableList<Visitable> {
     val out = mutableListOf<Visitable>()
+    out.addAll(reflectionInstructions)
+    println(fields)
     out.add(
         Visitable(
             2,

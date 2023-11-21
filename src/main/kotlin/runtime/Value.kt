@@ -55,18 +55,6 @@ sealed class Value {
         }
     }
 
-    data class NumberList(val value: List<Number>) : Value() {
-        override fun toString(): kotlin.String {
-            return """{"type":"string_list","value":$value}"""
-        }
-    }
-
-    data class StringList(val value: List<String>) : Value() {
-        override fun toString(): kotlin.String {
-            return """{"type":"string_list","value":$value}"""
-        }
-    }
-
     object Null : Value() {
         override fun toString(): kotlin.String {
             return """{"type":"null","value":"null"}"""
@@ -116,8 +104,6 @@ sealed class Value {
             is Selector -> value
             is String -> value
             is Symbol -> value
-            is NumberList -> value.toString()
-            is StringList -> value.toString()
             is Bool -> value.toString()
             is Struct -> "${type}{${fields}}"
             is StructField -> "structField{$name,$type,$value}"
@@ -148,8 +134,6 @@ sealed class Value {
             is Selector -> ArgumentType.SELECTOR
             is String -> ArgumentType.STRING
             is Symbol -> ArgumentType.SYMBOL
-            is NumberList -> ArgumentType.NUMBER_LIST
-            is StringList -> ArgumentType.STRING_LIST
             is Bool -> ArgumentType.BOOL
             is Struct -> type
             is StructField -> ArgumentType("structField", listOf())
@@ -174,5 +158,30 @@ sealed class Value {
     fun castToBoolean(): Boolean {
         return if (this is Bool) value
         else false
+    }
+
+    fun getJavaObject(): Any? {
+        return when(this) {
+            is Bool -> this.value
+            is GenericList -> this.value
+            is Item -> this.itemStack
+            is Number -> this.value
+            is Selector -> this.value
+            is String -> this.value
+            is Struct -> this.fields
+            is Symbol -> this.value
+            else -> null
+        }
+    }
+}
+
+fun Any.getXyraithObject(): Value {
+    return when(this) {
+        is String -> Value.String(this)
+        is Double -> Value.Number(this)
+        is Int -> Value.Number(this.toDouble())
+        is Short -> Value.Number(this.toDouble())
+        is Byte -> Value.Number(this.toDouble())
+        else -> Value.Null
     }
 }
