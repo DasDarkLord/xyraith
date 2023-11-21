@@ -76,7 +76,7 @@ fun main(args: Array<String>) {
 fun helpCommand() {
     println("""
 Xyraith's official compiler & tooling
-Version v0.1 (10/09/23)
+Version v0.3 (??/??/23)
 
 Usage: java -jar Xyraith.jar [subcommand]
 

@@ -220,7 +220,6 @@ class Interpreter(val constants: Map<Int, Value>, val blockMap: Map<Int, Interpr
                         this.environment.registers[reg]!!
                     )
                 }
-
             }
             this.environment.argumentCount = argumentCount
 

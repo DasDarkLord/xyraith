@@ -1,8 +1,13 @@
+import runtime.Value;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class StdBuiltins {
+    public static Value.String string_trim(Value.String value) {
+        return new Value.String(value.getValue().trim());
+    }
     public static String fs_readFile(String name) {
         try {
             return String.join("\n", Files.readAllLines(Path.of(name)));
