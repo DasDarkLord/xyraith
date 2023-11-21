@@ -17,10 +17,9 @@ var visitables: MutableList<Visitable> = createCoreVisitables()
  */
 class Visitable(
     /**
-     * The opcode of the command.
+     * The opcode/shortcode of the command.
      */
     val code: Int,
-
     /**
      * The name of the command that users will call it by.
      * Unless you will make an API for it in the standard
