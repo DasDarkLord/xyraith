@@ -1,7 +1,7 @@
 package error
 
 import lang.lexer.SpanData
-import lang.lexer.TokenType
+import lang.lexer.Token
 import registry.commandRegistry
 import typechecker.ArgumentType
 
@@ -9,9 +9,9 @@ abstract class ParserError(open val span: SpanData) : Exception() {
     abstract fun emit(): Diagnostic
 }
 
-class UnexpectedToken(val expected: TokenType, val found: TokenType, override val span: SpanData) : ParserError(span) {
+class UnexpectedToken(val expected: Class<*>, val found: Token, override val span: SpanData) : ParserError(span) {
     override fun emit(): Diagnostic {
-        return Diagnostic(1, "expected ${this.expected}, found ${this.found}", span)
+        return Diagnostic(1, "expected ${this.expected.name}, found ${this.found}", span)
     }
 }
 

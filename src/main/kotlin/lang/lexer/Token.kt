@@ -29,19 +29,4 @@ sealed class Token {
             is NewLine -> """{"type":"newLine","span":$span}"""
         }
     }
-
-    fun toType(): TokenType {
-        return when(this) {
-            is LeftParen -> TokenType.LeftParen
-            is RightParen -> TokenType.RightParen
-            is Identifier -> TokenType.Identifier
-            is StringText -> TokenType.StringText
-            is Number -> TokenType.Number
-            is Symbol -> TokenType.Symbol
-            is EOF -> TokenType.EOF
-            is At -> TokenType.At
-            is NewLine -> TokenType.NewLine
-            is Code -> TokenType.Code
-        }
-    }
 }

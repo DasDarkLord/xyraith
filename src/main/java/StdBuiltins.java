@@ -9,7 +9,7 @@ public class StdBuiltins {
         return value.trim();
     }
     public static String string_replace(String original, String from, String to) { return original.replace(from, to); }
-    public static String string_length(String value) { return value.length(); }
+    public static int string_length(String value) { return value.length(); }
     public static String fs_readFile(String name) {
         try {
             return String.join("\n", Files.readAllLines(Path.of(name)));
