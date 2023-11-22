@@ -15,7 +15,8 @@ sealed class Token {
     class NewLine(override val span: SpanData) : Token()
     class Equals(override val span: SpanData) : Token()
     class Bang(override val span: SpanData) : Token()
-
+    class ForEachKeyword(override val span: SpanData) : Token()
+    class IfKeyword(override val span: SpanData) : Token()
     override fun toString(): String {
         return when(this) {
             is LeftParen -> """{"type":"leftParen","span":$span}"""
@@ -26,6 +27,9 @@ sealed class Token {
 
             is EOF -> """{"type":"eof","span":$span}"""
             is NewLine -> """{"type":"newLine","span":$span}"""
+
+            is ForEachKeyword -> """{"type":"foreach","span":$span}"""
+            is IfKeyword -> """{"type":"if","span":$span}"""
 
             is Colon -> """{"type":"colon","span":$span}"""
             is Equals -> """{"type":"equals","span":$span}"""
