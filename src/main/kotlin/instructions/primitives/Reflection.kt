@@ -9,9 +9,16 @@ import typechecker.NodeBuilder
 import java.lang.reflect.Field
 import java.lang.reflect.Method
 
-val fields: MutableList<Method> = mutableListOf(
-    StdBuiltins().javaClass.getMethod("fs_readFile", java.lang.String::class.java),
-    StdBuiltins().javaClass.getMethod("fs_writeFile", java.lang.String::class.java, java.lang.String::class.java),
+fun getStdBuiltin(name: String, vararg parameters: Class<*>): Method {
+    return StdBuiltins().javaClass.getMethod(name, *parameters)
+}
+
+val fields: MutableMap<String, Method> = mutableMapOf(
+    "fs::readFile" to getStdBuiltin("fs_readFile", java.lang.String::class.java),
+    "fs::writeFile" to getStdBuiltin("fs_writeFile", java.lang.String::class.java, java.lang.String::class.java),
+    "string::trim" to getStdBuiltin("string_trim", java.lang.String::class.java),
+    "string::replace" to getStdBuiltin("string_replace", java.lang.String::class.java, java.lang.String::class.java, java.lang.String::class.java),
+    "string::length" to getStdBuiltin("string_length", java.lang.String::class.java),
 )
 
 val reflectionInstructions: MutableList<Visitable> = mutableListOf(
@@ -19,7 +26,7 @@ val reflectionInstructions: MutableList<Visitable> = mutableListOf(
         10,
         "reflection.method",
         NodeBuilder()
-            .addSingleArgument(ArgumentType.NUMBER, "Field index to call")
+            .addSingleArgument(ArgumentType.STRING, "Method to invoke")
             .addOptionalPluralArgument(ArgumentType.ANY, "Arguments to call with")
             .build(),
         "@internal Call a method based off an index.",
@@ -32,7 +39,11 @@ val reflectionInstructions: MutableList<Visitable> = mutableListOf(
                 if(index == 1) continue
                 arguments.add(argument.getJavaObject())
             }
-            val method = fields[visitor.environment.passedValues[0]!!.castToNumber().toInt()]
+            val h = visitor.environment.passedValues[0]!!.toDisplay()
+            if(!fields.containsKey(h)) {
+                return@Visitable Value.Null
+            }
+            val method = fields[h]!!
             val output = method.invoke(null, *arguments.toTypedArray())
             return@Visitable output.getXyraithObject()
         },

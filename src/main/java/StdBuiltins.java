@@ -5,9 +5,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class StdBuiltins {
-    public static Value.String string_trim(Value.String value) {
-        return new Value.String(value.getValue().trim());
+    public static String string_trim(String value) {
+        return value.trim();
     }
+    public static String string_replace(String original, String from, String to) { return original.replace(from, to); }
+    public static String string_length(String value) { return value.length(); }
     public static String fs_readFile(String name) {
         try {
             return String.join("\n", Files.readAllLines(Path.of(name)));
