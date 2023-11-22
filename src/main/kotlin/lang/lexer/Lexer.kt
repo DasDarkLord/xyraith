@@ -24,6 +24,9 @@ class Lexer(val source: String, val file: String) {
                 source[position] == '@' -> {
                     output.add(Token.At(SpanData(position, position++, file)))
                 }
+                source[position] == ':' -> {
+                    output.add(Token.Colon(SpanData(position, position++, file)))
+                }
                 source[position].isDigit() || source[position] == '-' -> {
                     val spanStart = position
                     var number = ""
@@ -72,13 +75,7 @@ class Lexer(val source: String, val file: String) {
                         symbol = "$symbol${source[position]}"
                         position++
                     }
-                    if(symbol.startsWith(":")) {
-                        output.add(Token.Symbol(symbol, SpanData(spanStart, position, file)))
-                    } else if(symbol.startsWith("$")) {
-                        output.add(Token.Code(symbol, SpanData(spanStart, position, file)))
-                    } else {
-                        output.add(Token.Identifier(symbol, SpanData(spanStart, position, file)))
-                    }
+                    output.add(Token.Identifier(symbol, SpanData(spanStart, position, file)))
                 }
             }
         }
