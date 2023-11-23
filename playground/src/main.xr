@@ -1,6 +1,3 @@
-event startup {
-    console.log (sub (add 2 3) (add 7 4))
-    console.log (reflection.method fs::readFile "test.txt")
-    reflection.method fs::writeFile "test.txt" "im overriding you brother :sob:"
-    console.log (reflection.method fs::readFile "test.txt")
+event join {
+
 }

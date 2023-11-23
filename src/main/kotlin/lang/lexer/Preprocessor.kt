@@ -20,7 +20,7 @@ fun preprocessMain(mainTokens: MutableList<Token>, directory: String): MutableLi
                 }
                 val next = mainTokens[index+1]
                 if(next !is Token.StringText) {
-                    throw UnexpectedToken(Token.StringText::class.java, next, next.span)
+                    throw UnexpectedToken("string", next, next.span)
                 }
                 if(stdlibFiles.containsKey(next.value)) {
                     val lexer = Lexer(
@@ -39,9 +39,7 @@ fun preprocessMain(mainTokens: MutableList<Token>, directory: String): MutableLi
                         throw NotAValidImport(next.span)
                     }
                 }
-
-
-            } else if (token is Token.Identifier) {
+            } else {
                 hitCode = true
                 outputTokens.add(token)
             }

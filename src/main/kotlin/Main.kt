@@ -6,7 +6,7 @@ import docs.generateDocumentation
 import lang.lexer.Lexer
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
-import parser.Parser
+import lang.parser.Parser
 import error.ParserError
 import instructions.visitables
 import lang.emitter.IREmitter
@@ -123,7 +123,7 @@ fun generateCommandDump() {
 }
 
 fun runServer(withServer: Boolean) {
-    val text = File("src/main.xr").readText()
+    var text = File("src/main.xr").readText()
     val lexer = Lexer(text, "src/main.xr")
     val tokens = lexer.transform()
     println("tokens:\n$tokens")

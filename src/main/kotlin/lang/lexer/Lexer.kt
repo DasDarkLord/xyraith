@@ -1,5 +1,6 @@
 package lang.lexer
 
+import error.NotANumber
 import java.lang.NumberFormatException
 
 class Lexer(val source: String, val file: String) {
@@ -27,6 +28,12 @@ class Lexer(val source: String, val file: String) {
                 source[position] == ':' -> {
                     output.add(Token.Colon(SpanData(position, position++, file)))
                 }
+                source[position] == '=' -> {
+                    output.add(Token.Equals(SpanData(position, position++, file)))
+                }
+                source[position] == '!' -> {
+                    output.add(Token.Bang(SpanData(position, position++, file)))
+                }
                 source[position].isDigit() || source[position] == '-' -> {
                     val spanStart = position
                     var number = ""
@@ -42,9 +49,13 @@ class Lexer(val source: String, val file: String) {
                     try {
                         output.add(Token.Number(number.toDouble(), SpanData(spanStart, position, file)))
                     } catch(e: NumberFormatException) {
-                        output.add(Token.Identifier(number, SpanData(spanStart, position, file)))
-                    }
+                        if(number == "->") {
+                            output.add(Token.Arrow(SpanData(spanStart, position, file)))
+                        } else {
+                            throw NotANumber(SpanData(spanStart, position, file))
+                        }
 
+                    }
                 }
                 source[position] == '"' -> {
                     val spanStart = position
@@ -69,16 +80,25 @@ class Lexer(val source: String, val file: String) {
                     var symbol = ""
                     while (position < source.length &&
                         !source[position].isWhitespace() &&
-                        source[position] != '(' &&
-                        source[position] != ')' &&
-                        source[position] != '"') {
+                        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789_".contains(source[position])) {
                         symbol = "$symbol${source[position]}"
                         position++
                     }
-                    output.add(Token.Identifier(symbol, SpanData(spanStart, position, file)))
+                    val span = SpanData(spanStart, position, file)
+                    when(symbol) {
+                        "if" -> output.add(Token.IfKeyword(span))
+                        "foreach" -> output.add(Token.ForEachKeyword(span))
+                        "global" -> output.add(Token.GlobalKeyword(span))
+                        "event" -> output.add(Token.EventKeyword(span))
+                        "function" -> output.add(Token.FunctionKeyword(span))
+                        "struct" -> output.add(Token.StructKeyword(span))
+                        else -> output.add(Token.Identifier(symbol, span))
+                    }
                 }
             }
+            println("position: $position | output: $output")
         }
+        output.add(Token.EOF(SpanData(position, position+1)))
         return preprocessMain(output, "src/")
     }
 }

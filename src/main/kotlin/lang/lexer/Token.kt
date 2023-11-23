@@ -9,14 +9,22 @@ sealed class Token {
     class Identifier(val value: String, override val span: SpanData) : Token()
     class StringText(val value: String, override val span: SpanData) : Token()
     class Number(val value: Double, override val span: SpanData) : Token()
-    class Colon(override val span: SpanData) : Token()
+
     class EOF(override val span: SpanData) : Token()
-    class At(override val span: SpanData) : Token()
     class NewLine(override val span: SpanData) : Token()
+
+    class Colon(override val span: SpanData) : Token()
+    class At(override val span: SpanData) : Token()
     class Equals(override val span: SpanData) : Token()
     class Bang(override val span: SpanData) : Token()
+    class Arrow(override val span: SpanData) : Token()
     class ForEachKeyword(override val span: SpanData) : Token()
     class IfKeyword(override val span: SpanData) : Token()
+    class GlobalKeyword(override val span: SpanData) : Token()
+    class EventKeyword(override val span: SpanData) : Token()
+    class FunctionKeyword(override val span: SpanData) : Token()
+    class StructKeyword(override val span: SpanData) : Token()
+
     override fun toString(): String {
         return when(this) {
             is LeftParen -> """{"type":"leftParen","span":$span}"""
@@ -35,6 +43,12 @@ sealed class Token {
             is Equals -> """{"type":"equals","span":$span}"""
             is Bang -> """{"type":"bang","span":$span}"""
             is At -> """{"type":"at","span":$span}"""
+            is Arrow -> """{"type":"at","span":$span}"""
+
+            is EventKeyword -> """{"type":"event","span":$span}"""
+            is FunctionKeyword -> """{"type":"function","span":$span}"""
+            is GlobalKeyword -> """{"type":"global","span":$span}"""
+            is StructKeyword -> """{"type":"struct","span":$span}"""
         }
     }
 }

@@ -9,9 +9,9 @@ abstract class ParserError(open val span: SpanData) : Exception() {
     abstract fun emit(): Diagnostic
 }
 
-class UnexpectedToken(val expected: Class<*>, val found: Token, override val span: SpanData) : ParserError(span) {
+class UnexpectedToken(val expected: String, val found: Token, override val span: SpanData) : ParserError(span) {
     override fun emit(): Diagnostic {
-        return Diagnostic(1, "expected ${this.expected.name}, found ${this.found}", span)
+        return Diagnostic(1, "expected ${expected}, found ${found}", span)
     }
 }
 
@@ -62,17 +62,12 @@ class VariableWasntDeclared(val variable: String, override val span: SpanData) :
     }
 }
 
-class InvalidTargetStore(val variable: String, val type: ArgumentType, override val span: SpanData) : ParserError(span) {
-    override fun emit(): Diagnostic {
-        return Diagnostic(8, "can not store type $type to variable $variable in target scope", span, "only `Number`, `String`, and `Boolean` are valid types to store in target scope")
-    }
-}
-
 class NotAStructField(override val span: SpanData) : ParserError(span) {
     override fun emit(): Diagnostic {
         return Diagnostic(9, "structs can only hold struct fields", span, "remove the excess command")
     }
 }
+
 
 class NotAType(private val givenType: String, private val validTypes: List<String>, override val span: SpanData) : ParserError(span) {
     override fun emit(): Diagnostic {
@@ -121,6 +116,13 @@ class NotAValidFunction(override val span: SpanData) : ParserError(span) {
         return Diagnostic(15, "this is not a valid function", span)
     }
 }
+
+class NotANumber(override val span: SpanData) : ParserError(span) {
+    override fun emit(): Diagnostic {
+        return Diagnostic(16, "not a valid number", span)
+    }
+}
+
 
 class Unreachable : Exception()
 
