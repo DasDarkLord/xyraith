@@ -125,24 +125,48 @@ class Parser(private val input: MutableList<Token>) {
         }
     }
 
-    private fun parseBlock(eventName: String?): Ast.Block {
+    private fun parseBlock(eventName: String = "callable"): Ast.Block {
         val openBrace = next()
         if(openBrace !is Token.LeftParen) {
             throw UnexpectedToken("opening brace", openBrace, openBrace.span)
+        }
+        val commands = mutableListOf<Ast.Command>()
+        while(true) {
+            println("next command is ${peek()}")
+            val command = parseCommand()
+            commands.add(command)
+            val peeked = peek()
+            if(peeked is Token.RightParen)
+                break
         }
         val closeBrace = next()
         if(closeBrace !is Token.RightParen) {
             throw UnexpectedToken("closing brace", closeBrace, closeBrace.span)
         }
-        return Ast.Block(listOf(), eventName ?: "callable", openBrace.span)
+        return Ast.Block(commands, eventName, openBrace.span)
     }
 
     private fun parseCommand(): Ast.Command {
-        TODO()
+        val identifier = next()
+        if(identifier !is Token.Identifier)
+            throw UnexpectedToken("identifier", identifier, identifier.span)
+        val values = mutableListOf<Value>()
+        val spans = mutableListOf<SpanData>()
+        while(true) {
+            val peeked = peek()
+            val value = parseValue()
+            if(value == null)
+                break
+            else {
+                values.add(value)
+                spans.add(peeked.span)
+            }
+        }
+        return Ast.Command(identifier.value, values, identifier.span, spans)
     }
 
-    private fun parseValue(): Value {
-        val next = next()
+    private fun parseValue(): Value? {
+        val next = next(false)
         return when(next) {
             is Token.StringText -> Value.String(next.value)
             is Token.Number -> Value.Number(next.value)
@@ -151,6 +175,8 @@ class Parser(private val input: MutableList<Token>) {
                 "true" -> Value.Command(Ast.Command("true", mutableListOf(), next.span, mutableListOf()))
                 else -> throw UnexpectedToken("valid identifier", next, next.span)
             }
+            is Token.RightParen -> return null
+            is Token.NewLine -> return null
             else -> {
                 throw UnexpectedToken("valid value", next, next.span)
             }

@@ -78,12 +78,16 @@ class Lexer(val source: String, val file: String) {
                 else -> {
                     val spanStart = position
                     var symbol = ""
+                    var iters = 0
                     while (position < source.length &&
                         !source[position].isWhitespace() &&
                         "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789_".contains(source[position])) {
+                        iters++
                         symbol = "$symbol${source[position]}"
                         position++
                     }
+                    if(iters == 0)
+                        position++
                     val span = SpanData(spanStart, position, file)
                     when(symbol) {
                         "if" -> output.add(Token.IfKeyword(span))
