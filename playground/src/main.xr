@@ -1,5 +1,3 @@
-event join {
-    console.log "Hello world!"
+event startup {
+    jvm_method "console::log" "Hello world!"
 }
-
-

@@ -19,12 +19,13 @@ val fields: MutableMap<String, Method> = mutableMapOf(
     "string::trim" to getStdBuiltin("string_trim", java.lang.String::class.java),
     "string::replace" to getStdBuiltin("string_replace", java.lang.String::class.java, java.lang.String::class.java, java.lang.String::class.java),
     "string::length" to getStdBuiltin("string_length", java.lang.String::class.java),
+    "console::log" to getStdBuiltin("console_log", java.lang.String::class.java),
 )
 
 val reflectionInstructions: MutableList<Visitable> = mutableListOf(
     Visitable(
         10,
-        "reflection.method",
+        "jvm_method",
         NodeBuilder()
             .addSingleArgument(ArgumentType.STRING, "Method to invoke")
             .addOptionalPluralArgument(ArgumentType.ANY, "Arguments to call with")

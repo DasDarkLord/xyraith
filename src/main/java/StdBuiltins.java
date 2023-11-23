@@ -25,4 +25,8 @@ public class StdBuiltins {
             throw new RuntimeException(e);
         }
     }
+
+    public static void console_log(String output) {
+        System.out.println(output);
+    }
 }
