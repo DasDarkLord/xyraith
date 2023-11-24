@@ -100,19 +100,17 @@ class Parser(private val input: MutableList<Token>) {
                 )
             }
             is Token.FunctionKeyword -> {
-                val functionNameToken = next()
-                if(functionNameToken !is Token.Identifier) {
-                    throw UnexpectedToken("identifier", functionNameToken, functionNameToken.span)
-                }
+                val rawToken = peek()
+                val functionNameToken = parseNamespacedIdentifier()
                 return Pair(true, Ast.Event(
-                    functionNameToken.value,
-                    parseBlock(functionNameToken.value),
+                    "function",
+                    parseBlock("function"),
                     EventType.Function(
-                        functionNameToken.value,
+                        functionNameToken,
                         listOf(),
                         ArgumentType.NONE
                     ),
-                    functionNameToken.span
+                    rawToken.span
                 ))
             }
             is Token.StructKeyword -> {
@@ -146,10 +144,24 @@ class Parser(private val input: MutableList<Token>) {
         return Ast.Block(commands, eventName, openBrace.span)
     }
 
-    private fun parseCommand(): Ast.Command {
+    private fun parseNamespacedIdentifier(path: PathName = PathName(mutableListOf())): PathName {
         val identifier = next()
         if(identifier !is Token.Identifier)
             throw UnexpectedToken("identifier", identifier, identifier.span)
+
+        path.path.add(0, identifier.value)
+
+        val next = peek()
+        if(next is Token.Dot) {
+            next()
+            return parseNamespacedIdentifier(path)
+        }
+        return path
+    }
+
+    private fun parseCommand(): Ast.Command {
+        val rawToken = peek()
+        val identifier = parseNamespacedIdentifier()
         val values = mutableListOf<Value>()
         val spans = mutableListOf<SpanData>()
         while(true) {
@@ -162,7 +174,7 @@ class Parser(private val input: MutableList<Token>) {
                 spans.add(peeked.span)
             }
         }
-        return Ast.Command(identifier.value, values, identifier.span, spans)
+        return Ast.Command(identifier, values, rawToken.span, spans)
     }
 
     private fun parseValue(): Value? {
@@ -172,7 +184,7 @@ class Parser(private val input: MutableList<Token>) {
             is Token.Number -> Value.Number(next.value)
             is Token.LeftParen -> Value.Command(parseCommand())
             is Token.Identifier -> when(next.value) {
-                "true" -> Value.Command(Ast.Command("true", mutableListOf(), next.span, mutableListOf()))
+                "true" -> Value.Command(Ast.Command(PathName(mutableListOf("true")), mutableListOf(), next.span, mutableListOf()))
                 else -> throw UnexpectedToken("valid identifier", next, next.span)
             }
             is Token.RightParen -> return null

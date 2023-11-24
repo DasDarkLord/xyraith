@@ -1,5 +1,6 @@
 package instructions
 
+import lang.parser.PathName
 import runtime.Interpreter
 import org.reflections.Reflections
 import org.reflections.util.ConfigurationBuilder
@@ -25,7 +26,7 @@ class Visitable(
      * Unless you will make an API for it in the standard
      * library, give this a sensible name.
      */
-    val command: String,
+    val command: PathName,
     /**
      * A list of arguments the command can accept.
      * Automatically validated for you,

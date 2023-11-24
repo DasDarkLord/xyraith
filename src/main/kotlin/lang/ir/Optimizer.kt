@@ -1,6 +1,7 @@
 package lang.ir
 
 import instructions.Visitable
+import lang.parser.PathName
 import registry.commandRegistry
 
 fun IR.Module.deadStoreElimination(): IR.Module {
@@ -8,21 +9,21 @@ fun IR.Module.deadStoreElimination(): IR.Module {
         val usedLocals = mutableListOf<String>()
         val usedGlobals = mutableListOf<String>()
         for(command in block.commands) {
-            if(command.name == "load") {
+            if(command.name == PathName(mutableListOf("load"))) {
                 usedLocals.add((command.arguments[0] as IR.Argument.Symbol).value)
             }
-            if(command.name == "global.load") {
+            if(command.name == PathName(mutableListOf("global", "load"))) {
                 usedGlobals.add((command.arguments[0] as IR.Argument.Symbol).value)
             }
         }
         val markForRemoval = mutableListOf<IR.Command>()
         for(command in block.commands) {
-            if(command.name == "store") {
+            if(command.name == PathName(mutableListOf("store"))) {
                 if(!usedLocals.contains((command.arguments[0] as IR.Argument.Symbol).value)) {
                     markForRemoval.add(command)
                 }
             }
-            if(command.name == "global.store") {
+            if(command.name == PathName(mutableListOf("global", "store"))) {
                 if(!usedGlobals.contains((command.arguments[0] as IR.Argument.Symbol).value)) {
                     markForRemoval.add(command)
                 }
@@ -45,11 +46,11 @@ fun IR.Module.deadFunctionElimination(): IR.Module {
             else
                 ""
             for(command in block.commands) {
-                if(command.name == "call") {
+                if(command.name == PathName(mutableListOf("call"))) {
                     val arg = (command.arguments[0] as IR.Argument.Symbol).value
                     if(arg != functionName) usedFunctions.add(arg)
                 }
-                if(command.name == "struct.init") {
+                if(command.name == PathName(mutableListOf("struct", "init"))) {
                     val arg = ":__struct_init_" + (command.arguments[0] as IR.Argument.Symbol).value
                     if(arg != functionName) usedFunctions.add(arg)
                 }
@@ -87,9 +88,10 @@ fun IR.Module.deadCallElimination(): IR.Module {
         for(block in this.blocks) {
             val markForRemoval = mutableListOf<IR.Command>()
             for(command in block.commands) {
-                if(!usedSSAs.contains(command.id) && ((commandRegistry[command.name]!!["object"]!! as Visitable).pure)) {
-                    markForRemoval.add(command)
-                }
+                // TODO: fix typechecker errors from kotlin
+//                if(!usedSSAs.contains(command.id) && ((commandRegistry[command.name]!!["object"]!! as Visitable).pure)) {
+//                    markForRemoval.add(command)
+//                }
             }
             for(command in markForRemoval) {
                 block.commands.remove(command)

@@ -2,6 +2,7 @@ package instructions
 
 import instructions.primitives.fields
 import instructions.primitives.reflectionInstructions
+import lang.parser.PathName
 import runtime.Value
 import typechecker.ArgumentList
 import typechecker.ArgumentType
@@ -14,7 +15,7 @@ fun createCoreVisitables(): MutableList<Visitable> {
     out.add(
         Visitable(
             2,
-            "console.log",
+            PathName(mutableListOf("console", "log")),
             NodeBuilder()
                 .addSingleArgument(ArgumentType.ANY, "Value")
                 .build(),
@@ -29,7 +30,7 @@ fun createCoreVisitables(): MutableList<Visitable> {
     ))
     out.add(Visitable(
         3,
-        "add",
+        PathName(mutableListOf("add")),
         NodeBuilder()
             .addSingleArgument(ArgumentType.NUMBER, "Lhs")
             .addSingleArgument(ArgumentType.NUMBER, "Rhs")
@@ -44,7 +45,7 @@ fun createCoreVisitables(): MutableList<Visitable> {
     ))
     out.add(Visitable(
         4,
-        "sub",
+        PathName(mutableListOf("sub")),
         NodeBuilder()
             .addSingleArgument(ArgumentType.NUMBER, "Lhs")
             .addSingleArgument(ArgumentType.NUMBER, "Rhs")

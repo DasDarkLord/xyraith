@@ -11,9 +11,9 @@ import error.ParserError
 import instructions.visitables
 import lang.emitter.IREmitter
 import lang.ir.transformAst
+import lang.parser.PathName
 import registry.validateRegistry
 import typechecker.ArgumentType
-import typechecker.Typechecker
 import java.io.File
 import java.nio.ByteBuffer
 
@@ -38,8 +38,7 @@ val types: MutableList<String> = mutableListOf(
     "any",
     "itemStack"
 )
-
-val functions: MutableMap<String, Pair<MutableList<ArgumentType>, ArgumentType>> = mutableMapOf()
+val functions: MutableMap<PathName, Pair<MutableList<ArgumentType>, ArgumentType>> = mutableMapOf()
 
 fun main(args: Array<String>) {
     println(visitables)
@@ -131,10 +130,6 @@ fun runServer(withServer: Boolean) {
     try {
         // val time1 = LocalDate.now()
         val ast = parser.parseAll()
-        val typeChecker = Typechecker()
-        for(event in ast) {
-            typeChecker.typecheckEvent(event)
-        }
         println("ast:\n${ast}")
         val module = transformAst(ast)
         println(module)

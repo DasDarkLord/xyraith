@@ -5,14 +5,14 @@ import typechecker.*
 
 fun generateDocumentation(): Map<String, String> {
     val output = mutableMapOf<String, String>()
-    for(obj in visitables.sortedBy { it.command }) {
-        val command = obj.command
+    for(obj in visitables.sortedBy { it.command.resolve() }) {
+        val command = obj.command.resolve()
         val split = command.split(".").toMutableList()
         val finalName = split.removeLast()
         val startingName = split.joinToString("/")
         println("split: $split | finalName: $finalName | startingName: $startingName")
         val documentation = CommandDocument(
-            obj.command,
+            obj.command.resolve(),
             decomposeList(obj.arguments),
             obj.description,
             obj.returnType

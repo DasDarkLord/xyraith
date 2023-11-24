@@ -6,7 +6,7 @@ fun dumpCommands(): String {
     var output = "["
     for(obj in instructions.visitables) {
         val documentation = CommandDocument(
-            obj.command,
+            obj.command.resolve(),
             decomposeList(obj.arguments),
             obj.description,
             obj.returnType

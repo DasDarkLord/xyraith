@@ -1,5 +1,7 @@
 package lang.ir
 
+import lang.parser.PathName
+
 sealed class IR {
     data class Module(val blocks: MutableList<BasicBlock>) : IR() {
         override fun toString(): String {
@@ -13,7 +15,7 @@ bb$id $blockData =>
     ${commands.joinToString("\n\t")}"""
         }
     }
-    public sealed class BlockData : IR() {
+    sealed class BlockData : IR() {
         data class Event(val eventId: Int) : BlockData() {
             override fun toString(): String {
                 return """(event $eventId)"""
@@ -25,9 +27,9 @@ bb$id $blockData =>
             }
         }
     }
-    data class Command(val id: Int, val name: String, val arguments: MutableList<Argument>) : IR() {
+    data class Command(val id: Int, val name: PathName, val arguments: MutableList<Argument>) : IR() {
         override fun toString(): String {
-            return "%$id = $name $arguments"
+            return "%$id = ${name.resolve()} $arguments"
         }
     }
     public sealed class Argument : IR() {

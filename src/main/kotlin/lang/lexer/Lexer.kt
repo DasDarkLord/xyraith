@@ -25,6 +25,9 @@ class Lexer(val source: String, val file: String) {
                 source[position] == '@' -> {
                     output.add(Token.At(SpanData(position, position++, file)))
                 }
+                source[position] == '.' -> {
+                    output.add(Token.Dot(SpanData(position, position++, file)))
+                }
                 source[position] == ':' -> {
                     output.add(Token.Colon(SpanData(position, position++, file)))
                 }

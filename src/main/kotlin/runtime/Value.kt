@@ -1,9 +1,9 @@
 package runtime
 
+import lang.parser.PathName
 import net.minestom.server.item.ItemStack
 import parser.Ast
 import typechecker.ArgumentType
-import typechecker.Typechecker
 
 sealed class Value {
     /*
@@ -141,19 +141,19 @@ sealed class Value {
             is GenericList -> ArgumentType.GENERIC_LIST
         }
     }
-
-    fun getFixedType(tc: Typechecker, functionName: kotlin.String?): ArgumentType {
-        return when(this) {
-            is Command -> {
-                if(this.value.name == "list") {
-                    val generic = this.value.arguments[0].getFixedType(tc, functionName)
-                    return ArgumentType("list", listOf(generic))
-                }
-                return tc.getCommandReturnType(this.value, null, functionName)
-            }
-            else -> this.castToArgumentType()
-        }
-    }
+//
+//    fun getFixedType(tc: Typechecker, functionName: PathName?): ArgumentType {
+//        return when(this) {
+//            is Command -> {
+//                if(this.value.name == PathName(mutableListOf("list"))) {
+//                    val generic = this.value.arguments[0].getFixedType(tc, functionName)
+//                    return ArgumentType("list", listOf(generic))
+//                }
+//                return tc.getCommandReturnType(this.value, null, functionName)
+//            }
+//            else -> this.castToArgumentType()
+//        }
+//    }
 
     fun castToBoolean(): Boolean {
         return if (this is Bool) value

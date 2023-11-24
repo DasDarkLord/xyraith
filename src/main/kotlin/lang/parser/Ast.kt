@@ -1,6 +1,7 @@
 package parser
 
 import lang.lexer.SpanData
+import lang.parser.PathName
 import runtime.Value
 import typechecker.ArgumentType
 
@@ -15,7 +16,7 @@ sealed class Ast {
             return """{"name":"$eventName","nodes":$nodes}""".trimIndent()
         }
     }
-    class Command(val name: String, val arguments: MutableList<Value>, val nameSpan: SpanData, val nodeSpans: List<SpanData>) : Ast() {
+    class Command(val name: PathName, val arguments: MutableList<Value>, val nameSpan: SpanData, val nodeSpans: List<SpanData>) : Ast() {
         override fun toString(): String {
             return """{"name":"$name","arguments":$arguments}"""
         }
@@ -24,7 +25,7 @@ sealed class Ast {
 
 sealed class EventType {
     data object Event : EventType()
-    data class Function(val name: String, val parameters: List<ArgumentType>, val returns: ArgumentType) : EventType()
+    data class Function(val name: PathName, val parameters: List<ArgumentType>, val returns: ArgumentType) : EventType()
     data object Struct : EventType()
 }
 

@@ -2,6 +2,7 @@ package instructions.primitives
 
 import StdBuiltins
 import instructions.Visitable
+import lang.parser.PathName
 import runtime.Value
 import runtime.getXyraithObject
 import typechecker.ArgumentType
@@ -25,7 +26,7 @@ val fields: MutableMap<String, Method> = mutableMapOf(
 val reflectionInstructions: MutableList<Visitable> = mutableListOf(
     Visitable(
         10,
-        "jvm_method",
+        PathName(mutableListOf("jvm_method")),
         NodeBuilder()
             .addSingleArgument(ArgumentType.STRING, "Method to invoke")
             .addOptionalPluralArgument(ArgumentType.ANY, "Arguments to call with")

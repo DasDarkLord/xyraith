@@ -17,6 +17,7 @@ sealed class Token {
     class At(override val span: SpanData) : Token()
     class Equals(override val span: SpanData) : Token()
     class Bang(override val span: SpanData) : Token()
+    class Dot(override val span: SpanData) : Token()
     class Arrow(override val span: SpanData) : Token()
     class ForEachKeyword(override val span: SpanData) : Token()
     class IfKeyword(override val span: SpanData) : Token()
@@ -42,6 +43,7 @@ sealed class Token {
             is Colon -> """{"type":"colon","span":$span}"""
             is Equals -> """{"type":"equals","span":$span}"""
             is Bang -> """{"type":"bang","span":$span}"""
+            is Dot -> """{"type":"dot","span":$span}"""
             is At -> """{"type":"at","span":$span}"""
             is Arrow -> """{"type":"at","span":$span}"""
 
